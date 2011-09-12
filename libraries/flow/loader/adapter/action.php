@@ -53,7 +53,7 @@ class FlowLoaderAdapterAction extends KLoaderAdapterAbstract
 		    }
 
 		    $type = strtolower(array_shift($parts));
-		    
+
 		    $action = strtolower(array_shift($parts));
 			$file 	   = array_pop($parts);
 				
@@ -64,7 +64,10 @@ class FlowLoaderAdapterAction extends KLoaderAdapterAbstract
 			} 
 			else $path = $file;
 
-			$path = Flow::findFile($type.'/'.$action.'/'.$path.'.php', $this->_basepath);
+			if (($file = Flow::findFile($type.'/'.$action.'/'.$action.'.php', $this->_basepath)) === false) {
+			    $path = Flow::findFile($type.'/'.$action.'.php', $this->_basepath);
+		    }
+		    else $path = $file;
 		}
 
 		return $path;
