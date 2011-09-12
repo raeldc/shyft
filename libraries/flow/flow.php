@@ -119,11 +119,13 @@ class Flow
 
     /**
      * Search for a file in the given array of directories unti it is found
+     *      TODO: Find a better location for findFile()
      *
      * @return string   Real path to the file
      */
     public function findFile($path, $directories)
     {
+        // TODO: Implement caching here
         if (is_string($directories)) 
         {
             return rtrim($directories, '/').'/'.trim($path, '/');
