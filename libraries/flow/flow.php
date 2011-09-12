@@ -124,7 +124,7 @@ class Flow
      *
      * @return string   Real path to the file
      */
-    public function findFile($path, $directories = array())
+    public function findFile($path, $directories)
     {
         if (is_string($directories)) 
         {
