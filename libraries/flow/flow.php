@@ -53,45 +53,40 @@ class Flow
         // Get Koowa, for some reason, this serves nothing critical
         require_once self::findFile('koowa/koowa.php',                    self::$paths['libraries']);
 
-        /**
-         * Exception Classes
-         */
+        // Exception Classes
         require_once self::findFile('koowa/exception/interface.php',      self::$paths['libraries']);
         require_once self::findFile('koowa/exception/exception.php',      self::$paths['libraries']);
 
-        /**
-         * Loader Classes
-         */
+        // Loader Classes
         require_once self::findFile('koowa/loader/adapter/interface.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/exception.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/abstract.php',  self::$paths['libraries']);
         require_once self::findFile('flow/loader/adapter/koowa.php',      self::$paths['libraries']);
         require_once self::findFile('flow/loader/adapter/flow.php',       self::$paths['libraries']);
 
-        /**
-         * Registry Classes
-         */
+        // Registry Classes
         require_once self::findFile('koowa/loader/registry.php',          self::$paths['libraries']);
 
         // Get Flow Loader
-        require_once self::getPath().'/loader/loader.php';
+        require_once self::findFile('flow/loader/loader.php',             self::$paths['libraries']);
 
         /*
          *      We have a special loader adapter for Flow which looks for "fallback" directories
          *      Fallback directories is searched in this order sites/site -> sites/all -> system
          */
 
-        // First, add the loader and identifier adapters for Flow
+        // First, add the loader adapter for Flow
         FlowLoader::registerAdapter(new FlowLoaderAdapterKoowa(self::$paths['libraries']));
         
-        // Then add the loader and identifier adapters for Nooku
+        // Then add the loader adapter for Nooku
         FlowLoader::registerAdapter(new FlowLoaderAdapterFlow(self::$paths['libraries']));
 
-        // Register the adapter for Koow and Flow Identifier
+        // Add the loader adapter for Components
+        FlowLoader::registerAdapter(new FlowLoaderAdapterComponent(self::$paths['components']));
+
+        // Register the adapter for Koowa and Flow Identifier
         KIdentifier::registerAdapter(new FlowIdentifierAdapterKoowa());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterFlow());
-
-        echo KFactory::get('flow:application.dispatcher')->hello();die();
     }
 
     /**
