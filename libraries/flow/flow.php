@@ -85,6 +85,7 @@ class Flow
         KIdentifier::registerAdapter(new FlowIdentifierAdapterKoowa());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterFlow());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterComponent());
+        KIdentifier::registerAdapter(new FlowIdentifierAdapterAction());
     }
 
     /**
