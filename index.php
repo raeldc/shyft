@@ -54,3 +54,5 @@ Flow::getInstance(array(
     'templates'  => array(SITE_TEMPLATES,  SITES_TEMPLATES,    SYSTEM_TEMPLATES),
     'languages'  => array(SITE_LANGUAGES,  SITES_LANGUAGES,    SYSTEM_LANGUAGES),
 ));
+
+echo KFactory::get('com:application.controller.boom')->dispatch();

@@ -84,7 +84,7 @@ class FlowIdentifierAdapterComponent extends KIdentifierAdapterComponent
 				$classname = false;
 			}
 		}
-		
+
 		return $classname;
 	}
 }
