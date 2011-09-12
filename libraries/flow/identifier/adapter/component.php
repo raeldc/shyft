@@ -83,7 +83,6 @@ class FlowIdentifierAdapterComponent extends KIdentifierAdapterComponent
 			} else {
 				$classname = false;
 			}
-			echo $classname;die();
 		}
 		
 		return $classname;
