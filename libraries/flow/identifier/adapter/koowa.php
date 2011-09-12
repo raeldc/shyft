@@ -26,6 +26,8 @@ class FlowIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
 	 */
 	public function findPath(KIdentifier $identifier)
 	{
+		$path = '';
+		
 		if(count($identifier->path)) {
 			$path .= implode('/',$identifier->path);
 		}
