@@ -75,16 +75,13 @@ class Flow
          *      Fallback directories is searched in this order sites/site -> sites/all -> system
          */
 
-        // First, add the loader adapter for Flow
+        // Register the necessary Loader Adapters
         FlowLoader::registerAdapter(new FlowLoaderAdapterKoowa(self::$paths['libraries']));
-        
-        // Then add the loader adapter for Nooku
         FlowLoader::registerAdapter(new FlowLoaderAdapterFlow(self::$paths['libraries']));
-
-        // Add the loader adapter for Components
         FlowLoader::registerAdapter(new FlowLoaderAdapterComponent(self::$paths['components']));
+        FlowLoader::registerAdapter(new FlowLoaderAdapterAction(self::$paths['actions']));
 
-        // Register the adapter for Koowa and Flow Identifier
+        // Register the necessary Identifier Adapaters
         KIdentifier::registerAdapter(new FlowIdentifierAdapterKoowa());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterFlow());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterComponent());
