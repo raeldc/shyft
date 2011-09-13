@@ -47,7 +47,10 @@ define('SITE_LANGUAGES',    SITE_ROOT.'/languages');
  ************************************************************************************************/
 
 require_once SYSTEM_LIBRARIES.'/flow/flow.php';
+
 Flow::getInstance(array(
+    // Here, an array of paths are passed to the Flow instance. 
+    // Flow will look for files in those folders, starting on the first path, until the file is found.
     'libraries'  => array(SITE_LIBRARIES,  SITES_LIBRARIES,    SYSTEM_LIBRARIES),
     'components' => array(SITE_COMPONENTS, SITES_COMPONENTS,   SYSTEM_COMPONENTS),
     'actions'    => array(SITE_ACTIONS,    SITES_ACTIONS,      SYSTEM_ACTIONS),
@@ -55,4 +58,6 @@ Flow::getInstance(array(
     'languages'  => array(SITE_LANGUAGES,  SITES_LANGUAGES,    SYSTEM_LANGUAGES),
 ));
 
-echo KFactory::get('com:application.controller.boom')->dispatch();
+echo KFactory::get('com:application.dispatcher', array(
+    //'behaviors' => KFactory::get('com:config')->get('application.behaviors')
+))->dispatch();
