@@ -1,5 +1,4 @@
 <?php
-
 define('FLOW', true);
 
 /************************************************
@@ -56,8 +55,9 @@ Flow::getInstance(array(
     'actions'    => array(SITE_ACTIONS,    SITES_ACTIONS,      SYSTEM_ACTIONS),
     'templates'  => array(SITE_TEMPLATES,  SITES_TEMPLATES,    SYSTEM_TEMPLATES),
     'languages'  => array(SITE_LANGUAGES,  SITES_LANGUAGES,    SYSTEM_LANGUAGES),
+    'site'       => array(SITE_ROOT,       SITES_ROOT,         SYSTEM_ROOT),
 ));
 
-echo KFactory::get('com:application.dispatcher', array(
+echo KFactory::get('com://site/application.dispatcher', array(
     //'behaviors' => KFactory::get('com:config')->get('application.behaviors')
 ))->dispatch();
