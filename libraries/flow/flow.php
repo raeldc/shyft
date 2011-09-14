@@ -47,7 +47,7 @@ class Flow
         self::$paths['libraries']   = (isset($paths['libraries']))  ? $paths['libraries']   : SYSTEM_LIBRARIES;
         self::$paths['components']  = (isset($paths['components'])) ? $paths['components']  : SYSTEM_COMPONENTS;
         self::$paths['actions']     = (isset($paths['actions']))    ? $paths['actions']     : SYSTEM_ACTIONS;
-        self::$paths['templates']   = (isset($paths['templates']))  ? $paths['templates']   : SYSTEM_TEMPLATES;
+        self::$paths['themes']      = (isset($paths['themes']))     ? $paths['themes']      : SYSTEM_THEMES;
         self::$paths['languages']   = (isset($paths['languages']))  ? $paths['languages']   : SYSTEM_LANGUAGES;
         self::$paths['site']        = (isset($paths['site']))       ? $paths['site']        : SYSTEM_ROOT;
 
@@ -89,6 +89,8 @@ class Flow
         KIdentifier::registerAdapter(new FlowIdentifierAdapterAction());
 
         KIdentifier::registerApplication('site' , self::$paths['site']);
+
+        define('FLOW', true);
     }
 
     /**
