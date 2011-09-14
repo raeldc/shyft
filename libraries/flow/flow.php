@@ -49,6 +49,7 @@ class Flow
         self::$paths['actions']     = (isset($paths['actions']))    ? $paths['actions']     : SYSTEM_ACTIONS;
         self::$paths['templates']   = (isset($paths['templates']))  ? $paths['templates']   : SYSTEM_TEMPLATES;
         self::$paths['languages']   = (isset($paths['languages']))  ? $paths['languages']   : SYSTEM_LANGUAGES;
+        self::$paths['site']        = (isset($paths['site']))       ? $paths['site']        : SYSTEM_ROOT;
 
         // Get Koowa, for some reason, this serves nothing critical
         require_once self::findFile('koowa/koowa.php',                    self::$paths['libraries']);
@@ -86,6 +87,8 @@ class Flow
         KIdentifier::registerAdapter(new FlowIdentifierAdapterFlow());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterComponent());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterAction());
+
+        KIdentifier::registerApplication('site' , self::$paths['site']);
     }
 
     /**
