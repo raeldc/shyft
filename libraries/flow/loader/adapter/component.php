@@ -34,14 +34,21 @@ class FlowLoaderAdapterComponent extends KLoaderAdapterComponent
 
 		if (array_shift($parts) == 'com') 
 		{
-		    //Switch the basepath
-		    if(!empty($basepath)) {
-		        $this->_basepath = $basepath;
-		    }
-		    
 		    $component = strtolower(array_shift($parts));
 			$file 	   = array_pop($parts);
 
+			//Merge the basepath
+			if (is_array($basepath)) 
+			{
+				$basepaths = $this->_basepath;
+				foreach ($basepaths as $base) {
+					$basepaths[] = rtrim($base, 'components').'components';
+				}
+
+				$basepath = array_unique($basepaths);
+			}
+			else $basepath = $this->_basepath;
+			
 			if(count($parts)) 
 			{
 			    if($parts[0] != 'view') 
@@ -57,7 +64,7 @@ class FlowLoaderAdapterComponent extends KLoaderAdapterComponent
 			} 
 			else $path = $file;
 
-			$path = Flow::findFile($component.'/'.$path.'.php', $this->_basepath);
+			$path = Flow::findFile($component.'/'.$path.'.php', $basepath);
 		}
 	
 		return $path;

@@ -15,7 +15,7 @@
  * @package     Flow_Identifier
  * @subpackage 	Adapter
  */
-class FlowIdentifierAdapterComponent extends KIdentifierAdapterComponent
+class FlowIdentifierAdapterComponent extends KIdentifierAdapterAbstract
 {
 	/** 
 	 * The adapter type
@@ -74,10 +74,14 @@ class FlowIdentifierAdapterComponent extends KIdentifierAdapterComponent
 				$classname = 'ComDefault'.ucfirst($classtype).$path.'Default';
 			} elseif(class_exists( 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
 				$classname = 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name);
+			}elseif(class_exists( 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
+				$classname = 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default';
 			}elseif(class_exists('Flow'.ucfirst($classtype).$path.'Default')) {
 				$classname = 'Flow'.ucfirst($classtype).$path.'Default';
 			}elseif(class_exists( 'K'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
 				$classname = 'K'.ucfirst($classtype).$path.ucfirst($identifier->name);
+			}elseif(class_exists( 'K'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
+				$classname = 'K'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default';
 			} elseif(class_exists('K'.ucfirst($classtype).$path.'Default')) {
 				$classname = 'K'.ucfirst($classtype).$path.'Default';
 			} else {
@@ -86,5 +90,34 @@ class FlowIdentifierAdapterComponent extends KIdentifierAdapterComponent
 		}
 
 		return $classname;
+	}
+
+	/**
+	 * Get the path based on an identifier
+	 *
+	 * @param  object  	An Identifier object - com:[//application/]component.view.[.path].name
+	 * @return string	Returns the path
+	 */
+	public function findPath(KIdentifier $identifier)
+	{
+        $path  = '';
+	    $parts = $identifier->path;
+				
+		$component = strtolower($identifier->package);
+			
+		if(!empty($identifier->name))
+		{
+			if(count($parts)) 
+			{
+				$path    = KInflector::pluralize(array_shift($parts));
+				$path   .= count($parts) ? '/'.implode('/', $parts) : '';
+				$path   .= '/'.strtolower($identifier->name);	
+			} 
+			else $path  = strtolower($identifier->name);	
+		}
+
+		$path = Flow::findFile('/components/'.$component.'/'.$path.'.php', $identifier->basepath);
+
+		return $path;
 	}
 }
