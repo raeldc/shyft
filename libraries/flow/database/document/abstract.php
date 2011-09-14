@@ -19,36 +19,28 @@
  */
 abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectIdentifiable
 {
-	protected $_collection;
 	protected $_database;
+	protected $_document;
 
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
 
-		// TODO: Move this to an adapter
-		if (!empty($config->username) && !empty($config->password)) 
-		{
-			$db = new Mongo('mongodb://'.$config->username.':'.$config->password.'@localhost');
-		}
-		else
-		{
-			$db = new Mongo();
-		}
-
-		$this->_database = $db->selectDB($config->database);
-
-		$this->_collection = $this->_database->selectCollection($config->collection);
+		$this->_database = $config->database;
+		$this->_document = $config->name;
 	}
 
 	protected function _initialize(KConfig $config)
 	{
+		// TODO: Set the database to be a singleton, use com:application.database
+		$database = KFactory::get('flow:database.adapter.document');
+		$package = $this->_identifier->package;
+        $name    = $this->_identifier->name;
+
 		$config->append(array(
-			'host' => 'localhost',
-			'database' => 'flowku',
-			'collection' => 'test',
-			'username' => null,
-			'password' => null
+			'database' => $database,
+			'behaviors' => array(),
+			'name' => empty($package) ? $name : $package.'_'.$name,
 		));
 	
 		parent::_initialize($config);
@@ -61,20 +53,30 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
 
 	public function find(FlowDatabaseQueryDocument $query, $mode = KDatabase::FETCH_ROWSET)
 	{
+		// TODO : Select document based on the table settings.
 		switch($mode)
         {
             case KDatabase::FETCH_ROW    : 
             {
-                return $this->_collection->findOne((object)$query->query());
+                return $this->getDocument()->findOne((object)$query->query());
                 break;
             }
             
             case KDatabase::FETCH_ROWSET : 
             {
-                return $this->_collection->find((object)$query->query());
+                return $this->getDocument()->find((object)$query->query());
                 break;
             }
         }
+	}
+
+	public function getDocument()
+	{
+		if (!($this->_document instanceof MongoCollection)) {
+			$this->_document = $this->_database->selectCollection($this->_document);
+		}
+
+		return $this->_document;
 	}
 
 	public function getQuery()
