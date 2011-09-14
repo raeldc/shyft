@@ -13,7 +13,6 @@
  * @author		Israel Canasa <raeldc@gmail.com>
  * @category	Flow
  * @package     Flow_Model
- * @uses		KObject
  */
 
  abstract class FlowModelDocument extends KModelAbstract
@@ -167,7 +166,6 @@
 	 */
     public function isConnected()
 	{
-		return true;
 	    return (bool) $this->getDocument();
 	}
 
@@ -259,8 +257,6 @@
      */
     protected function _buildQueryWhere(FlowDatabaseQueryDocument $query)
     {
-        if (!is_null($this->_state->name)) {
-        	$query->where('name', '=', $this->_state->name);
-        }
+        
     }
 }
