@@ -68,8 +68,7 @@ class FlowIdentifierAdapterAction extends KIdentifierAdapterAbstract
 			} 
 			else $path  = strtolower($identifier->name);	
 		}
-				$path = Flow::findFile($type.'/'.$action.'/'.$path.'.php', $identifier->basepath);
-
+		
 		//Plugins can have their own folder
 		if (($path = Flow::findFile($type.'/'.$action.'/'.$path.'.php', $identifier->basepath)) === false) {
 		    $path = Flow::findFile($type.'/'.$action.'/'.$path.'/'.$path.'.php', $identifier->basepath);
