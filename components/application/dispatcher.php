@@ -20,7 +20,7 @@ class ComApplicationDispatcher extends KControllerAbstract
 		parent::_initialize($config);
 	}
 
-	public static function instantiate($config = array())
+	public static function getInstance($config = array())
     {
         static $instance;
         
@@ -39,14 +39,6 @@ class ComApplicationDispatcher extends KControllerAbstract
 	
 	public function _actionDispatch(KCommandContext $context)
 	{
-		$action = KRequest::get('post.action', 'cmd', strtolower(KRequest::method()));
-
-		if(KRequest::method() != KHttpRequest::GET) {
-            $context->data = KRequest::get(strtolower(KRequest::method()), 'raw');;
-        }
-
-        $result = $this->getController()->execute($action, $context);
-	           
-        return $result;
+	
 	}
 }
