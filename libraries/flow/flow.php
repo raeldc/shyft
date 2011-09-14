@@ -87,6 +87,7 @@ class Flow
         KIdentifier::registerAdapter(new FlowIdentifierAdapterFlow());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterComponent());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterAction());
+        KIdentifier::registerAdapter(new FlowIdentifierAdapterTheme());
 
         KIdentifier::registerApplication('site' , self::$paths['site']);
 
