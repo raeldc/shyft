@@ -1,3 +1,3 @@
 <?foreach ($contents as $content):?>
-	<?=$content->name;?><br />
+	<a href="index.php?com=content&id=<?=$content->_id;?>&layout=form"><?=$content->title;?></a><br />
 <?endforeach;?>
