@@ -1,24 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Flowku Content Workflow System - Making CMS's a Thing of the Past</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <title><?=@container('title')?></title>
+    <?=@container('meta')?>
+    <?=@container('scripts')?>
+    <?=@container('styles')?>
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <!-- Le styles -->
     <link href="css://bootstrap-1.2.0.css" rel="stylesheet">
-
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="image://favicon.ico">
-    <link rel="apple-touch-icon" href="image://apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="image://apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="image://apple-touch-icon-114x114.png">
   </head>
 
   <body>
@@ -29,8 +22,8 @@
           <h3><a href="#">Project name</a></h3>
           <ul class="nav">
             <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="index.php?com=nodes&view=nodes&layout=admin">Nodes</a></li>
+            <li><a href="index.php?com=nodes&view=nodes">List</a></li>
           </ul>
         </div>
       </div>
@@ -41,7 +34,7 @@
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit">
         <h1>FLowku - Content Workflow System</h1>
-        <p><?=@component()?></p>
+        <p><?=@container('page')?></p>
         <p><a class="btn primary large">Learn more &raquo;</a></p>
       </div>
 
