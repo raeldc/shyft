@@ -4,6 +4,7 @@ class FlowDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 {
 	protected $_connection;
 	protected $_database;
+	protected $_synced;
 
 	public function __construct(KConfig $config)
 	{
@@ -24,6 +25,9 @@ class FlowDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 
 		// Mixin a command chain
         $this->mixin(new KMixinCommandchain($config->append(array('mixer' => $this))));
+
+        // More sure that data has been inserted/updated
+        $this->_synced = $config->synced;
 	}
 
 	public function getIdentifier()
@@ -36,6 +40,7 @@ class FlowDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
     	$config->append(array(
     		'connection'		=> null,
     		'database'			=> 'flowku',
+    		'synced'			=> true,
 			'options'	=> array(
     			'host'		=> 'localhost', 
     			'username'	=> null,
@@ -61,6 +66,44 @@ class FlowDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 	public function getConnection()
 	{
 		return $this->_connection;
+	}
+
+	public function find($query, $mode = KDatabase::FETCH_ROWSET)
+	{
+		$result = array();
+
+		if(!empty($query->from)) 
+		{
+			$collection = $this->_database->selectCollection($query->from);
+
+			switch($mode)
+			{
+				case KDatabase::FETCH_ROW:
+					// TODO: Support selecting specific fields
+					$result = $collection->findOne($query->build());
+				break;
+
+				default:
+					$result = iterator_to_array($collection->find($query->build()));
+				break;
+			}
+		}
+
+		return $result;
+	}
+
+	public function insert($collection, $data = array())
+	{
+		$this->_database->selectCollection($collection)->insert((array)$data, array('fsync' => $this->_synced));
+
+		return $data;
+	}
+
+	public function count($query)
+	{
+		return $this->_database->selectCollection($query->from)
+			->find($query->build())
+			->count();
 	}
 
 	public function __call($method, $args)
