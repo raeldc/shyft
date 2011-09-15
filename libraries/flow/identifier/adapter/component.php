@@ -68,10 +68,10 @@ class FlowIdentifierAdapterComponent extends KIdentifierAdapterAbstract
 				$classname = 'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.ucfirst($identifier->name);
 			} elseif(class_exists('Com'.ucfirst($identifier->package).ucfirst($classtype).$path.'Default')) {
 				$classname = 'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.'Default';
-			} elseif(class_exists('ComDefault'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
-				$classname = 'ComDefault'.ucfirst($classtype).$path.ucfirst($identifier->name);
-			} elseif(class_exists('ComDefault'.ucfirst($classtype).$path.'Default')) {
-				$classname = 'ComDefault'.ucfirst($classtype).$path.'Default';
+			} elseif(class_exists('ComApplication'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
+				$classname = 'ComApplication'.ucfirst($classtype).$path.ucfirst($identifier->name);
+			} elseif(class_exists('ComApplication'.ucfirst($classtype).$path.'Default')) {
+				$classname = 'ComApplication'.ucfirst($classtype).$path.'Default';
 			} elseif(class_exists( 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
 				$classname = 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name);
 			}elseif(class_exists( 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
