@@ -17,6 +17,8 @@
  */
 class FlowDatabaseQueryDocument extends KObject
 {
+    public $from;
+
     public $where = array();
 
     public $sort = array();
@@ -77,7 +79,14 @@ class FlowDatabaseQueryDocument extends KObject
         return $this;
     }
 
-    public function query($query = null)
+    public function from($from)
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    public function build($query = null)
     {
         if (!is_null($query))
             return $this->query = $query;
@@ -111,6 +120,6 @@ class FlowDatabaseQueryDocument extends KObject
             }
         }
 
-        return empty($this->query) ? null : $this->query;
+        return empty($this->query) ? new stdclass : (object)$this->query;
     }
 }
