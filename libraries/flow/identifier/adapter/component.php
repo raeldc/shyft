@@ -68,7 +68,7 @@ class FlowIdentifierAdapterComponent extends KIdentifierAdapterAbstract
 				$classname = 'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.ucfirst($identifier->name);
 			} elseif(class_exists('Com'.ucfirst($identifier->package).ucfirst($classtype).$path.'Default')) {
 				$classname = 'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.'Default';
-			} elseif(class_exists('ComApplication'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
+			} elseif(class_exists('ComApplication'.ucfirst($classtype).$path.ucfirst($identifier->name)) && !array_key_exists('KObjectInstantiatable', class_implements('ComApplication'.ucfirst($classtype).$path.ucfirst($identifier->name)))) {
 				$classname = 'ComApplication'.ucfirst($classtype).$path.ucfirst($identifier->name);
 			} elseif(class_exists('ComApplication'.ucfirst($classtype).$path.'Default')) {
 				$classname = 'ComApplication'.ucfirst($classtype).$path.'Default';
