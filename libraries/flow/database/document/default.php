@@ -17,7 +17,31 @@
  * @package     Flow_Database
  * @subpackage  Table
  */
-class FlowDatabaseDocumentDefault extends FlowDatabaseDocumentAbstract
+class FlowDatabaseDocumentDefault extends FlowDatabaseDocumentAbstract implements KObjectInstantiatable
 {
-	
+	/**
+     * Associative array of table instances
+     * 
+     * @var array
+     */
+    private static $_instances = array();
+    
+	/**
+     * Force creation of a singleton
+     *
+     * @return KDatabaseDocumentDefault
+     */
+    public static function getInstance($config = array())
+    {
+        // Check if an instance with this identifier already exists or not
+        $instance = (string) $config->identifier;
+        if (!isset(self::$_instances[$instance]))
+        {
+            //Create the singleton
+            $classname = $config->identifier->classname;
+            self::$_instances[$instance] = new $classname($config);
+        }
+        
+        return self::$_instances[$instance];
+    }
 }
