@@ -20,14 +20,14 @@
 abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectIdentifiable
 {
 	protected $_database;
-	protected $_document;
+	protected $_name;
 
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
 
 		$this->_database = $config->database;
-		$this->_document = $config->name;
+		$this->_name = $config->name;
            
         // TODO: Set the column filters
         if(!empty($config->filters) && false) 
@@ -38,7 +38,7 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
         }
     
         // Mixin a command chain
-         $this->mixin(new KMixinCommandchain($config->append(array('mixer' => $this))));
+        $this->mixin(new KMixinCommandchain($config->append(array('mixer' => $this))));
            
         // Set the table behaviors
         if(!empty($config->behaviors)) {
@@ -55,14 +55,13 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
 
 		$config->append(array(
 			'command_chain'     => new KCommandChain(),
-			'command_chain'     => new KCommandChain(),
             'dispatch_events'   => false,
             'enable_callbacks'  => false,
 
 			'database' 			=> $database,
 			'behaviors' 		=> array(),
 			'filters'	 		=> array(),
-			'name' 				=> empty($package) ? $name : $package.'_'.$name,
+			'name'		        => empty($package) ? $name : $package.'_'.$name,
 		));
 	
 		parent::_initialize($config);
@@ -73,36 +72,41 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
 		return $this->_identifier;
 	}
 
-	public function find(FlowDatabaseQueryDocument $query, $mode = KDatabase::FETCH_ROWSET)
+	public function find($query = null, $mode = KDatabase::FETCH_ROWSET)
 	{
         //Create commandchain context
-        $context = $this->getCommandContext();
+        $context            = $this->getCommandContext();
         $context->operation = KDatabase::OPERATION_SELECT;
         $context->query     = $query;
         $context->mode      = $mode;
         
         if($this->getCommandChain()->run('before.find', $context) !== false) 
         {
+            if ($context->query) 
+                $context->query->from($this->_name);
+            
             switch($context->mode)
             {
                 case KDatabase::FETCH_ROW    : 
                 {
-                	$data = $this->getDocument()->findOne((object)$context->query->query());
+                	$data = ($context->query) ? $this->_database->find($context->query, KDatabase::FETCH_ROW) : array();
                     $context->data = $this->getRow();
 
                     if(isset($data) && !empty($data)) {
-                       $context->data->setData(iterator_to_array($data), false)->setStatus(KDatabase::STATUS_LOADED);
+                       $context->data->setData($data, false)->setStatus(KDatabase::STATUS_LOADED);
                     }
+
                     break;
                 }
                 
                 case KDatabase::FETCH_ROWSET : 
                 {
-                	$data = $this->getDocument()->find((object)$context->query->query());
+                	$data = ($context->query) ? $this->_database->find($context->query, KDatabase::FETCH_ROWSET) : array();
+
                     $context->data = $this->getRowset();
 
                     if(isset($data) && !empty($data)) {
-                        $context->data->addData(iterator_to_array($data), false);
+                        $context->data->addData($data, false);
                     }
                     break;
                 }
@@ -112,19 +116,121 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
                         
             $this->getCommandChain()->run('after.find', $context);
         }
-    
+
         return KConfig::toData($context->data);
 	}
 
+    /**
+     * Table insert method
+     *
+     * @param  object       A KDatabaseRow object
+     * @return bool|integer Returns the number of rows inserted, or FALSE if insert query was not executed.
+     */
+    public function insert( KDatabaseRowInterface $row )
+    {
+        //Create commandchain context
+        $context            = $this->getCommandContext();
+        $context->operation = KDatabase::OPERATION_INSERT;
+        $context->data      = $row;
+        $context->name      = $this->_name;
+
+        if($this->getCommandChain()->run('before.insert', $context) !== false) 
+        {
+            // Prepare data, running validation, filters, mappings, etc.
+            //$context->data->prepare();
+            
+            //Execute the insert query
+            $context->data = $this->_database->insert($context->name, $context->data->toArray());
+
+            $this->getCommandChain()->run('after.insert', $context);
+        }
+
+        return $context->data;
+    }
+
+    /**
+     * Table update method
+     *
+     * @param  object           A KDatabaseRow object
+     * @return boolean|integer  Returns the number of rows updated, or FALSE if insert query was not executed.
+     */
+    public function update( KDatabaseRowInterface $row)
+    {
+        //Create commandchain context
+        $context            = $this->getCommandContext();
+        $context->operation = KDatabase::OPERATION_INSERT;
+        $context->data      = $row;
+        $context->name      = $this->_name;
+        $context->affected  = false;
+        
+        if($this->getCommandChain()->run('before.update', $context) !== false) 
+        {
+            // Prepare data, running validation, filters, mappings, etc.
+            //$context->data->prepare();
+            
+            //Execute the insert query
+            $context->data = $this->_database->update($context->name, $context->data->toArray());
+
+            $this->getCommandChain()->run('after.update', $context);
+        }
+
+        return $context->affected;
+    }
+
+    /**
+     * Table delete method
+     *
+     * @param  object       A KDatabaseRow object
+     * @return bool|integer Returns the number of rows deleted, or FALSE if delete query was not executed.
+     */
+    public function delete( KDatabaseRowInterface $row )
+    {
+        //Create commandchain context
+        $context = $this->getCommandContext();
+        $context->operation = KDatabase::OPERATION_DELETE;
+        $context->table     = $this->getBase();
+        $context->data      = $row;
+        $context->query     = null;
+        $context->affected  = false;
+        
+        if($this->getCommandChain()->run('before.delete', $context) !== false) 
+        {
+            $query = $this->_database->getQuery();
+            
+            //Create where statement
+            foreach($this->getPrimaryKey() as $key => $column) {
+                $query->where($column->name, '=', $context->data->$key);
+            }
+            
+            //Execute the delete query
+            $context->affected = $this->_database->delete($context->table, $query);
+            
+            //Set the query in the context
+            if($context->affected !== false) 
+            {
+                if(((integer) $context->affected) > 0) 
+                {   
+                    $context->query = $query;
+                    $context->data->setStatus(KDatabase::STATUS_DELETED);
+                }
+                else $context->data->setStatus(KDatabase::STATUS_FAILED);
+            }
+            
+            $this->getCommandChain()->run('after.delete', $context);
+        }
+
+        return $context->affected;
+    }
+
 	/**
-     * Count table rows
+     * Count Results of the Query
      *
      * @param   mixed   KDatabaseQuery object or query string or null to count all rows
      * @return  int     Number of rows
      */
     public function count($query = null)
     {
-        return $this->getDocument()->find((object)$query->query())->count();
+        return $this->_database->count($query->from($this->_name));
     }
 
 	/**
@@ -162,15 +268,6 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
         return KFactory::get($identifier, $options);
     }
 
-	public function getDocument()
-	{
-		if (!($this->_document instanceof MongoCollection)) {
-			$this->_document = $this->_database->selectCollection($this->_document);
-		}
-
-		return $this->_document;
-	}
-
 	public function getQuery()
 	{
 		static $instance;
@@ -204,5 +301,73 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
         }
         
         return $this;
+    }
+
+    /**
+     * Get a behavior by identifier
+     *
+     * @param  
+     * @return KDatabaseBehaviorAbstract
+     */
+    public function getBehavior($behavior, $config = array())
+    {
+       if(!($behavior instanceof KIdentifier))
+       {
+            //Create the complete identifier if a partial identifier was passed
+           if(is_string($behavior) && strpos($behavior, '.') === false )
+           {
+               $identifier = clone $this->_identifier;
+               $identifier->path = array('database', 'behavior');
+               $identifier->name = $behavior;
+           }
+           else $identifier = KIdentifier::identify($behavior);
+       }
+       
+       if(!isset($this->getSchema()->behaviors[$identifier->name])) {
+           $behavior = KDatabaseBehavior::factory($identifier, array_merge($config, array('mixer' => $this)));
+       } else {
+           $behavior = $this->getSchema()->behaviors[$identifier->name];
+       }
+       
+       return $behavior;
+    }
+       
+    /**
+     * Gets the behaviors of the table
+     *
+     * @return array    An asscociate array of table behaviors, keys are the behavior names
+     */
+    public function getBehaviors()
+    {
+        return $this->getSchema()->behaviors;
+    }
+
+    /**
+     * Search the behaviors to see if this table behaves as.
+     *
+     * Function is also capable of checking is a behavior has been mixed succesfully
+     * using is[Behavior] function. If the behavior exists the function will return 
+     * TRUE, otherwise FALSE.
+     *
+     * @param  string   The function name
+     * @param  array    The function arguments
+     * @throws BadMethodCallException   If method could not be found
+     * @return mixed The result of the function
+     */
+    public function __call($method, array $arguments)
+    {
+        // If the method is of the form is[Bahavior] handle it.
+        $parts = KInflector::explode($method);
+
+        if($parts[0] == 'is' && isset($parts[1]))
+        {
+            if($this->hasBehavior(strtolower($parts[1]))) {
+                 return true;    
+            }
+                
+            return false;
+        }
+
+        return parent::__call($method, $arguments);
     }
 }
