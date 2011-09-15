@@ -5,7 +5,7 @@
  *	- Redirect where necessary
  *  - Render the Template
  */
-class ComApplicationDispatcher extends KControllerAbstract
+class ComApplicationDispatcher extends KControllerAbstract implements KObjectInstantiatable
 {
     public function __construct(KConfig $config)
     {
@@ -62,7 +62,7 @@ class ComApplicationDispatcher extends KControllerAbstract
 	
 	protected function _actionDispatch(KCommandContext $context)
 	{
-        return 'Flowku - Content Workflow System';
+        return 'Solid Framework + Fast and Scalable Database + Content Workflow Management = The Web Developer&rsquo;s Dream!';
 	}
 
     protected function _actionForward(KCommandContext $context)
