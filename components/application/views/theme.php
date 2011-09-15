@@ -1,6 +1,6 @@
 <?php
 
-class ComApplicationViewTheme extends KViewAbstract
+class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiatable
 {
 	/**
      * Template identifier (theme://APP/template.NAME)
@@ -41,6 +41,13 @@ class ComApplicationViewTheme extends KViewAbstract
     protected $_styles = array();
 
     /**
+     * Containers
+     *
+     * @var array
+     */
+    protected $_containers = array();
+
+    /**
      * Constructor
      *
      * @param   object  An optional KConfig object with configuration options
@@ -71,7 +78,7 @@ class ComApplicationViewTheme extends KViewAbstract
 
         //Add alias filter for @component()
         $this->getTemplate()->getFilter('alias')->append(
-            array('@component()' => '$this->getView()->getResult();'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
+            array('@container(' => '$this->getView()->renderContainer('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
         
         //Add alias filter for media:// namespace
@@ -92,6 +99,12 @@ class ComApplicationViewTheme extends KViewAbstract
         //Add alias filter for base:// namespace
         $this->getTemplate()->getFilter('alias')->append(
             array('base://' => $config->base_url.'/'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
+        );
+
+        $this->_containers = array(
+            'title' => array(
+                array('content' => 'Flowku! The Next Generation CMS')
+            )
         );
     }
 
@@ -137,6 +150,20 @@ class ComApplicationViewTheme extends KViewAbstract
         ));
         
         parent::_initialize($config);
+    }
+
+    public static function getInstance($config = array())
+    {
+        static $instance;
+
+        if ($instance === NULL) 
+        {
+            //Create the singleton
+            $classname = $config->identifier->classname;
+            $instance = new $classname($config);
+        }
+
+        return $instance;
     }
 
     /**
@@ -344,6 +371,35 @@ class ComApplicationViewTheme extends KViewAbstract
         $this->_template = $template;
             
         return $this;
+    }
+
+    public function renderContainer($container, $chrome = 'default')
+    {
+        $result = '';
+
+        if (isset($this->_containers[$container])) 
+        {
+            // We expect container to be an array of arrays
+            $containers = $this->_containers[$container];
+
+            if (!($chrome instanceof KIdentifier)) 
+            {
+                $identifier = clone $this->_layout;
+                $identifier->path = array('html','chrome');
+                $identifier->name = $chrome;
+                $chrome = $identifier;
+            }
+
+            foreach ($containers as $container) 
+            {
+                $result .= $this->getTemplate()
+                    ->loadIdentifier($chrome, $container)
+                    ->render();
+            }
+            
+        }
+
+        return $result;
     }
     
     /**
