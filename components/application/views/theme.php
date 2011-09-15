@@ -76,9 +76,14 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
             $this->getTemplate()->addFilter($config->template_filters);
         }
 
-        //Add alias filter for @component()
+        //Add alias filter for @container()
         $this->getTemplate()->getFilter('alias')->append(
             array('@container(' => '$this->getView()->renderContainer('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
+        );
+
+        //Add alias filter for @contains()
+        $this->getTemplate()->getFilter('alias')->append(
+            array('@contains(' => '$this->getView()->countContainer('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
         
         //Add alias filter for media:// namespace
@@ -373,14 +378,37 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
         return $this;
     }
 
-    public function renderContainer($container, $chrome = 'default')
+    public function addtoContainer($name, $content = array())
+    {
+
+        if(!isset($this->_containers[$name]))
+        {
+            $this->_containers[$name] = array($content);
+        }
+        else array_push($this->_containers[$name], $content);
+
+        return $this;
+    }
+
+    public function countContainer($name)
+    {
+
+        if(!isset($this->_containers[$name]))
+        {
+            $this->_containers[$name] = array();
+        }
+        
+        return count($this->_containers[$name]);
+    }
+
+    public function renderContainer($name, $chrome = 'default')
     {
         $result = '';
 
-        if (isset($this->_containers[$container])) 
+        if(isset($this->_containers[$name])) 
         {
             // We expect container to be an array of arrays
-            $containers = $this->_containers[$container];
+            $container = $this->_containers[$name];
 
             if (!($chrome instanceof KIdentifier)) 
             {
@@ -390,10 +418,13 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
                 $chrome = $identifier;
             }
 
-            foreach ($containers as $container) 
+            foreach ($container as $block) 
             {
+                if (is_string($block))
+                    $block = array('content' => $block);
+   
                 $result .= $this->getTemplate()
-                    ->loadIdentifier($chrome, $container)
+                    ->loadIdentifier($chrome, $block)
                     ->render();
             }
             
