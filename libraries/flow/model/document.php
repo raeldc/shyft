@@ -15,7 +15,7 @@
  * @package     Flow_Model
  */
 
- abstract class FlowModelDocument extends KModelAbstract
+abstract class FlowModelDocument extends KModelAbstract
 {
     /**
      * Document object or identifier (type://app/COMPONENT.database.document.DOCUMENTNAME)
@@ -43,7 +43,9 @@
             ->insert('direction', 'word', 'asc')
             ->insert('search'   , 'string')
             // callback state for JSONP, needs to be filtered as cmd to prevent XSS
-            ->insert('callback' , 'cmd');
+            ->insert('callback' , 'cmd')
+            // TODO: Automatically populate the unique states from the row definition.
+            ->insert('id', 'string', null, true);
 
         //Try getting a document object
         if($this->isConnected())
@@ -183,12 +185,11 @@
         {
             if($this->isConnected())
             {
-                $query  = null;
-
+                $query = null;
+                
                 if($this->_state->isUnique())
                 {
                     $query = $this->getDocument()->getQuery();
-
                     $this->_buildQueryWhere($query);   
                 }
                 
