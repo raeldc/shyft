@@ -99,7 +99,10 @@ class FlowDatabaseQueryDocument extends KObject
 
             switch($where['constraint']){
                 case '=':
-                    $this->query[$where['property']] = $where['value'];
+                    if ($where['property'] == '_id') {
+                        $this->query[$where['property']] = new MongoId($where['value']);
+                    }
+                    else $this->query[$where['property']] = $where['value'];
                 break;
 
                 default:
