@@ -35,7 +35,7 @@ class ComApplicationTemplateDefault extends KTemplateAbstract
 	{
 	    //Identify the template
 	    $identifier = KIdentifier::identify($template);
-	    $file = false;
+	    $file = $identifier->filepath;
 
 	    if ($identifier->type == 'com') {
 	    	$theme = clone KFactory::get('com:application.document')->getLayout();
@@ -60,10 +60,8 @@ class ComApplicationTemplateDefault extends KTemplateAbstract
 		    }
 	    }
 
-	    $file = $identifier->filepath;
-	    
 		if ($file === false) {
-			throw new KTemplateException('Template "'.$identifier->name.'" not found');
+			throw new KTemplateException('Template "'.$identifier.'" not found');
 		}
 		
 		// Load the file
