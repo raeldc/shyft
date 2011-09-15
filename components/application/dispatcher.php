@@ -28,7 +28,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
     		'request'				=> KRequest::get('get', 'string'),
     		// TODO: Behavior should be configurable in database
     		'behaviors'				=> array('routable'),
-            'component'             => KRequest::get('get.com', 'cmd', 'contents'),
+            'component'             => KRequest::get('get.com', 'cmd', 'content'),
         ))->append(array(
             'request' 				=> array('format' => KRequest::format() ? KRequest::format() : 'html')
         ));
