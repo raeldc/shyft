@@ -11,7 +11,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
     {
         parent::__construct($config);
 
-        $this->registerCallback('before.dispatch', array($this, 'prepare'));
+        $this->registerCallback('before.dispatch', array($this, 'map'));
 
         if(KRequest::method() != 'GET') {
             $this->registerCallback('after.dispatch' , array($this, 'forward'));
@@ -47,22 +47,14 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
         return $instance;
     }
 
-    protected function _actionPrepare(KCommandContext $context)
+    protected function _actionMap(KCommandContext $context)
     {
-        // TODO: Change which view to use depending on format
-        $document = KFactory::get('com://site/application.view.theme', array(
-            // TODO: This is where we configure the theme
-        ));
-
-        KIdentifier::map('com://site/application.view.theme', 'com:application.document');
-
-        // Let's save the document in the factory
-        KFactory::set('com:application.document', $document);
+        KIdentifier::map('com:application.document', 'com://site/application.view.theme');
     }
 	
 	protected function _actionDispatch(KCommandContext $context)
 	{
-        return 'Solid Framework + Fast and Scalable Database + Content Workflow Management = The Web Developer&rsquo;s Dream!';
+       return 'Solid Framework + Fast and Scalable Database + Content Workflow Management = The Web Developer&rsquo;s Dream!';
 	}
 
     protected function _actionForward(KCommandContext $context)
@@ -91,11 +83,10 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
             if(KRequest::type() != 'AJAX')
             {
                 return KFactory::get('com:application.document')
-                    ->setResult($context->result)
+                    ->addtoContainer('page', $context->result)
                     ->display();
             }
             else return $context->result;
         }
-        
     }
 }
