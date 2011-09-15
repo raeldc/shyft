@@ -186,11 +186,11 @@ abstract class FlowModelDocument extends KModelAbstract
             if($this->isConnected())
             {
                 $query = null;
-                
+
                 if($this->_state->isUnique())
                 {
                     $query = $this->getDocument()->getQuery();
-                    $this->_buildQueryWhere($query);   
+                    $this->_buildQueryWhere($query);
                 }
                 
                 $this->_item = $this->getDocument()->find($query, KDatabase::FETCH_ROW);
@@ -258,6 +258,8 @@ abstract class FlowModelDocument extends KModelAbstract
      */
     protected function _buildQueryWhere(FlowDatabaseQueryDocument $query)
     {
-        
+        if (!is_null($this->_state->id)) {
+            $query->where('_id', '=', $this->_state->id);
+        }
     }
 }
