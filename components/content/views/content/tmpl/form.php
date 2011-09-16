@@ -1,8 +1,5 @@
-<form action="index.php?com=content&view=content" method="post" class="-koowa-form">
+<form action="<?=@route('id='.$content->id)?>" method="post" class="-koowa-form">
 <input type="hidden" name="action" value="save">
-<?if(!$content->isNew()):?>
-<input type="hidden" name="_id" value="<?=$content->_id?>">
-<?endif;?>
 <fieldset>
     <legend>Create Content</legend>
 
@@ -10,6 +7,13 @@
         <label for="form-title">Title</label>
         <div class="input">
             <input class="xlarge" id="form-title" name="title" size="30" type="text" value="<?=$content->title?>">
+        </div>
+    </div>
+
+    <div class="clearfix">
+        <label for="form-phone">Phone</label>
+        <div class="input">
+            <input class="xlarge" id="form-phone" name="phone" size="30" type="text" value="<?=$content->phone?>">
         </div>
     </div>
 
