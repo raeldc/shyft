@@ -33,11 +33,11 @@ abstract class FlowModelDocument extends KModelAbstract
     {
         parent::__construct($config);
 
-       $this->_document = $config->document;
+        $this->_document = $config->document;
       
         // Set the static states
         $this->_state
-            ->insert('limit'    , 'int')
+            ->insert('limit'    , 'int', 10)
             ->insert('offset'   , 'int')
             ->insert('sort'     , 'cmd')
             ->insert('direction', 'word', 'asc')
@@ -219,6 +219,8 @@ abstract class FlowModelDocument extends KModelAbstract
                     $query = $this->getDocument()->getQuery();
 
                     $this->_buildQueryWhere($query);
+                    $this->_buildQueryLimit($query);
+                    $this->_buildQueryOrder($query);
                 }
 
                 $this->_list = $this->getDocument()->find($query, KDatabase::FETCH_ROWSET);
@@ -262,4 +264,26 @@ abstract class FlowModelDocument extends KModelAbstract
             $query->where('id', '=', $this->_state->id);
         }
     }
+
+    /**
+     * Builds a Limit clause for the query
+     */
+    protected function _buildQueryLimit(FlowDatabaseQueryDocument $query)
+    {
+        if (!is_null($this->_state->limit)) {
+            $query->limit($this->_state->limit, $this->_state->offset);
+        }
+    }
+
+    /**
+     * Builds a Order clause for the query
+     */
+    protected function _buildQueryOrder(FlowDatabaseQueryDocument $query)
+    {
+        if (!is_null($this->_state->sort)) {
+            $query->sort($this->_state->sort, $this->_state->direction);
+        }
+    }
+
+
 }
