@@ -29,19 +29,19 @@ class FlowDatabaseDocumentDefault extends FlowDatabaseDocumentAbstract implement
 	/**
      * Force creation of a singleton
      *
-     * @return KDatabaseDocumentDefault
+     * @return FlowDatabaseDocumentDefault
      */
-    public static function getInstance($config = array())
+    public static function getInstance($config = array(), KFactoryInterface $factory = null)
     {
-        // Check if an instance with this identifier already exists or not
-        $instance = (string) $config->identifier;
-        if (!isset(self::$_instances[$instance]))
+       // Check if an instance with this identifier already exists or not
+        if (!$factory->exists($config->identifier))
         {
             //Create the singleton
             $classname = $config->identifier->classname;
-            self::$_instances[$instance] = new $classname($config);
+            $instance  = new $classname($config);
+            $factory->set($config->identifier, $instance);
         }
         
-        return self::$_instances[$instance];
+        return $factory->get($config->identifier);
     }
 }
