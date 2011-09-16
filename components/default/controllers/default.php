@@ -1,6 +1,6 @@
 <?php
 
-class ComApplicationControllerDefault extends KControllerService
+class ComDefaultControllerDefault extends KControllerService
 {
 	/**
 	 * Returns an array with the redirect url, the message and the message type

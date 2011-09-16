@@ -14,9 +14,9 @@
  * @author      Israel Canasa <raeldc@gmail.com>
  * @category    Flowku
  * @package     Flowku_Components
- * @subpackage  Application
+ * @subpackage  Default
  */
-class ComApplicationTemplateDefault extends KTemplateAbstract
+class ComDefaultTemplateDefault extends KTemplateAbstract
 {
 	/**
 	 * Load a template by identifier

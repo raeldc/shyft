@@ -1,6 +1,6 @@
 <?php
 
-class FlowDispatcherDefault extends KDispatcherAbstract 
+class ComDefaultDispatcherDefault extends KDispatcherAbstract 
 { 
     /**
 	 * Forward after a post request
