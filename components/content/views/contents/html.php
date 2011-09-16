@@ -1,6 +1,6 @@
 <?php
 
-class ComContentViewContentsHtml extends KViewHtml
+class ComContentViewContentsHtml extends ComDefaultViewHtml
 {
 	
 }
