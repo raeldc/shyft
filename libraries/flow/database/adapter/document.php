@@ -99,6 +99,34 @@ class FlowDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 		return $data;
 	}
 
+	public function update($collection, $query, $data = array())
+	{
+		$query = $query->build();
+
+		$collection = $this->_database->selectCollection($collection);
+
+		unset($data['_id']);unset($data['id']);
+
+		$collection->update($query, (array)$data, array('fsync' => $this->_synced));
+
+		// return affected rows
+		return $collection->find($query)->count();
+	}
+
+	public function delete($collection, $query, $data = array())
+	{
+		$query = $query->build();
+
+		$collection = $this->_database->selectCollection($collection);
+
+		unset($data['_id']);unset($data['id']);
+
+		$collection->remove($query, array('fsync' => $this->_synced));
+
+		// return affected rows
+		return $collection->find($query)->count();
+	}
+
 	public function count($query)
 	{
 		return $this->_database->selectCollection($query->from)

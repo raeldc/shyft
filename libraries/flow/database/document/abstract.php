@@ -132,11 +132,12 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
         $context            = $this->getCommandContext();
         $context->operation = KDatabase::OPERATION_INSERT;
         $context->data      = $row;
+        $context->query     = null;
         $context->name      = $this->_name;
 
         if($this->getCommandChain()->run('before.insert', $context) !== false) 
         {
-            // Prepare data, running validation, filters, mappings, etc.
+            // TODO: Prepare data, running validation, filters, mappings, etc.
             //$context->data->prepare();
             
             //Execute the insert query
@@ -158,18 +159,41 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
     {
         //Create commandchain context
         $context            = $this->getCommandContext();
-        $context->operation = KDatabase::OPERATION_INSERT;
+        $context->operation = KDatabase::OPERATION_UPDATE;
         $context->data      = $row;
         $context->name      = $this->_name;
         $context->affected  = false;
         
         if($this->getCommandChain()->run('before.update', $context) !== false) 
         {
-            // Prepare data, running validation, filters, mappings, etc.
+            // TODO: Prepare data, running validation, filters, mappings, etc.
             //$context->data->prepare();
-            
-            //Execute the insert query
-            $context->data = $this->_database->update($context->name, $context->data->toArray());
+
+            $query = $this->getQuery();
+
+            if (!$row->isNew()) 
+            {
+                // TODO: map $row->id to $row->_id. Query with all the unique keys of row.
+                $query->where('id', '=', $context->data->id);
+
+                // Convert object to array first
+                $data = $context->data->toArray();
+
+                //Execute the update query
+                $context->affected = $this->_database->update($context->name, $query, $data);
+
+                if(((integer) $context->affected) > 0)
+                {
+                    //Reverse apply the column mappings and set the data in the row
+                    $context->data->setData($data, false)
+                                  ->setStatus(KDatabase::STATUS_UPDATED);
+                }
+                else $context->data->setStatus(KDatabase::STATUS_FAILED);
+
+                //Set the query in the context
+                $context->query = $query;
+            }
+            else $context->data->setStatus(KDatabase::STATUS_FAILED);
 
             $this->getCommandChain()->run('after.update', $context);
         }
@@ -183,39 +207,46 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
      * @param  object       A KDatabaseRow object
      * @return bool|integer Returns the number of rows deleted, or FALSE if delete query was not executed.
      */
-    public function delete( KDatabaseRowInterface $row )
+    public function delete( KDatabaseRowInterface $row)
     {
         //Create commandchain context
-        $context = $this->getCommandContext();
+        $context            = $this->getCommandContext();
         $context->operation = KDatabase::OPERATION_DELETE;
-        $context->table     = $this->getBase();
         $context->data      = $row;
-        $context->query     = null;
+        $context->name      = $this->_name;
         $context->affected  = false;
         
         if($this->getCommandChain()->run('before.delete', $context) !== false) 
         {
-            $query = $this->_database->getQuery();
-            
-            //Create where statement
-            foreach($this->getPrimaryKey() as $key => $column) {
-                $query->where($column->name, '=', $context->data->$key);
-            }
-            
-            //Execute the delete query
-            $context->affected = $this->_database->delete($context->table, $query);
-            
-            //Set the query in the context
-            if($context->affected !== false) 
+            // TODO: Prepare data, running validation, filters, mappings, etc.
+            //$context->data->prepare();
+
+            $query = $this->getQuery();
+
+            if (!$row->isNew()) 
             {
-                if(((integer) $context->affected) > 0) 
-                {   
-                    $context->query = $query;
-                    $context->data->setStatus(KDatabase::STATUS_DELETED);
+                // TODO: map $row->id to $row->_id. Query with all the unique keys of row.
+                $query->where('id', '=', $context->data->id);
+
+                // Convert object to array first
+                $data = $context->data->toArray();
+
+                //Execute the update query
+                $context->affected = $this->_database->delete($context->name, $query, $data);
+
+                if(((integer) $context->affected) > 0)
+                {
+                    //Reverse apply the column mappings and set the data in the row
+                    $context->data->setData($data, false)
+                                  ->setStatus(KDatabase::STATUS_DELETED);
                 }
                 else $context->data->setStatus(KDatabase::STATUS_FAILED);
+
+                //Set the query in the context
+                $context->query = $query;
             }
-            
+            else $context->data->setStatus(KDatabase::STATUS_FAILED);
+
             $this->getCommandChain()->run('after.delete', $context);
         }
 
