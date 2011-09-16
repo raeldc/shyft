@@ -23,9 +23,9 @@ class FlowDatabaseQueryDocument extends KObject
 
     public $sort = array();
 
-    public $limit = null;
+    public $limit = 0;
 
-    public $offset = null;
+    public $offset = 0;
 
     public $query = null;
 
@@ -65,15 +65,13 @@ class FlowDatabaseQueryDocument extends KObject
         return $this;
     }
 
-    public function sort( $columns, $direction = 'ASC' )
+    public function sort( $columns, $direction = 'asc' )
     {
         settype($columns, 'array'); //force to an array
-
+        $direction = strtolower($direction);
         foreach($columns as $column)
         {
-            $this->sort[] = array(
-                $column    => ($direction == 'DESC') ? -1 : 1
-            );
+            $this->sort[$column] = ($direction == 'desc') ? -1 : 1;
         }
 
         return $this;

@@ -84,7 +84,17 @@ class FlowDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 				break;
 
 				default:
-					$result = iterator_to_array($collection->find($query->build()));
+					$result = $collection->find($query->build());
+
+					if (!empty($query->sort)) {
+						$result = $result->sort($query->sort);
+					}
+
+					if ($query->limit) {
+						$result = $result->limit($query->limit)->skip($query->offset);
+					}
+
+					$result = iterator_to_array($result);
 				break;
 			}
 		}
