@@ -56,7 +56,7 @@
                 </nav>
             </div>
 
-            <section class="span8 columns">
+            <section class="span12 columns">
                 <?=@container('page')?>
             </section>
         </div>
