@@ -1,6 +1,6 @@
 <?php
 
-class ComDefaultDispatcherDefault extends KDispatcherAbstract 
+class ComDefaultDispatcher extends KDispatcherAbstract 
 { 
     /**
 	 * Forward after a post request
