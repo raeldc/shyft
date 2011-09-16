@@ -259,7 +259,7 @@ abstract class FlowModelDocument extends KModelAbstract
     protected function _buildQueryWhere(FlowDatabaseQueryDocument $query)
     {
         if (!is_null($this->_state->id)) {
-            $query->where('_id', '=', $this->_state->id);
+            $query->where('id', '=', $this->_state->id);
         }
     }
 }
