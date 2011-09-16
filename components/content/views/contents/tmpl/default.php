@@ -17,5 +17,10 @@
 		</tr>
 		<?php endforeach ?>
 	</tbody>
+	<tfooter>
+		<td colspan="20">
+				<?= @helper('paginator.pagination', array('total' => $total)) ?>
+		</td>
+	</tfooter>
 </table>
 </form>
