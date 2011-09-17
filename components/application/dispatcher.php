@@ -11,14 +11,6 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
     {
         parent::__construct($config);
 
-        $this->registerCallback('before.dispatch', array($this, 'map'));
-
-        if(KRequest::method() != 'GET') {
-            $this->registerCallback('after.dispatch' , array($this, 'forward'));
-        }
-
-        $this->registerCallback('after.dispatch', array($this, 'render'));
-
         $this->_component = $config->component;
     }
     
@@ -32,6 +24,14 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
         ))->append(array(
             'request' 				=> array('format' => KRequest::format() ? KRequest::format() : 'html')
         ));
+
+        if (KRequest::type() != 'AJAX') 
+        {
+            // Use these behaviors only when not on AJAX
+            $config->append(array(
+                'behaviors' => array('themable')
+            ));
+        }
 
 		parent::_initialize($config);
 	}
@@ -55,48 +55,11 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
         return $factory->get($config->identifier);
     }
 
-    protected function _actionMap(KCommandContext $context)
-    {
-        KIdentifier::map('com:application.document', 'com://site/application.view.theme');
-    }
-	
 	protected function _actionDispatch(KCommandContext $context)
 	{
+        $context->application = $this;
         return $this->getComponent()->execute('dispatch', $context);
 	}
-
-    protected function _actionForward(KCommandContext $context)
-    {
-        //TODO: Create redirect
-    }
-
-    protected function _actionRender(KCommandContext $context)
-    {
-        //Headers
-        if($context->headers) 
-        {
-            foreach($context->headers as $name => $value) {
-                header($name.' : '.$value);
-            }
-        }
-
-        //Status
-        if($context->status) {
-           header(KHttpResponse::getHeader($context->status));
-        }
-
-        if (is_string($context->result)) 
-        {
-            // If Ajax, don't use the template
-            if(KRequest::type() != 'AJAX')
-            {
-                return KFactory::get('com:application.document')
-                    ->addtoContainer('page', $context->result)
-                    ->display();
-            }
-            else return $context->result;
-        }
-    }
 
     /**
      * Method to get a Component Dispatcher object
