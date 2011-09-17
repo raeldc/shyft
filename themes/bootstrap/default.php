@@ -35,19 +35,11 @@
     </header>
 
     <div class="container">
-
-        <!-- Main hero unit for a primary marketing message or call to action -->
-        <article class="hero-unit">
-            <h1>Learn Nooku in Small Easy Steps</h1>
-            <p></p>
-            <p><a class="btn primary large">Learn more &raquo;</a></p>
-        </article>
-
-        <div class="row">
+        <div class="row after-topbar">
             <div class="span4 columns">
                 <a href="#" class="rounded highlight gray main btn-huge active">
-                    <h2>Chapter 1</h2>
-                    <p>Do it first, understand later</p>
+                    <h2>Pages</h2>
+                    <p>Manage the pages of your website</p>
                 </a>
                 
                 <nav class="highlight lightblue rounded list">

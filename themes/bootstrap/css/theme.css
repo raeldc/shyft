@@ -1,3 +1,6 @@
+.after-topbar{
+	margin-top: 60px;
+}
 .rounded {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
