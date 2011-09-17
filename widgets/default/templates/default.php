@@ -9,14 +9,14 @@
  */
 
 /**
- * Default Template
+ * Default Template for widgets
 .*
  * @author      Israel Canasa <raeldc@gmail.com>
  * @category    Flowku
  * @package     Flowku_Widgets
  * @subpackage  Default
  */
-class WidgetDefaultTemplateDefault extends KTemplateAbstract
+class WidgetDefaultTemplateDefault extends ComDefaultTemplateDefault
 {
 	/**
 	 * Load a template by identifier
@@ -37,7 +37,8 @@ class WidgetDefaultTemplateDefault extends KTemplateAbstract
 	    $identifier = KIdentifier::identify($template);
 	    $file = $identifier->filepath;
 
-	    if ($identifier->type == 'widget') {
+	    if ($identifier->type == 'widget') 
+	    {
 	    	$theme = clone KFactory::get('com:application.document')->getLayout();
 
 	    	$path = array();
@@ -52,7 +53,7 @@ class WidgetDefaultTemplateDefault extends KTemplateAbstract
 
 	    	$file = $theme->filepath;
 
-	    	// Now try the component
+	    	// Now try the widget
 		    if ($file === false) 
 		    {
 		    	array_push($identifier->path, 'tmpl');
@@ -69,36 +70,4 @@ class WidgetDefaultTemplateDefault extends KTemplateAbstract
 		
 		return $this;
 	}
-
-	/**
-     * Load a template helper
-     * 
-     * This function merges the elements of the attached view model state with the parameters passed to the helper
-     * so that the values of one are appended to the end of the previous one. 
-     * 
-     * If the view state have the same string keys, then the parameter value for that key will overwrite the state.
-     *
-     * @param   string  Name of the helper, dot separated including the helper function to call
-     * @param   mixed   Parameters to be passed to the helper
-     * @return  string  Helper output
-     */
-    public function renderHelper($identifier, $params = array())
-    {
-        $view = $this->getView();
-        
-        if(KInflector::isPlural($view->getName())) 
-        {
-            if($state = $view->getModel()->getState()) {
-                $params = array_merge( $state->getData(), $params);
-            }
-        } 
-        else 
-        {
-            if($item = $view->getModel()->getItem()) {
-                $params = array_merge( $item->getData(), $params);
-            }
-        }   
-        
-        return parent::renderHelper($identifier, $params);
-    }
 }
