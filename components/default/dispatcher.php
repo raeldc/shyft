@@ -1,7 +1,20 @@
 <?php
 
 class ComDefaultDispatcher extends KDispatcherAbstract 
-{ 
+{
+	/**
+	 * Push the controller data into the document
+	 *
+	 * This function divert the standard behavior and will push specific controller data
+	 * into the document
+	 *
+	 * @return	mixed
+	 */
+	protected function _actionRender(KCommandContext $context)
+	{
+	    return $context->result;
+	}
+
     /**
 	 * Forward after a post request
 	 *
