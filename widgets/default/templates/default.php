@@ -39,7 +39,7 @@ class WidgetDefaultTemplateDefault extends ComDefaultTemplateDefault
 
 	    if ($identifier->type == 'widget') 
 	    {
-	    	$theme = clone KFactory::get('com:application.document')->getLayout();
+	    	$theme = clone KFactory::get('theme')->getLayout();
 
 	    	$path = array();
 	    	if (!empty($identifier->path) && $identifier->path[0] == 'view')

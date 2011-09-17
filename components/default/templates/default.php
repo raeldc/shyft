@@ -37,8 +37,9 @@ class ComDefaultTemplateDefault extends KTemplateAbstract
 	    $identifier = KIdentifier::identify($template);
 	    $file = $identifier->filepath;
 
+	    //TODO: Suggest to Johan that map identifiers should also be checked by KFactory::exists()
 	    if ($identifier->type == 'com') {
-	    	$theme = clone KFactory::get('com:application.document')->getLayout();
+	    	$theme = clone KFactory::get('theme')->getLayout();
 
 	    	$path = array();
 	    	if (!empty($identifier->path) && $identifier->path[0] == 'view')
