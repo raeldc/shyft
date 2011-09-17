@@ -30,7 +30,7 @@ class FlowControllerBehaviorCommandable extends KControllerBehaviorCommandable
             {
                 $identifier = $context->caller->getIdentifier();
                 $config     = array('attribs' => array(
-                    				//'href' => JRoute::_( 'index.php?option=com_'.$identifier->package.'&view='.$identifier->name)
+                    				'href' => 'index.php?com='.$identifier->package.'&view='.$identifier->name
                               ));
                 
                 $this->getToolbar()->addCommand('new', $config);
