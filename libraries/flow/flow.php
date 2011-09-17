@@ -38,7 +38,7 @@ class Flow
      */
     public static $paths;
 
-    public function __construct($paths)
+    final public function __construct($paths)
     {
         // Don't do anything else if instance is already created.
         if (self::$instance !== null)
@@ -46,6 +46,7 @@ class Flow
 
         self::$paths['libraries']   = (isset($paths['libraries']))  ? $paths['libraries']   : SYSTEM_LIBRARIES;
         self::$paths['components']  = (isset($paths['components'])) ? $paths['components']  : SYSTEM_COMPONENTS;
+        self::$paths['widgets']     = (isset($paths['widgets']))    ? $paths['widgets']     : SYSTEM_WIDGETS;
         self::$paths['actions']     = (isset($paths['actions']))    ? $paths['actions']     : SYSTEM_ACTIONS;
         self::$paths['themes']      = (isset($paths['themes']))     ? $paths['themes']      : SYSTEM_THEMES;
         self::$paths['languages']   = (isset($paths['languages']))  ? $paths['languages']   : SYSTEM_LANGUAGES;
@@ -80,12 +81,14 @@ class Flow
         FlowLoader::registerAdapter(new FlowLoaderAdapterKoowa(self::$paths['libraries']));
         FlowLoader::registerAdapter(new FlowLoaderAdapterFlow(self::$paths['libraries']));
         FlowLoader::registerAdapter(new FlowLoaderAdapterComponent(self::$paths['components']));
+        FlowLoader::registerAdapter(new FlowLoaderAdapterWidget(self::$paths['widgets']));
         FlowLoader::registerAdapter(new FlowLoaderAdapterAction(self::$paths['actions']));
 
         // Register the necessary Identifier Adapaters
         KIdentifier::registerAdapter(new FlowIdentifierAdapterKoowa());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterFlow());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterComponent());
+        KIdentifier::registerAdapter(new FlowIdentifierAdapterWidget());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterAction());
         KIdentifier::registerAdapter(new FlowIdentifierAdapterTheme());
 
