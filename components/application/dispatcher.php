@@ -29,7 +29,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
         {
             // Use these behaviors only when not on AJAX
             $config->append(array(
-                'behaviors' => array('themable')
+                'behaviors' => array('themable', 'widgetable')
             ));
         }
 
