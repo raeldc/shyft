@@ -42,6 +42,7 @@ class FlowLoaderAdapterComponent extends KLoaderAdapterComponent
 			{
 				$basepaths = $this->_basepath;
 				foreach ($basepaths as $base) {
+					// We need to do this so that it won't search for components/components folder.
 					$basepaths[] = rtrim($base, 'components').'components';
 				}
 

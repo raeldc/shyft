@@ -57,11 +57,13 @@ class FlowIdentifierAdapterComponent extends KIdentifierAdapterAbstract
 			/*
 			 * Find the classname to fallback too and auto-load the class
 			 * 
-			 * Fallback sequence : -> Named Component Specific 
-			 *                     -> Named Component Default  
-			 *                     -> Default Component Specific 
-			 *                     -> Default Component Defaukt
-			 *                     -> Framework Specific 
+			 * Fallback sequence : -> Named Component Specific
+			 *                     -> Named Component Default
+			 *                     -> Default Component Specific
+			 *                     -> Default Component Default
+			 *                     -> Flow Component Specific
+			 *                     -> Flow Component Default
+			 *                     -> Framework Specific
 			 *                     -> Framework Default
 			 */
 			if(class_exists('Com'.ucfirst($identifier->package).ucfirst($classtype).$path.ucfirst($identifier->name))) {
