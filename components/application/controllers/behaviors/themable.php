@@ -2,8 +2,10 @@
 
 class ComApplicationControllerBehaviorThemable extends KControllerBehaviorAbstract
 {
-	protected function _beforeDispatch(KCommandContext $context)
+	public function __construct(KConfig $config)
 	{
+		parent::__construct($config);
+		
 		// Map a shortcut to the theme
 		KIdentifier::map('theme', 'com://site/application.view.theme');
 	}
@@ -30,8 +32,7 @@ class ComApplicationControllerBehaviorThemable extends KControllerBehaviorAbstra
             {
             	// Wrap it around the template
                 $context->result = KFactory::get('theme')
-                    ->addtoContainer('page', $context->result)
-                    ->display();
+					->display();
             }
             else return $context->result;
         }
