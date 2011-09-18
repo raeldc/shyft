@@ -44,7 +44,7 @@
             </div>
             <div class="row">
                 <div class="span4">
-                    <?=@container('left', 'wrapped')?>
+                    <?=@container('left', 'wrapper')?>
                 </div>
                 <div class="span10">
                     <?=@container('page')?>
