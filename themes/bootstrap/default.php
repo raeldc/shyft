@@ -2,16 +2,14 @@
 <html lang="en">
 <head>
 <title><?=@container('title')?></title>
-<?=@container('meta')?>
-<?=@container('scripts')?>
-<?=@container('styles')?>
+
 
 <!-- HTML5 shim, for IE6-8 support of HTML elements -->
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<link href="css://bootstrap-1.2.0.css" rel="stylesheet">
+<link href="css://bootstrap.css" rel="stylesheet">
 <link href="css://theme.css" rel="stylesheet">
 </head>
 
@@ -20,8 +18,7 @@
     <header class="topbar">
         <div class="fill">
             <div class="container">
-                <h3><a href="#">Flowku Project</a></h3>
-
+                <h3><a class="brand" href="#">Flowku Project</a></h3>
                 <nav>
                     <ul class="nav">
                         <li class="active"><a href="#">Home</a></li>
@@ -30,27 +27,28 @@
                     </ul>
                 </nav>
 
+                <form action="" class="pull-right">
+                    <input class="input-small" type="text" placeholder="Username">
+                    <input class="input-small" type="password" placeholder="Password">
+                    <button class="btn" type="submit">Sign in</button>
+                </form>
             </div>
         </div>
     </header>
 
     <div class="container">
-        <div class="row after-topbar">
-            <div class="span4 columns">
-                <a href="#" class="rounded highlight gray main btn-huge active">
-                    <h2>Pages</h2>
-                    <p>Manage the pages of your website</p>
-                </a>
-                
-                <nav class="highlight lightblue rounded list">
-                    <a class="underlined" href="index.php?com=content&view=content&layout=form">Add a Page</a>
-                    <a class="underlined" href="index.php?com=content&view=contents">List of Contents</a><br />
-                </nav>
+        <div class="content">
+            <div class="page-header">
+                <h1>Page name <small>Supporting text or tagline</small></h1>
             </div>
-
-            <section class="span12 columns">
-                <?=@container('page')?>
-            </section>
+            <div class="row">
+                <div class="span4">
+                    <h3>Secondary content</h3>
+                </div>
+                <div class="span10">
+                    <?=@container('page')?>
+                </div>
+            </div>
         </div>
 
 
