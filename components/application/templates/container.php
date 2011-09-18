@@ -81,7 +81,7 @@ class ComApplicationTemplateContainer extends KObject implements KObjectIdentifi
      * @param  mixed    A value of an or array of values to be appended
      * @return ComApplicationTemplateContainer
      */
-    public function append($name, $content, $position = 'bottom')
+    public function append($name, $content, $position = 'append')
     {
     	$content = (string)  $content;
 
@@ -89,13 +89,13 @@ class ComApplicationTemplateContainer extends KObject implements KObjectIdentifi
 
     	if(!$this->_containers->offsetExists($name))
 		{
-			$this->_containers->offsetSet($name, array($content));
+			$this->_containers->offsetSet($name, new ContainerArrayObject(array($content)));
 			return $this;
 		}
-		if ($position == 'top') {
-			array_unshift($this->get($name), $content);
+		if ($position == 'prepend') {
+			$this->get($name)->prepend($content);
 		}
-		else array_push($this->get($name), $content);
+		else $this->get($name)->append($content);
 
 		return $this;
     }
@@ -164,7 +164,7 @@ class ComApplicationTemplateContainer extends KObject implements KObjectIdentifi
 			return $this->_containers->offsetGet($name);
 		}
 
-		return array();
+		return new ArrayObject();
 	}
 
 	/**
@@ -178,4 +178,14 @@ class ComApplicationTemplateContainer extends KObject implements KObjectIdentifi
         return $this->get($name);
     }
 
-} 
+}
+
+class ContainerArrayObject extends ArrayObject 
+{
+    public function prepend($value) 
+    {
+        $array = (array)$this;
+        array_unshift($array, $value);
+        $this->exchangeArray($array);
+    }
+}
