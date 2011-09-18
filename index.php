@@ -46,6 +46,7 @@ define('SITE_LANGUAGES',    SITE_ROOT.'/languages');
  *                                   Initialize Flow                                            *
  ************************************************************************************************/
 
+define('DS', DIRECTORY_SEPARATOR);
 require_once SYSTEM_LIBRARIES.'/flow/flow.php';
 
 Flow::getInstance(array(
