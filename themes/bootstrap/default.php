@@ -18,12 +18,13 @@
     <header class="topbar">
         <div class="fill">
             <div class="container">
-                <h3><a class="brand" href="#">Flowku Project</a></h3>
+                <h3><a class="brand" href="index.php">Flowku Project</a></h3>
                 <nav>
                     <ul class="nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#">The Tutorial</a></li>
-                        <li><a href="#">About Me</a></li>
+                        <li class="active"><a href="index.php">Home</a></li>
+                        <li><a href="index.php?com=pages">Pages</a></li>
+                        <li><a href="index.php?com=widgets">Widgets</a></li>
+                        <li><a href="index.php?com=content">Contents</a></li>
                     </ul>
                 </nav>
 
@@ -43,7 +44,7 @@
             </div>
             <div class="row">
                 <div class="span4">
-                    <h3>Secondary content</h3>
+                    <?=@container('left', 'wrapped')?>
                 </div>
                 <div class="span10">
                     <?=@container('page')?>
