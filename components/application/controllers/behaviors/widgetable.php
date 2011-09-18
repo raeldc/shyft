@@ -27,7 +27,7 @@ class ComApplicationControllerBehaviorWidgetable extends KControllerBehaviorAbst
 
     protected function _afterDispatch(KCommandContext $context)
     {
-        if($context->caller->isThemable())
+        if($context->application->isThemable())
         {   
             // Inject the dispatcher's result into the 'page' container.
             // This assumes that widgetable's _afterDispatch is executed before themeable's
