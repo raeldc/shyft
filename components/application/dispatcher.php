@@ -25,7 +25,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
             'request' 				=> array('format' => KRequest::format() ? KRequest::format() : 'html')
         ));
 
-        if (KRequest::type() != 'AJAX') 
+        if (KRequest::type() != 'AJAX' && $config->request->format == 'html')
         {
             // Use these behaviors only when not on AJAX
             $config->append(array(
