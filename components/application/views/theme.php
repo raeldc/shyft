@@ -43,9 +43,9 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
     /**
      * Containers
      *
-     * @var array
+     * @var ComApplicatonTemplateContainer
      */
-    protected $_containers = array();
+    protected $_container;
 
     /**
      * Constructor
@@ -78,12 +78,12 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
 
         //Add alias filter for @container()
         $this->getTemplate()->getFilter('alias')->append(
-            array('@container(' => '$this->getView()->renderContainer('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
+            array('@container(' => '$this->getView()->getContainer()->render('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
 
         //Add alias filter for @contains()
         $this->getTemplate()->getFilter('alias')->append(
-            array('@contains(' => '$this->getView()->countContainer('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
+            array('@contains(' => '$this->getView()->getContainer()->count('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
         
         //Add alias filter for media:// namespace
@@ -106,11 +106,7 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
             array('base://' => $config->base_url.'/'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
 
-        $this->_containers = array(
-            'title' => array(
-                array('content' => 'Flowku! The Next Generation CMS')
-            )
-        );
+        $this->_container = $config->container;
     }
 
     /**
@@ -135,7 +131,8 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
             'replace_filters'  => false,
             'base_url'         => KRequest::base(),
             'root_url'         => KRequest::root(), 
-            'themes_url'        => KRequest::root().'/themes' 
+            'themes_url'       => KRequest::root().'/themes',
+            'container'        => null
         ));
 
         if(!empty($config->theme)) {
@@ -383,59 +380,19 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
         return $this;
     }
 
-    public function addtoContainer($name, $content = array())
+    public function getContainer()
     {
-
-        if(!isset($this->_containers[$name]))
-        {
-            $this->_containers[$name] = array($content);
+        // Container is tightly dependent on ComApplicatonTemplateContainer so we have to make sure
+        if (!($this->_container instanceof ComApplicationTemplateContainer)) {
+           throw new KTemplateException("View must be an instance of ComApplicationTemplateContainer");
         }
-        else array_push($this->_containers[$name], $content);
 
-        return $this;
+        return $this->_container;
     }
 
-    public function countContainer($name)
+    public function setContainer(ComApplicationTemplateContainer $container)
     {
-
-        if(!isset($this->_containers[$name]))
-        {
-            $this->_containers[$name] = array();
-        }
-        
-        return count($this->_containers[$name]);
-    }
-
-    public function renderContainer($name, $chrome = 'default')
-    {
-        $result = '';
-
-        if(isset($this->_containers[$name])) 
-        {
-            // We expect container to be an array of arrays
-            $container = $this->_containers[$name];
-
-            if (!($chrome instanceof KIdentifier)) 
-            {
-                $identifier = clone $this->_layout;
-                $identifier->path = array('html','chrome');
-                $identifier->name = $chrome;
-                $chrome = $identifier;
-            }
-
-            foreach ($container as $block) 
-            {
-                if (is_string($block))
-                    $block = array('content' => $block);
-   
-                $result .= $this->getTemplate()
-                    ->loadIdentifier($chrome, $block)
-                    ->render();
-            }
-            
-        }
-
-        return $result;
+        $this->_container = $container;
     }
     
     /**
