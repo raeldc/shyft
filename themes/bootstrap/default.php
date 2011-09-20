@@ -3,7 +3,6 @@
 <head>
 <title><?=@container('title')?></title>
 
-
 <!-- HTML5 shim, for IE6-8 support of HTML elements -->
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -11,6 +10,8 @@
 
 <link href="css://bootstrap.css" rel="stylesheet">
 <link href="css://theme.css" rel="stylesheet">
+<script src="js://jquery.js"></script>
+<script src="js://tabs.js"></script>
 </head>
 
 <body>
@@ -25,6 +26,7 @@
                         <li><a href="index.php?com=pages">Pages</a></li>
                         <li><a href="index.php?com=widgets">Widgets</a></li>
                         <li><a href="index.php?com=content">Contents</a></li>
+                        <li><a href="index.php?com=forms">Forms</a></li>
                     </ul>
                 </nav>
 
