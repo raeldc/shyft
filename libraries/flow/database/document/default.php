@@ -31,7 +31,7 @@ class FlowDatabaseDocumentDefault extends FlowDatabaseDocumentAbstract implement
      *
      * @return FlowDatabaseDocumentDefault
      */
-    public static function getInstance($config = array(), KFactoryInterface $factory = null)
+    public static function getInstance($config, KFactoryInterface $factory)
     {
        // Check if an instance with this identifier already exists or not
         if (!$factory->exists($config->identifier))
