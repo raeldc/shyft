@@ -20,7 +20,7 @@
     <div class="clearfix">
         <label for="form-textarea">Body</label>
         <div class="input">
-            <textarea class="xxlarge" id="form-textarea" name="body" rows="5"><?=$content->body?></textarea>
+            <textarea class="xlarge" id="form-textarea" name="body" rows="5"><?=$content->body?></textarea>
             <span class="help-block">
             Block of help text to describe the field above if need be.
             </span>
