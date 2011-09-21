@@ -43,7 +43,7 @@ define('SITE_THEMES',       SITE_ROOT.'/themes');
 define('SITE_LANGUAGES',    SITE_ROOT.'/languages');
 
 /************************************************************************************************
- *                                   Initialize Flux                                            *
+ *                               Initialize Flux Subframework                                   *
  ************************************************************************************************/
 
 define('DS', DIRECTORY_SEPARATOR);
