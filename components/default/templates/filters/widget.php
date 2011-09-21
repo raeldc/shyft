@@ -33,7 +33,10 @@ class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements 
 	 * @return ComDefaultTemplateFilterWidget
 	 */
     public function write(&$text)
-    {   
+    {
+    	if (!KFactory::has('theme.container'))
+    		return $this;
+
 		$matches = array();
 		
 		if(preg_match_all('#<section class="widget ([^>^"]*)">(.*)</section>#siU', $text, $matches)) 
