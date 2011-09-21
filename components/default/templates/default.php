@@ -38,21 +38,25 @@ class ComDefaultTemplateDefault extends KTemplateAbstract
 	    $file = $identifier->filepath;
 
 	    //TODO: Suggest to Johan that map identifiers should also be checked by KFactory::exists()
-	    if ($identifier->type == 'com') {
-	    	$theme = clone KFactory::get('theme')->getLayout();
-
-	    	$path = array();
-	    	if (!empty($identifier->path) && $identifier->path[0] == 'view')
+	    if ($identifier->type == 'com') 
+	    {
+	    	if (KFactory::has('theme')) 
 	    	{
-	    		$path = $identifier->path;
-	    		array_shift($path);
+	    		$theme = clone KFactory::get('theme')->getLayout();
+
+		    	$path = array();
+		    	if (!empty($identifier->path) && $identifier->path[0] == 'view')
+		    	{
+		    		$path = $identifier->path;
+		    		array_shift($path);
+		    	}
+
+		    	$theme->path = array_merge(array('html', 'components', $identifier->package), $path);
+		    	$theme->name = $identifier->name;
+
+		    	$file = $theme->filepath;
 	    	}
-
-	    	$theme->path = array_merge(array('html', 'components', $identifier->package), $path);
-	    	$theme->name = $identifier->name;
-
-	    	$file = $theme->filepath;
-
+	    	
 	    	// Now try the component
 		    if ($file === false) 
 		    {
