@@ -1,11 +1,11 @@
 <?php
 /**
- * @version		$Id$
- * @category	Koowa
- * @package		Koowa_Config
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.nooku.org
+ * @version     $Id$
+ * @category    Koowa
+ * @package     Koowa_Config
+ * @copyright   Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link        http://www.nooku.org
  */
 
 /**
@@ -40,35 +40,13 @@ class KConfig implements KConfigInterface
         }
         
         $this->_data = array();
-
-        if (!is_null($config)) 
+        if (is_array($data)) 
         { 
-            foreach ($config as $key => $value) {
+            foreach ($data as $key => $value) {
                 $this->__set($key, $value);
             }
         }
     } 
-    
-    /**
-     * Deep clone of this instance to ensure that nested KConfigs
-     * are also cloned.
-     *
-     * @return void
-     */
-    public function __clone()
-    {
-        $array = array();
-        foreach ($this->_data as $key => $value) 
-        {
-            if ($value instanceof KConfig || $value instanceof stdClass) {
-                $array[$key] = clone $value;
-            } else {
-                $array[$key] = $value;
-            }
-        }
-        
-        $this->_data = $array;  
-    }
     
     /**
      * Retrieve a configuration item and return $default if there is no element set.
@@ -300,7 +278,7 @@ class KConfig implements KConfigInterface
         return $array;
     }
     
- 	/**
+    /**
      * Returns a string with the encapsulated data in JSON format
      *             
      * @return string   returns the data encoded to JSON
@@ -310,7 +288,7 @@ class KConfig implements KConfigInterface
         return json_encode($this->toArray());
     }
     
- 	/**
+    /**
      * Deep clone of this instance to ensure that nested KConfigs
      * are also cloned.
      *
