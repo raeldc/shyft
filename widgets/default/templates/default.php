@@ -39,19 +39,22 @@ class WidgetDefaultTemplateDefault extends ComDefaultTemplateDefault
 
 	    if ($identifier->type == 'widget') 
 	    {
-	    	$theme = clone KFactory::get('theme')->getLayout();
-
-	    	$path = array();
-	    	if (!empty($identifier->path) && $identifier->path[0] == 'view')
+	    	if (KFactory::has('theme')) 
 	    	{
-	    		$path = $identifier->path;
-	    		array_shift($path);
-	    	}
+		    	$theme = clone KFactory::get('theme')->getLayout();
 
-	    	$theme->path = array_merge(array('html', 'widgets', $identifier->package), $path);
-	    	$theme->name = $identifier->name;
+		    	$path = array();
+		    	if (!empty($identifier->path) && $identifier->path[0] == 'view')
+		    	{
+		    		$path = $identifier->path;
+		    		array_shift($path);
+		    	}
 
-	    	$file = $theme->filepath;
+		    	$theme->path = array_merge(array('html', 'widgets', $identifier->package), $path);
+		    	$theme->name = $identifier->name;
+
+		    	$file = $theme->filepath;
+		    }
 
 	    	// Now try the widget
 		    if ($file === false) 
