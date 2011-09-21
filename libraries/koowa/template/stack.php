@@ -48,12 +48,14 @@ class KTemplateStack extends KObject implements KObjectIdentifiable, KObjectInst
      */
     final private function __clone() { }
       
- 	/**
+    /**
      * Force creation of a singleton
      *
+     * @param   object  An optional KConfig object with configuration options
+     * @param   object  A KFactoryInterface object
      * @return KTemplateStack
      */
-    public static function getInstance($config, KFactoryInterface $factory)
+    public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
     { 
         // Check if an instance with this identifier already exists or not
         if (!$factory->exists($config->identifier))
@@ -67,7 +69,7 @@ class KTemplateStack extends KObject implements KObjectIdentifiable, KObjectInst
         return $factory->get($config->identifier);
     }
     
-	/**
+    /**
      * Get the object identifier
      * 
      * @return  KIdentifier 
@@ -110,10 +112,10 @@ class KTemplateStack extends KObject implements KObjectIdentifiable, KObjectInst
         return array_pop($this->_object_stack);
     } 
     
-	/**
+    /**
      * Counts the number of elements
      * 
-     * @return integer	The number of elements
+     * @return integer  The number of elements
      */
     public function count()
     {
@@ -123,7 +125,7 @@ class KTemplateStack extends KObject implements KObjectIdentifiable, KObjectInst
     /**
      * Check to see if the registry is empty
      * 
-     * @return boolean	Return TRUE if the registry is empty, otherwise FALSE
+     * @return boolean  Return TRUE if the registry is empty, otherwise FALSE
      */
     public function isEmpty()
     {
