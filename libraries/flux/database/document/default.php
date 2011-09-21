@@ -31,10 +31,10 @@ class FluxDatabaseDocumentDefault extends FluxDatabaseDocumentAbstract implement
      *
      * @return FluxDatabaseDocumentDefault
      */
-    public static function getInstance($config, KFactoryInterface $factory)
+    public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
     {
        // Check if an instance with this identifier already exists or not
-        if (!$factory->exists($config->identifier))
+        if (!$factory->has($config->identifier))
         {
             //Create the singleton
             $classname = $config->identifier->classname;

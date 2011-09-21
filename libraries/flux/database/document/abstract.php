@@ -117,7 +117,7 @@ abstract class FluxDatabaseDocumentAbstract extends KObject implements KObjectId
             $this->getCommandChain()->run('after.find', $context);
         }
 
-        return KConfig::toData($context->data);
+        return $context->data;
 	}
 
     /**
@@ -318,7 +318,7 @@ abstract class FluxDatabaseDocumentAbstract extends KObject implements KObjectId
      */
     public function addBehavior($behaviors)
     {
-        $behaviors = (array) KConfig::toData($behaviors);
+        $behaviors = (array) $behaviors->toArray();
                 
         foreach($behaviors as $behavior)
         {

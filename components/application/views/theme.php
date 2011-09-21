@@ -60,7 +60,7 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
         $this->_auto_assign = $config->auto_assign;
         
         //set the data
-        $this->_data = KConfig::toData($config->data);
+        $this->_data = $config->data->toArray();
          
         // set the template object
         $this->_template = $config->template;
@@ -159,10 +159,10 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
      *
      * @return ComApplicationViewTheme
      */
-    public static function getInstance($config, KFactoryInterface $factory)
+    public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
     { 
        // Check if an instance with this identifier already exists or not
-        if (!$factory->exists($config->identifier))
+        if (!$factory->has($config->identifier))
         {
             //Create the singleton
             $classname = $config->identifier->classname;
