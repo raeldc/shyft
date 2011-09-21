@@ -1,11 +1,11 @@
 <?php
 /**
- * @category	Flow
- * @package     Flow_Database
+ * @category	Flux
+ * @package     Flux_Database
  * @subpackage  Table
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.flowku.com
+ * @link     	http://www.fluxed.com
  */
 
 /**
@@ -13,11 +13,11 @@
  *
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flow
- * @package     Flow_Database
+ * @category    Flux
+ * @package     Flux_Database
  * @subpackage  Document
  */
-abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectIdentifiable
+abstract class FluxDatabaseDocumentAbstract extends KObject implements KObjectIdentifiable
 {
 	protected $_database;
 	protected $_name;
@@ -49,7 +49,7 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
 	protected function _initialize(KConfig $config)
 	{
 		// TODO: Set the database to be a singleton, use com:application.database
-		$database = KFactory::get('flow:database.adapter.document');
+		$database = KFactory::get('flux:database.adapter.document');
 		$package = $this->_identifier->package;
         $name    = $this->_identifier->name;
 
@@ -304,7 +304,7 @@ abstract class FlowDatabaseDocumentAbstract extends KObject implements KObjectId
 		static $instance;
 
 		if (is_null($instance)) {
-			$instance = new FlowDatabaseQueryDocument();
+			$instance = new FluxDatabaseQueryDocument();
 		}
 
 		return $instance;

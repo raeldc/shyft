@@ -1,19 +1,19 @@
 <?php
 /**
- * @category	Flowku
- * @package     Flowku_Widgets
+ * @category	Fluxku
+ * @package     Fluxku_Widgets
  * @subpackage  Application
  * @copyright   Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link        http://www.flowku.com
+ * @link        http://www.fluxed.com
  */
 
 /**
  * Default Template for widgets
 .*
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flowku
- * @package     Flowku_Widgets
+ * @category    Fluxku
+ * @package     Fluxku_Widgets
  * @subpackage  Default
  */
 class WidgetDefaultTemplateDefault extends ComDefaultTemplateDefault

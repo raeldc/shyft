@@ -1,8 +1,8 @@
 <?php
 /**
  * @version 	$Id$
- * @category	Flow
- * @package		Flow_Loader
+ * @category	Flux
+ * @package		Flux_Loader
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -17,21 +17,21 @@
  * @subpackage 	Adapter
  * @uses 		Koowa
  */
-class FlowLoaderAdapterFlow extends KLoaderAdapterAbstract
+class FluxLoaderAdapterFlux extends KLoaderAdapterAbstract
 {
 	/** 
 	 * The adapter type
 	 * 
 	 * @var string
 	 */
-	protected $_type = 'flow';
+	protected $_type = 'flux';
 	
 	/**
 	 * The class prefix
 	 * 
 	 * @var string
 	 */
-	protected $_prefix = 'Flow';
+	protected $_prefix = 'Flux';
 
 	/**
 	 * Get the path based on a class name
@@ -54,11 +54,11 @@ class FlowLoaderAdapterFlow extends KLoaderAdapterAbstract
 			if(count($parts) == 1) {
 				$path = $path.'/'.$path;
 			}
-			if(!is_file(Flow::findFile('flow/'.$path.'.php', $this->_basepath))) {
+			if(!is_file(Flux::findFile('flux/'.$path.'.php', $this->_basepath))) {
 				$path = $path.'/'.strtolower(array_pop($parts));
 			}
 
-			$path = Flow::findFile('flow/'.$path.'.php', $this->_basepath);
+			$path = Flux::findFile('flux/'.$path.'.php', $this->_basepath);
 		}
 
 		return $path;

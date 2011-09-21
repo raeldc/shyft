@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flow
- * @package		Flow_Loader
+ * @category	Flux
+ * @package		Flux_Loader
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,12 +11,12 @@
  * Loader Adapter for a plugin
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flow
- * @package     Flow_Loader
+ * @category	Flux
+ * @package     Flux_Loader
  * @subpackage 	Adapter
  * @uses		KInflector
  */
-class FlowLoaderAdapterAction extends KLoaderAdapterAbstract
+class FluxLoaderAdapterAction extends KLoaderAdapterAbstract
 {
 	/** 
 	 * The adapter type
@@ -64,8 +64,8 @@ class FlowLoaderAdapterAction extends KLoaderAdapterAbstract
 			} 
 			else $path = $file;
 
-			if (($file = Flow::findFile($type.'/'.$action.'/'.$action.'.php', $this->_basepath)) === false) {
-			    $path = Flow::findFile($type.'/'.$action.'.php', $this->_basepath);
+			if (($file = Flux::findFile($type.'/'.$action.'/'.$action.'.php', $this->_basepath)) === false) {
+			    $path = Flux::findFile($type.'/'.$action.'.php', $this->_basepath);
 		    }
 		    else $path = $file;
 		}

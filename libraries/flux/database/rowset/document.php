@@ -1,6 +1,6 @@
 <?php
 
-class FlowDatabaseRowsetDocument extends KDatabaseRowsetAbstract
+class FluxDatabaseRowsetDocument extends KDatabaseRowsetAbstract
 {
 
 }

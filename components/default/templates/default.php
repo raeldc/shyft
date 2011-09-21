@@ -1,19 +1,19 @@
 <?php
 /**
- * @category	Flowku
- * @package     Flowku_Components
+ * @category	Fluxku
+ * @package     Fluxku_Components
  * @subpackage  Application
  * @copyright   Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link        http://www.flowku.com
+ * @link        http://www.fluxed.com
  */
 
 /**
  * Default Template
 .*
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flowku
- * @package     Flowku_Components
+ * @category    Fluxku
+ * @package     Fluxku_Components
  * @subpackage  Default
  */
 class ComDefaultTemplateDefault extends KTemplateAbstract

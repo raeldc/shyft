@@ -1,24 +1,24 @@
 <?php
 /**
  * @version 	$Id$
- * @category	Flow
- * @package		Flow_Loader
+ * @category	Flux
+ * @package		Flux_Loader
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
 //Instantiate the loader singleton
-FlowLoader::getInstance();
+FluxLoader::getInstance();
 
 /**
- * FlowLoader class derived from KLoader class
+ * FluxLoader class derived from KLoader class
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Flow
- * @package     Flow_Loader
+ * @category    Flux
+ * @package     Flux_Loader
  * @static
  */
-class FlowLoader
+class FluxLoader
 {
     /**
      * The file container

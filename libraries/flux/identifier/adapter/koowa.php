@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flow
- * @package		Flow_Identifier
+ * @category	Flux
+ * @package		Flux_Identifier
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -16,7 +16,7 @@
  * @subpackage 	Adapter
  * @uses 		KInflector
  */
-class FlowIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
+class FluxIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
 {	
 	/**
 	 * Get the path based on an identifier
@@ -36,7 +36,7 @@ class FlowIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
 			$path .= '/'.$identifier->name;
 		}
 
-		$path = Flow::findFile($path.'.php', $identifier->basepath);
+		$path = Flux::findFile($path.'.php', $identifier->basepath);
 		return $path;
 	}
 }

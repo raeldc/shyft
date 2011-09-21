@@ -1,6 +1,6 @@
 <?php
 
-class ComConfigModelConfig extends FlowModelDocument
+class ComConfigModelConfig extends FluxModelDocument
 {
 	public function __construct(KConfig $config)
 	{

@@ -1,6 +1,6 @@
 <?php
 
-class FlowDatabaseRowDocument extends KDatabaseRowAbstract
+class FluxDatabaseRowDocument extends KDatabaseRowAbstract
 {
 	/**
      * Document object or identifier (type://app/COMPONENT.database.document.DOCUMENTNAME)
@@ -120,7 +120,7 @@ class FlowDatabaseRowDocument extends KDatabaseRowAbstract
     {
         if($this->_document !== false)
         {
-            if(!($this->_document instanceof FlowDatabaseDocumentAbstract))
+            if(!($this->_document instanceof FluxDatabaseDocumentAbstract))
 		    {   		        
 		        //Make sure we have a document identifier
 		        if(!($this->_document instanceof KIdentifier)) {
@@ -150,7 +150,7 @@ class FlowDatabaseRowDocument extends KDatabaseRowAbstract
      */
     public function setDocument($document)
 	{
-		if(!($document instanceof FlowDatabaseDocumentAbstract))
+		if(!($document instanceof FluxDatabaseDocumentAbstract))
 		{
 			if(is_string($document) && strpos($document, '.') === false ) 
 		    {

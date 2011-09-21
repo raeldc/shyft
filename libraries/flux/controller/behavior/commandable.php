@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flow
- * @package		Flow_Controller
+ * @category	Flux
+ * @package		Flux_Controller
  * @subpackage	Command
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,11 +11,11 @@
  * Commandable Controller Behavior Class
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flow
- * @package     Flow_Controller
+ * @category	Flux
+ * @package     Flux_Controller
  * @subpackage	Behavior
  */
-class FlowControllerBehaviorCommandable extends KControllerBehaviorCommandable
+class FluxControllerBehaviorCommandable extends KControllerBehaviorCommandable
 {
     /**
 	 * Add default toolbar commands

@@ -1,11 +1,11 @@
 <?php
 /**
- * @category	Flow
- * @package     Flow_Database
+ * @category	Flux
+ * @package     Flux_Database
  * @subpackage  Table
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.flowku.com
+ * @link     	http://www.fluxed.com
  */
 
 /**
@@ -13,11 +13,11 @@
  *
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flow
- * @package     Flow_Database
+ * @category    Flux
+ * @package     Flux_Database
  * @subpackage  Document
  */
-class FlowDatabaseDocumentNodes extends FlowDatabaseDocumentAbstract
+class FluxDatabaseDocumentNodes extends FluxDatabaseDocumentAbstract
 {
 	protected function _initialize(KConfig $config)
 	{

@@ -1,6 +1,6 @@
 <?php
 
-class FlowDatabaseRowDefault extends FlowDatabaseRowDocument
+class FluxDatabaseRowDefault extends FluxDatabaseRowDocument
 {
 	
 }

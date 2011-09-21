@@ -1,3 +1,3 @@
 <?php
 
-class FlowModelDefault extends FlowModelDocument{}
+class FluxModelDefault extends FluxModelDocument{}

@@ -1,19 +1,19 @@
 <?php
 /**
- * @category    Flowku
- * @package     Flowku_Components
+ * @category    Fluxku
+ * @package     Fluxku_Components
  * @subpackage  Default
  * @copyright   Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link        http://www.flowku.org
+ * @link        http://www.fluxed.com
  */
 
 /**
  * Default Paginator Helper
 .*
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flowku
- * @package     Flowku_Components
+ * @category    Fluxku
+ * @package     Fluxku_Components
  * @subpackage  Default
  * @uses        KRequest
  * @uses        KConfig

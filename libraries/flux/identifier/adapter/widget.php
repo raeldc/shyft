@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flow
- * @package		Flow_Identifier
+ * @category	Flux
+ * @package		Flux_Identifier
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,11 +11,11 @@
  * Identifier Adapter for a component
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flow
- * @package     Flow_Identifier
+ * @category	Flux
+ * @package     Flux_Identifier
  * @subpackage 	Adapter
  */
-class FlowIdentifierAdapterWidget extends KIdentifierAdapterAbstract
+class FluxIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 {
 	/** 
 	 * The adapter type
@@ -50,7 +50,7 @@ class FlowIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 			return false;
 
       	//Manually load the class to set the basepath
-		if (!FlowLoader::loadClass($classname, $identifier->basepath))
+		if (!FluxLoader::loadClass($classname, $identifier->basepath))
 		{
 			$classname = false;
 		    $classpath = $identifier->path;
@@ -66,8 +66,8 @@ class FlowIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 			 *                     -> Named Widget Default  
 			 *                     -> Named Component Specific 
 			 *                     -> Named Component Default
-			 *                     -> Flow Specific
-			 *                     -> Flow Default
+			 *                     -> Flux Specific
+			 *                     -> Flux Default
 			 *                     -> Framework Specific 
 			 *                     -> Framework Default
 			 */
@@ -97,12 +97,12 @@ class FlowIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 				$classname = 'ComDefault'.ucfirst($classtype).$path.ucfirst($identifier->name);
 			} elseif(class_exists('ComDefault'.ucfirst($classtype).$path.'Default')) {
 				$classname = 'ComDefault'.ucfirst($classtype).$path.'Default';
-			} elseif(class_exists( 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
-				$classname = 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name);
-			}elseif(class_exists( 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
-				$classname = 'Flow'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default';
-			}elseif(class_exists('Flow'.ucfirst($classtype).$path.'Default')) {
-				$classname = 'Flow'.ucfirst($classtype).$path.'Default';
+			} elseif(class_exists( 'Flux'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
+				$classname = 'Flux'.ucfirst($classtype).$path.ucfirst($identifier->name);
+			}elseif(class_exists( 'Flux'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
+				$classname = 'Flux'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default';
+			}elseif(class_exists('Flux'.ucfirst($classtype).$path.'Default')) {
+				$classname = 'Flux'.ucfirst($classtype).$path.'Default';
 			}elseif(class_exists( 'K'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
 				$classname = 'K'.ucfirst($classtype).$path.ucfirst($identifier->name);
 			}elseif(class_exists( 'K'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
@@ -141,7 +141,7 @@ class FlowIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 			else $path  = strtolower($identifier->name);	
 		}
 
-		$path = Flow::findFile('/widgets/'.$component.'/'.$path.'.php', $identifier->basepath);
+		$path = Flux::findFile('/widgets/'.$component.'/'.$path.'.php', $identifier->basepath);
 
 		return $path;
 	}

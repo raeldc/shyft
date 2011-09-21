@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flow
- * @package		Flow_Identifier
+ * @category	Flux
+ * @package		Flux_Identifier
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,11 +11,11 @@
  * Identifier Adapter for a theme
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flow
- * @package     Flow_Identifier
+ * @category	Flux
+ * @package     Flux_Identifier
  * @subpackage 	Adapter
  */
-class FlowIdentifierAdapterTheme extends KIdentifierAdapterAbstract
+class FluxIdentifierAdapterTheme extends KIdentifierAdapterAbstract
 {
 	/** 
 	 * The adapter type
@@ -56,7 +56,7 @@ class FlowIdentifierAdapterTheme extends KIdentifierAdapterAbstract
 			$path = '/'.implode('/', $parts);
 		}
 
-		$path = Flow::findFile('/themes/'.$theme.$path.'/'.$layout.'.php', $identifier->basepath);
+		$path = Flux::findFile('/themes/'.$theme.$path.'/'.$layout.'.php', $identifier->basepath);
 
 		return $path;
 	}

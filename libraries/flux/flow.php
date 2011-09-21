@@ -1,30 +1,30 @@
 <?php
 /**
-* @category		Flow
+* @category		Flux
 * @copyright    Copyright (C) 2011 Israel Canasa. All rights reserved.
 * @license      GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
-* @link         http://www.flowku.com
+* @link         http://www.fluxed.com
 */
 
 /**
- * Flow class
+ * Flux class
  *
- * Provides metadata for Flow such as version info
+ * Provides metadata for Flux such as version info
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @package     Flow
+ * @package     Flux
  */
-class Flow
+class Flux
 {
     /**
-     * Flow version
+     * Flux version
      * 
      * @var string
      */
     const VERSION = '0.1-prototype';
     
     /**
-     * Path to Flow libraries
+     * Path to Flux libraries
      */
     protected static $_path;
 
@@ -63,34 +63,34 @@ class Flow
         require_once self::findFile('koowa/loader/adapter/interface.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/exception.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/abstract.php',  self::$paths['libraries']);
-        require_once self::findFile('flow/loader/adapter/koowa.php',      self::$paths['libraries']);
-        require_once self::findFile('flow/loader/adapter/flow.php',       self::$paths['libraries']);
+        require_once self::findFile('flux/loader/adapter/koowa.php',      self::$paths['libraries']);
+        require_once self::findFile('flux/loader/adapter/flux.php',       self::$paths['libraries']);
 
         // Registry Classes
         require_once self::findFile('koowa/loader/registry.php',          self::$paths['libraries']);
 
-        // Get Flow Loader
-        require_once self::findFile('flow/loader/loader.php',             self::$paths['libraries']);
+        // Get Flux Loader
+        require_once self::findFile('flux/loader/loader.php',             self::$paths['libraries']);
 
         /*
-         *      We have a special loader adapter for Flow which looks for "fallback" directories
+         *      We have a special loader adapter for Flux which looks for "fallback" directories
          *      Fallback directories is searched in this order sites/site -> sites/all -> system
          */
 
         // Register the necessary Loader Adapters
-        FlowLoader::registerAdapter(new FlowLoaderAdapterKoowa(self::$paths['libraries']));
-        FlowLoader::registerAdapter(new FlowLoaderAdapterFlow(self::$paths['libraries']));
-        FlowLoader::registerAdapter(new FlowLoaderAdapterComponent(self::$paths['components']));
-        FlowLoader::registerAdapter(new FlowLoaderAdapterWidget(self::$paths['widgets']));
-        FlowLoader::registerAdapter(new FlowLoaderAdapterAction(self::$paths['actions']));
+        FluxLoader::registerAdapter(new FluxLoaderAdapterKoowa(self::$paths['libraries']));
+        FluxLoader::registerAdapter(new FluxLoaderAdapterFlux(self::$paths['libraries']));
+        FluxLoader::registerAdapter(new FluxLoaderAdapterComponent(self::$paths['components']));
+        FluxLoader::registerAdapter(new FluxLoaderAdapterWidget(self::$paths['widgets']));
+        FluxLoader::registerAdapter(new FluxLoaderAdapterAction(self::$paths['actions']));
 
         // Register the necessary Identifier Adapaters
-        KIdentifier::registerAdapter(new FlowIdentifierAdapterKoowa());
-        KIdentifier::registerAdapter(new FlowIdentifierAdapterFlow());
-        KIdentifier::registerAdapter(new FlowIdentifierAdapterComponent());
-        KIdentifier::registerAdapter(new FlowIdentifierAdapterWidget());
-        KIdentifier::registerAdapter(new FlowIdentifierAdapterAction());
-        KIdentifier::registerAdapter(new FlowIdentifierAdapterTheme());
+        KIdentifier::registerAdapter(new FluxIdentifierAdapterKoowa());
+        KIdentifier::registerAdapter(new FluxIdentifierAdapterFlux());
+        KIdentifier::registerAdapter(new FluxIdentifierAdapterComponent());
+        KIdentifier::registerAdapter(new FluxIdentifierAdapterWidget());
+        KIdentifier::registerAdapter(new FluxIdentifierAdapterAction());
+        KIdentifier::registerAdapter(new FluxIdentifierAdapterTheme());
 
         KIdentifier::registerApplication('site' , self::$paths['site']);
 
@@ -98,7 +98,7 @@ class Flow
     }
 
     /**
-     * Get the version of the Flow library
+     * Get the version of the Flux library
      */
     public static function getVersion()
     {
@@ -106,7 +106,7 @@ class Flow
     }
 
     /**
-     * Get path to Flow libraries
+     * Get path to Flux libraries
      */
     public static function getPath()
     {

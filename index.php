@@ -43,15 +43,15 @@ define('SITE_THEMES',       SITE_ROOT.'/themes');
 define('SITE_LANGUAGES',    SITE_ROOT.'/languages');
 
 /************************************************************************************************
- *                                   Initialize Flow                                            *
+ *                                   Initialize Flux                                            *
  ************************************************************************************************/
 
 define('DS', DIRECTORY_SEPARATOR);
-require_once SYSTEM_LIBRARIES.'/flow/flow.php';
+require_once SYSTEM_LIBRARIES.'/flux/flux.php';
 
-Flow::getInstance(array(
-    // Here, an array of paths are passed to the Flow instance. 
-    // Flow will look for files in those folders, starting on the first path, until the file is found.
+Flux::getInstance(array(
+    // Here, an array of paths are passed to the Flux instance. 
+    // Flux will look for files in those folders, starting on the first path, until the file is found.
     'libraries'  => array(SITE_LIBRARIES,  SITES_LIBRARIES,    SYSTEM_LIBRARIES),
     'components' => array(SITE_COMPONENTS, SITES_COMPONENTS,   SYSTEM_COMPONENTS),
     'widgets'    => array(SITE_WIDGETS,    SITES_WIDGETS,      SYSTEM_WIDGETS),
