@@ -139,13 +139,13 @@
                         <li>
                             <label>
                                 <input type="radio" name="visibility" value="display">
-                                <span>Display only if these conditions are met</span>
+                                <span>Display if one of these conditions are met</span>
                             </label>
                         </li>
                         <li>
                             <label>
                                 <input type="radio" name="visibility" value="hide">
-                                <span>Don't display if these conditions are met</span>
+                                <span>Don't display if one of these conditions are met</span>
                             </label>
                         </li>
                     </ul>
@@ -153,38 +153,11 @@
             </div>
 
             <div class="clearfix">
-                <label for="form-textarea">Condition 1</label>
-                <div class="input">
-                    <div class="input-prepend">
-                        <span class="add-on">com</span>
-                        <input class="medium" name="conditions[0][com]" size="16" type="text">
-                    </div><br>
-                    <div class="input-prepend">
-                        <span class="add-on">view</span>
-                        <input class="medium" name="conditions[0][view]" size="16" type="text">
-                    </div><br>
-                    <div class="input-prepend">
-                        <span class="add-on">id</span>
-                        <input class="medium" name="conditions[0][id]" size="16" type="text">
-                    </div><br>
-                </div>
-            </div>
-
-            <div class="clearfix">
-                <label for="form-textarea">Condition 2</label>
-                <div class="input">
-                    <div class="input-prepend">
-                        <span class="add-on">com</span>
-                        <input class="medium" name="conditions[1][com]" size="16" type="text">
-                    </div><br>
-                    <div class="input-prepend">
-                        <span class="add-on">view</span>
-                        <input class="medium" name="conditions[1][view]" size="16" type="text">
-                    </div><br>
-                    <div class="input-prepend">
-                        <span class="add-on">id</span>
-                        <input class="medium" name="conditions[1][id]" size="16" type="text">
-                    </div><br>
+                <h5>Conditions in URL Query Format</h5>
+                <div>
+                    <textarea class="xxlarge" id="form-textarea" name="conditions" rows="5" disabled><?=$widget->conditions?></textarea>
+                    <span class="help-block">Put Conditions in URL Query format. Each line is a condition. You can use wildcard asterisk *<br>
+                     Example: <strong>com=pages&view=page&id=my-first-page</strong></span>
                 </div>
             </div>
          </div><!--end: #widget-required-->
@@ -192,7 +165,7 @@
          <!--start: #widget-about-->
         <div id="widget-about">
             <div class="clearfix">
-                <h3>Provided by Wiz Media</h3>
+                <h3>Provided by Shyft, Inc</h3>
                 <p>This widget simply displays a text which can be an HTML format. Display images, quotations or other static sidebar content using this widget</p>
             </div>
          </div><!--end: #widget-about-->
