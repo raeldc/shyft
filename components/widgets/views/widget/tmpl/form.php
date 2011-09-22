@@ -11,6 +11,8 @@
         <li class="active"><a href="#widget-required">Essentials</a></li>
         <li><a href="#widget-configuration">Configuration</a></li>
         <li><a href="#widget-params">Parameters</a></li>
+        <li><a href="#widget-condition">Display Conditions</a></li>
+        <li><a href="#widget-about">About</a></li>
     </ul>
 
     
@@ -75,7 +77,7 @@
             
         </div><!--end: #widget-required-->
 
-        <!--start: #widget-params-->
+        <!--start: #widget-configuration-->
         <div id="widget-configuration">
             <p class="alert-message block-message success">Here you'll find the different options that the Widget Type: <strong>HTML Container</strong> needs.</p>
             <div class="clearfix">
@@ -84,7 +86,7 @@
                     <textarea class="xlarge" id="form-textarea" name="body" rows="5"><?=$widget->body?></textarea>
                 </div>
             </div>
-        </div>
+         </div><!--end: #widget-configuration-->
 
         <!--start: #widget-params-->
         <div id="widget-params">
@@ -117,7 +119,84 @@
                     </span>
                 </div>
             </div>
-        </div><!--end: #widget-required-->
+        </div><!--end: #widget-params-->
+
+        <!--start: #widget-condition-->
+        <div id="widget-condition">
+            <p class="alert-message block-message success">
+                Show/Hide this widget if certain conditions are met. Conditions are based on the URL used to access a page.
+            </p>
+
+            <div class="clearfix">
+                <div class="input">
+                    <ul class="inputs-list">
+                        <li>
+                            <label>
+                                <input type="radio" checked="checked" name="visibility" value="all">
+                                <span>Display everywhere</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="visibility" value="display">
+                                <span>Display only if these conditions are met</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="visibility" value="hide">
+                                <span>Don't display if these conditions are met</span>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <label for="form-textarea">Condition 1</label>
+                <div class="input">
+                    <div class="input-prepend">
+                        <span class="add-on">com</span>
+                        <input class="medium" name="conditions[0][com]" size="16" type="text">
+                    </div><br>
+                    <div class="input-prepend">
+                        <span class="add-on">view</span>
+                        <input class="medium" name="conditions[0][view]" size="16" type="text">
+                    </div><br>
+                    <div class="input-prepend">
+                        <span class="add-on">id</span>
+                        <input class="medium" name="conditions[0][id]" size="16" type="text">
+                    </div><br>
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <label for="form-textarea">Condition 2</label>
+                <div class="input">
+                    <div class="input-prepend">
+                        <span class="add-on">com</span>
+                        <input class="medium" name="conditions[1][com]" size="16" type="text">
+                    </div><br>
+                    <div class="input-prepend">
+                        <span class="add-on">view</span>
+                        <input class="medium" name="conditions[1][view]" size="16" type="text">
+                    </div><br>
+                    <div class="input-prepend">
+                        <span class="add-on">id</span>
+                        <input class="medium" name="conditions[1][id]" size="16" type="text">
+                    </div><br>
+                </div>
+            </div>
+         </div><!--end: #widget-required-->
+
+         <!--start: #widget-about-->
+        <div id="widget-about">
+            <div class="clearfix">
+                <h3>Provided by Wiz Media</h3>
+                <p>This widget simply displays a text which can be an HTML format. Display images, quotations or other static sidebar content using this widget</p>
+            </div>
+         </div><!--end: #widget-about-->
+
     </div><!--end: .pills-content-->
 
     <div class="actions">
