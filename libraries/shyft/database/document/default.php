@@ -1,11 +1,11 @@
 <?php
 /**
- * @category	Flux
- * @package     Flux_Database
+ * @category	Shyft
+ * @package     Shyft_Database
  * @subpackage  Table
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.fluxed.com
+ * @link     	http://www.shyfted.com
  */
 
 /**
@@ -13,11 +13,11 @@
  *
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flux
- * @package     Flux_Database
+ * @category    Shyft
+ * @package     Shyft_Database
  * @subpackage  Table
  */
-class FluxDatabaseDocumentDefault extends FluxDatabaseDocumentAbstract implements KObjectInstantiatable
+class SDatabaseDocumentDefault extends SDatabaseDocumentAbstract implements KObjectInstantiatable
 {
 	/**
      * Associative array of table instances
@@ -29,7 +29,7 @@ class FluxDatabaseDocumentDefault extends FluxDatabaseDocumentAbstract implement
 	/**
      * Force creation of a singleton
      *
-     * @return FluxDatabaseDocumentDefault
+     * @return SDatabaseDocumentDefault
      */
     public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
     {

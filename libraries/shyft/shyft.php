@@ -1,30 +1,30 @@
 <?php
 /**
-* @category		Flux
+* @category		Shyft
 * @copyright    Copyright (C) 2011 Israel Canasa. All rights reserved.
 * @license      GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
-* @link         http://www.fluxed.com
+* @link         http://www.shyfted.com
 */
 
 /**
- * Flux class
+ * Shyft class
  *
- * Provides metadata for Flux such as version info
+ * Provides metadata for Shyft such as version info
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @package     Flux
+ * @package     Shyft
  */
-class Flux
+class Shyft
 {
     /**
-     * Flux version
+     * Shyft version
      * 
      * @var string
      */
     const VERSION = '0.1-prototype';
     
     /**
-     * Path to Flux libraries
+     * Path to Shyft libraries
      */
     protected static $_path;
 
@@ -63,34 +63,34 @@ class Flux
         require_once self::findFile('koowa/loader/adapter/interface.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/exception.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/abstract.php',  self::$paths['libraries']);
-        require_once self::findFile('flux/loader/adapter/koowa.php',      self::$paths['libraries']);
-        require_once self::findFile('flux/loader/adapter/flux.php',       self::$paths['libraries']);
+        require_once self::findFile('shyft/loader/adapter/koowa.php',      self::$paths['libraries']);
+        require_once self::findFile('shyft/loader/adapter/shyft.php',       self::$paths['libraries']);
 
         // Registry Classes
         require_once self::findFile('koowa/loader/registry.php',          self::$paths['libraries']);
 
-        // Get Flux Loader
-        require_once self::findFile('flux/loader/loader.php',             self::$paths['libraries']);
+        // Get Shyft Loader
+        require_once self::findFile('shyft/loader/loader.php',             self::$paths['libraries']);
 
         /*
-         *      We have a special loader adapter for Flux which looks for "fallback" directories
+         *      We have a special loader adapter for Shyft which looks for "fallback" directories
          *      Fallback directories is searched in this order sites/site -> sites/all -> system
          */
 
         // Register the necessary Loader Adapters
-        FluxLoader::registerAdapter(new FluxLoaderAdapterKoowa(self::$paths['libraries']));
-        FluxLoader::registerAdapter(new FluxLoaderAdapterFlux(self::$paths['libraries']));
-        FluxLoader::registerAdapter(new FluxLoaderAdapterComponent(self::$paths['components']));
-        FluxLoader::registerAdapter(new FluxLoaderAdapterWidget(self::$paths['widgets']));
-        FluxLoader::registerAdapter(new FluxLoaderAdapterAction(self::$paths['actions']));
+        SLoader::registerAdapter(new SLoaderAdapterKoowa(self::$paths['libraries']));
+        SLoader::registerAdapter(new SLoaderAdapterShyft(self::$paths['libraries']));
+        SLoader::registerAdapter(new SLoaderAdapterComponent(self::$paths['components']));
+        SLoader::registerAdapter(new SLoaderAdapterWidget(self::$paths['widgets']));
+        SLoader::registerAdapter(new SLoaderAdapterAction(self::$paths['actions']));
 
         // Register the necessary Identifier Adapaters
-        KIdentifier::registerAdapter(new FluxIdentifierAdapterKoowa());
-        KIdentifier::registerAdapter(new FluxIdentifierAdapterFlux());
-        KIdentifier::registerAdapter(new FluxIdentifierAdapterComponent());
-        KIdentifier::registerAdapter(new FluxIdentifierAdapterWidget());
-        KIdentifier::registerAdapter(new FluxIdentifierAdapterAction());
-        KIdentifier::registerAdapter(new FluxIdentifierAdapterTheme());
+        KIdentifier::registerAdapter(new SIdentifierAdapterKoowa());
+        KIdentifier::registerAdapter(new SIdentifierAdapterShyft());
+        KIdentifier::registerAdapter(new SIdentifierAdapterComponent());
+        KIdentifier::registerAdapter(new SIdentifierAdapterWidget());
+        KIdentifier::registerAdapter(new SIdentifierAdapterAction());
+        KIdentifier::registerAdapter(new SIdentifierAdapterTheme());
 
         KIdentifier::registerApplication('site' , self::$paths['site']);
 
@@ -98,7 +98,7 @@ class Flux
     }
 
     /**
-     * Get the version of the Flux library
+     * Get the version of the Shyft library
      */
     public static function getVersion()
     {
@@ -106,7 +106,7 @@ class Flux
     }
 
     /**
-     * Get path to Flux libraries
+     * Get path to Shyft libraries
      */
     public static function getPath()
     {

@@ -1,11 +1,11 @@
 <?php
 /**
- * @category	Fluxku
- * @package     Fluxku_Components
+ * @category	Shyft
+ * @package     Shyft_Components
  * @subpackage  Default
  * @copyright   Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link        http://www.fluxed.com
+ * @link        http://www.shyfted.com
  */
 
 /**
@@ -20,8 +20,8 @@
  * It's using div so the template can still be compatible on different platforms. 
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Fluxku
- * @package     Fluxku_Components
+ * @category    Shyft
+ * @package     Shyft_Components
  * @subpackage  Default
  */
 class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements KTemplateFilterWrite

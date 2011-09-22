@@ -1,6 +1,6 @@
 <?php
 
-class FluxDatabaseAdapterDocument extends KObject implements KObjectIdentifiable 
+class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable 
 {
 	protected $_connection;
 	protected $_database;

@@ -1,11 +1,11 @@
 <?php
 /**
- * @category	Flux
- * @package     Flux_Database
+ * @category	Shyft
+ * @package     Shyft_Database
  * @subpackage  Table
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.fluxed.com
+ * @link     	http://www.shyfted.com
  */
 
 /**
@@ -13,11 +13,11 @@
  *
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flux
- * @package     Flux_Database
+ * @category    Shyft
+ * @package     Shyft_Database
  * @subpackage  Document
  */
-class FluxDatabaseDocumentNodes extends FluxDatabaseDocumentAbstract
+class SDatabaseDocumentNodes extends SDatabaseDocumentAbstract
 {
 	protected function _initialize(KConfig $config)
 	{

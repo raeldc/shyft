@@ -1,8 +1,8 @@
 <?php
 /**
  * @version 	$Id$
- * @category	Flux
- * @package		Flux_Loader
+ * @category	Shyft
+ * @package		Shyft_Loader
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -17,21 +17,21 @@
  * @subpackage 	Adapter
  * @uses 		Koowa
  */
-class FluxLoaderAdapterFlux extends KLoaderAdapterAbstract
+class SLoaderAdapterShyft extends KLoaderAdapterAbstract
 {
 	/** 
 	 * The adapter type
 	 * 
 	 * @var string
 	 */
-	protected $_type = 'flux';
+	protected $_type = 'shyft';
 	
 	/**
 	 * The class prefix
 	 * 
 	 * @var string
 	 */
-	protected $_prefix = 'Flux';
+	protected $_prefix = 'S';
 
 	/**
 	 * Get the path based on a class name
@@ -54,11 +54,11 @@ class FluxLoaderAdapterFlux extends KLoaderAdapterAbstract
 			if(count($parts) == 1) {
 				$path = $path.'/'.$path;
 			}
-			if(!is_file(Flux::findFile('flux/'.$path.'.php', $this->_basepath))) {
+			if(!is_file(Shyft::findFile('shyft/'.$path.'.php', $this->_basepath))) {
 				$path = $path.'/'.strtolower(array_pop($parts));
 			}
 
-			$path = Flux::findFile('flux/'.$path.'.php', $this->_basepath);
+			$path = Shyft::findFile('shyft/'.$path.'.php', $this->_basepath);
 		}
 
 		return $path;

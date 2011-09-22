@@ -1,11 +1,11 @@
 <?php
 /**
- * @category	Flux
- * @package     Flux_Database
+ * @category	Shyft
+ * @package     Shyft_Database
  * @subpackage  Table
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.fluxed.com
+ * @link     	http://www.shyfted.com
  */
 
 /**
@@ -13,11 +13,11 @@
  *
  *
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Flux
- * @package     Flux_Database
+ * @category    Shyft
+ * @package     Shyft_Database
  * @subpackage  Document
  */
-abstract class FluxDatabaseDocumentAbstract extends KObject implements KObjectIdentifiable
+abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdentifiable
 {
 	protected $_database;
 	protected $_name;
@@ -49,7 +49,7 @@ abstract class FluxDatabaseDocumentAbstract extends KObject implements KObjectId
 	protected function _initialize(KConfig $config)
 	{
 		// TODO: Set the database to be a singleton, use com:application.database
-		$database = KFactory::get('flux:database.adapter.document');
+		$database = KFactory::get('shyft:database.adapter.document');
 		$package = $this->_identifier->package;
         $name    = $this->_identifier->name;
 
@@ -304,7 +304,7 @@ abstract class FluxDatabaseDocumentAbstract extends KObject implements KObjectId
 		static $instance;
 
 		if (is_null($instance)) {
-			$instance = new FluxDatabaseQueryDocument();
+			$instance = new SDatabaseQueryDocument();
 		}
 
 		return $instance;

@@ -1,24 +1,24 @@
 <?php
 /**
  * @version 	$Id$
- * @category	Flux
- * @package		Flux_Loader
+ * @category	Shyft
+ * @package		Shyft_Loader
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
 //Instantiate the loader singleton
-FluxLoader::getInstance();
+SLoader::getInstance();
 
 /**
- * FluxLoader class derived from KLoader class
+ * SLoader class derived from KLoader class
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Flux
- * @package     Flux_Loader
+ * @category    Shyft
+ * @package     Shyft_Loader
  * @static
  */
-class FluxLoader
+class SLoader
 {
     /**
      * The file container

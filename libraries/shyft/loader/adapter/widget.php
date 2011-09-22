@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flux
- * @package		Flux_Loader
+ * @category	Shyft
+ * @package		Shyft_Loader
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,12 +11,12 @@
  * Loader Adapter for a widget
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flux
- * @package     Flux_Loader
+ * @category	Shyft
+ * @package     Shyft_Loader
  * @subpackage 	Adapter
  * @uses		KInflector
  */
-class FluxLoaderAdapterWidget extends KLoaderAdapterAbstract
+class SLoaderAdapterWidget extends KLoaderAdapterAbstract
 {
 	/** 
 	 * The adapter type
@@ -79,7 +79,7 @@ class FluxLoaderAdapterWidget extends KLoaderAdapterAbstract
 			elseif($file) $path = $file;
 			else $path = $widget;
 
-			$path = Flux::findFile($widget.'/'.$path.'.php', $basepath);
+			$path = Shyft::findFile($widget.'/'.$path.'.php', $basepath);
 		}
 
 		return $path;

@@ -1,21 +1,21 @@
 <?php
 /**
- * @category	Flux
- * @package		Flux_Model
+ * @category	Shyft
+ * @package		Shyft_Model
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.fluxed.com
+ * @link     	http://www.shyfted.com
  */
 
 /**
  * Abstract Model Class for Documents
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flux
- * @package     Flux_Model
+ * @category	Shyft
+ * @package     Shyft_Model
  */
 
-abstract class FluxModelDocument extends KModelAbstract
+abstract class SModelDocument extends KModelAbstract
 {
     /**
      * Document object or identifier (type://app/COMPONENT.database.document.DOCUMENTNAME)
@@ -109,7 +109,7 @@ abstract class FluxModelDocument extends KModelAbstract
     {
         if($this->_document !== false)
         {
-            if(!($this->_document instanceof FluxDatabaseDocumentAbstract))
+            if(!($this->_document instanceof SDatabaseDocumentAbstract))
 		    {   		        
 		        //Make sure we have a document identifier
 		        if(!($this->_document instanceof KIdentifier)) {
@@ -139,7 +139,7 @@ abstract class FluxModelDocument extends KModelAbstract
      */
     public function setDocument($document)
 	{
-		if(!($document instanceof FluxDatabaseDocumentAbstract))
+		if(!($document instanceof SDatabaseDocumentAbstract))
 		{
 			if(is_string($document) && strpos($document, '.') === false ) 
 		    {
@@ -258,7 +258,7 @@ abstract class FluxModelDocument extends KModelAbstract
     /**
      * Builds a WHERE clause for the query
      */
-    protected function _buildQueryWhere(FluxDatabaseQueryDocument $query)
+    protected function _buildQueryWhere(SDatabaseQueryDocument $query)
     {
         if (!is_null($this->_state->id)) {
             $query->where('id', '=', $this->_state->id);
@@ -268,7 +268,7 @@ abstract class FluxModelDocument extends KModelAbstract
     /**
      * Builds a Limit clause for the query
      */
-    protected function _buildQueryLimit(FluxDatabaseQueryDocument $query)
+    protected function _buildQueryLimit(SDatabaseQueryDocument $query)
     {
         if (!is_null($this->_state->limit)) {
             $query->limit($this->_state->limit, $this->_state->offset);
@@ -278,7 +278,7 @@ abstract class FluxModelDocument extends KModelAbstract
     /**
      * Builds a Order clause for the query
      */
-    protected function _buildQueryOrder(FluxDatabaseQueryDocument $query)
+    protected function _buildQueryOrder(SDatabaseQueryDocument $query)
     {
         if (!is_null($this->_state->sort)) {
             $query->sort($this->_state->sort, $this->_state->direction);

@@ -1,6 +1,6 @@
 <?php
 
-class FluxDatabaseRowsetDefault extends FluxDatabaseRowsetDocument
+class SDatabaseRowsetDefault extends SDatabaseRowsetDocument
 {
 	
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flux
- * @package		Flux_Identifier
+ * @category	Shyft
+ * @package		Shyft_Identifier
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,11 +11,11 @@
  * Identifier Adapter for a theme
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flux
- * @package     Flux_Identifier
+ * @category	Shyft
+ * @package     Shyft_Identifier
  * @subpackage 	Adapter
  */
-class FluxIdentifierAdapterTheme extends KIdentifierAdapterAbstract
+class SIdentifierAdapterTheme extends KIdentifierAdapterAbstract
 {
 	/** 
 	 * The adapter type
@@ -56,7 +56,7 @@ class FluxIdentifierAdapterTheme extends KIdentifierAdapterAbstract
 			$path = '/'.implode('/', $parts);
 		}
 
-		$path = Flux::findFile('/themes/'.$theme.$path.'/'.$layout.'.php', $identifier->basepath);
+		$path = Shyft::findFile('/themes/'.$theme.$path.'/'.$layout.'.php', $identifier->basepath);
 
 		return $path;
 	}

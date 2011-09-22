@@ -19,7 +19,7 @@
     <header class="topbar">
         <div class="fill">
             <div class="container">
-                <h3><a class="brand" href="index.php">Fluxku Project</a></h3>
+                <h3><a class="brand" href="index.php">Shyft Project</a></h3>
                 <nav>
                     <ul class="nav">
                         <li class="active"><a href="index.php">Home</a></li>

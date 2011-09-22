@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flux
- * @package     Flux_Database
+ * @category	Shyft
+ * @package     Shyft_Database
  * @subpackage  Query
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,11 +11,11 @@
  * Database Select Class for database select statement generation
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flux
- * @package     Flux_Database
+ * @category	Shyft
+ * @package     Shyft_Database
  * @subpackage  Query
  */
-class FluxDatabaseQueryDocument extends KObject
+class SDatabaseQueryDocument extends KObject
 {
     public $from;
 

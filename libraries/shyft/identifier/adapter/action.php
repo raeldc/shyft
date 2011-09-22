@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flux
- * @package		Flux_Identifier
+ * @category	Shyft
+ * @package		Shyft_Identifier
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -11,13 +11,13 @@
  * Identifier Adapter for a plugin
  *
  * @author		Israel Canasa <raeldc@gmail.com>
- * @category	Flux
- * @package     Flux_Identifier
+ * @category	Shyft
+ * @package     Shyft_Identifier
  * @subpackage 	Adapter
  * @uses 		KInflector
- * @uses 		Flux
+ * @uses 		Shyft
  */
-class FluxIdentifierAdapterAction extends KIdentifierAdapterAbstract
+class SIdentifierAdapterAction extends KIdentifierAdapterAbstract
 {
     /** 
 	 * The adapter type
@@ -70,8 +70,8 @@ class FluxIdentifierAdapterAction extends KIdentifierAdapterAbstract
 		}
 		
 		//Plugins can have their own folder
-		if (($path = Flux::findFile($type.'/'.$action.'/'.$path.'.php', $identifier->basepath)) === false) {
-		    $path = Flux::findFile($type.'/'.$action.'/'.$path.'/'.$path.'.php', $identifier->basepath);
+		if (($path = Shyft::findFile($type.'/'.$action.'/'.$path.'.php', $identifier->basepath)) === false) {
+		    $path = Shyft::findFile($type.'/'.$action.'/'.$path.'/'.$path.'.php', $identifier->basepath);
 	    }
 
 		return $path;

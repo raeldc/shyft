@@ -1,7 +1,7 @@
 <?php
 /**
- * @category	Flux
- * @package		Flux_Identifier
+ * @category	Shyft
+ * @package		Shyft_Identifier
  * @subpackage 	Adapter
  * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -16,7 +16,7 @@
  * @subpackage 	Adapter
  * @uses 		KInflector
  */
-class FluxIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
+class SIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
 {	
 	/**
 	 * Get the path based on an identifier
@@ -36,7 +36,7 @@ class FluxIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
 			$path .= '/'.$identifier->name;
 		}
 
-		$path = Flux::findFile($path.'.php', $identifier->basepath);
+		$path = Shyft::findFile($path.'.php', $identifier->basepath);
 		return $path;
 	}
 }

@@ -1,19 +1,19 @@
 <?php
 /**
- * @category	Fluxku
- * @package     Fluxku_Widgets
+ * @category	Shyft
+ * @package     Shyft_Widgets
  * @subpackage  Application
  * @copyright   Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link        http://www.fluxed.com
+ * @link        http://www.shyfted.com
  */
 
 /**
  * Default Template for widgets
 .*
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Fluxku
- * @package     Fluxku_Widgets
+ * @category    Shyft
+ * @package     Shyft_Widgets
  * @subpackage  Default
  */
 class WidgetDefaultTemplateDefault extends ComDefaultTemplateDefault

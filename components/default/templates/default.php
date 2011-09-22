@@ -1,19 +1,19 @@
 <?php
 /**
- * @category	Fluxku
- * @package     Fluxku_Components
+ * @category	Shyft
+ * @package     Shyft_Components
  * @subpackage  Application
  * @copyright   Copyright (C) 2011 Israel Canasa. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link        http://www.fluxed.com
+ * @link        http://www.shyfted.com
  */
 
 /**
  * Default Template
 .*
  * @author      Israel Canasa <raeldc@gmail.com>
- * @category    Fluxku
- * @package     Fluxku_Components
+ * @category    Shyft
+ * @package     Shyft_Components
  * @subpackage  Default
  */
 class ComDefaultTemplateDefault extends KTemplateAbstract
