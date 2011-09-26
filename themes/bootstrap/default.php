@@ -12,10 +12,9 @@
 <link href="css://theme.css" rel="stylesheet">
 <script src="js://jquery.js"></script>
 <script src="js://tabs.js"></script>
+<script src="js://dropdown.js"></script>
 </head>
-
 <body>
-
     <header class="topbar">
         <div class="fill">
             <div class="container">
@@ -40,6 +39,8 @@
     </header>
 
     <div class="container">
+
+        <!--layout-->
         <div class="content">
             <div class="page-header">
                 <h1>Page name <small>Supporting text or tagline</small></h1>
@@ -53,12 +54,13 @@
                 </div>
             </div>
         </div>
-
+        <!--/endlayout-->
 
         <footer>
             <p>&copy; 2011 Israel D. Canasa</p>
         </footer>
-    </div><!--/container-->
+
+    </div>
 
 </body>
 </html>
