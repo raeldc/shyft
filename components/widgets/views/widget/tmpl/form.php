@@ -160,7 +160,7 @@
                      Example: <strong>com=pages&view=page&id=my-first-page</strong></span>
                 </div>
             </div>
-         </div><!--end: #widget-required-->
+         </div><!--end: #widget-condition-->
 
          <!--start: #widget-about-->
         <div id="widget-about">
