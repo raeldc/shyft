@@ -7,7 +7,7 @@ class ComApplicationControllerBehaviorThemable extends KControllerBehaviorAbstra
 		parent::__construct($config);
 
 		// Map a shortcut to the theme
-		KIdentifier::map('theme', 'com://site/application.view.theme');
+		KIdentifier::setAlias('theme', 'com://site/application.view.theme');
 	}
 
     protected function _afterDispatch(KCommandContext $context)

@@ -78,21 +78,21 @@ class Shyft
          */
 
         // Register the necessary Loader Adapters
-        SLoader::registerAdapter(new SLoaderAdapterKoowa(self::$paths['libraries']));
-        SLoader::registerAdapter(new SLoaderAdapterShyft(self::$paths['libraries']));
-        SLoader::registerAdapter(new SLoaderAdapterComponent(self::$paths['components']));
-        SLoader::registerAdapter(new SLoaderAdapterWidget(self::$paths['widgets']));
-        SLoader::registerAdapter(new SLoaderAdapterAction(self::$paths['actions']));
+        SLoader::addAdapter(new SLoaderAdapterKoowa(self::$paths['libraries']));
+        SLoader::addAdapter(new SLoaderAdapterShyft(self::$paths['libraries']));
+        SLoader::addAdapter(new SLoaderAdapterComponent(self::$paths['components']));
+        SLoader::addAdapter(new SLoaderAdapterWidget(self::$paths['widgets']));
+        SLoader::addAdapter(new SLoaderAdapterAction(self::$paths['actions']));
 
         // Register the necessary Identifier Adapaters
-        KIdentifier::registerAdapter(new SIdentifierAdapterKoowa());
-        KIdentifier::registerAdapter(new SIdentifierAdapterShyft());
-        KIdentifier::registerAdapter(new SIdentifierAdapterComponent());
-        KIdentifier::registerAdapter(new SIdentifierAdapterWidget());
-        KIdentifier::registerAdapter(new SIdentifierAdapterAction());
-        KIdentifier::registerAdapter(new SIdentifierAdapterTheme());
+        KIdentifier::addAdapter(new SIdentifierAdapterKoowa());
+        KIdentifier::addAdapter(new SIdentifierAdapterShyft());
+        KIdentifier::addAdapter(new SIdentifierAdapterComponent());
+        KIdentifier::addAdapter(new SIdentifierAdapterWidget());
+        KIdentifier::addAdapter(new SIdentifierAdapterAction());
+        KIdentifier::addAdapter(new SIdentifierAdapterTheme());
 
-        KIdentifier::registerApplication('site' , self::$paths['site']);
+        KIdentifier::setApplication('site' , self::$paths['site']);
 
         define('FLOW', true);
     }

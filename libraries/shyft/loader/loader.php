@@ -240,7 +240,7 @@ class SLoader
      * @param object    A KLoaderAdapter
      * @return void
      */
-    public static function registerAdapter(KLoaderAdapterInterface $adapter)
+    public static function addAdapter(KLoaderAdapterInterface $adapter)
     {
         self::$_adapters[$adapter->getType()]     = $adapter;
         self::$_prefix_map[$adapter->getPrefix()] = $adapter->getType();

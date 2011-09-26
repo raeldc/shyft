@@ -8,7 +8,7 @@ class ComApplicationControllerBehaviorWidgetable extends KControllerBehaviorAbst
     
         // Create the container identifier
         $identifier = 'com://'.$this->_identifier->application.'/application.template.container';
-        KIdentifier::map('theme.container', $identifier);
+        KIdentifier::setAlias('theme.container', $identifier);
     }
     
     protected function _beforeDispatch(KCommandContext $context)
