@@ -1,0 +1,22 @@
+{
+	"name": 		"Bootstrap Theme",
+	"description":	"Shyft's default theme based on Twitter Bootstrap.",
+	"directory": 	"bootstrap",
+	"layouts":	{
+		"default":	{
+			"name": 		"Default Global Layout",
+			"descripton": 	"The Layout that houses other layouts. Containers here will be shown on all pages.",
+			"containers" : 	["navigation", "search", "footer", "logo"]
+		},
+		"home":	{
+			"name": 		"Home Page Layout",
+			"description":	"Use this layout for the home page. It has various containers",
+			"containers" : 	["featured", "snippets", "hometext", "bottom1", "bottom2", "bottom3", "bottom4"]
+		},
+		"inner":	{
+			"name": 		"Inner Page Layout",
+			"description":	"Use this layout for inner pages.",
+			"containers" : 	["left", "sidebar"]
+		},
+	}
+}
