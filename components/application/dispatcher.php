@@ -17,11 +17,13 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
-    		'request'				=> KRequest::get('get', 'string'),
-    		// TODO: Behavior should be configurable in database
+    		// TODO: Behavior can be configurable in database
     		'behaviors'				=> array('routable'),
+            // These values, component and request will just be defaults. But routable behavior can override them based on url.
             'component'             => KRequest::get('get.com', 'cmd', 'content'),
+            'request'               => KRequest::get('get', 'string'),
         ))->append(array(
+            // Routable behavior can figure this out. This is just a default value.
             'request' 				=> array('format' => KRequest::format() ? KRequest::format() : 'html')
         ));
 

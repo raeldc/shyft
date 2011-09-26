@@ -40,6 +40,7 @@ class ComDefaultTemplateDefault extends KTemplateAbstract
 	    //TODO: Suggest to Johan that map identifiers should also be checked by KFactory::exists()
 	    if ($identifier->type == 'com') 
 	    {
+	    	// Check for theme overrides first. This will look for template files inside the theme directory.
 	    	if (KFactory::has('theme')) 
 	    	{
 	    		$theme = clone KFactory::get('theme')->getLayout();
@@ -53,7 +54,7 @@ class ComDefaultTemplateDefault extends KTemplateAbstract
 
 		    	$theme->path = array_merge(array('html', 'components', $identifier->package), $path);
 		    	$theme->name = $identifier->name;
-
+		    	
 		    	$file = $theme->filepath;
 	    	}
 	    	
