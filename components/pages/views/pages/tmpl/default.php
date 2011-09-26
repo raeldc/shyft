@@ -1,3 +1,7 @@
+<section class="widget append left">
+    <?=@template('manage')?>
+</section>
+
 <form method="get" action="<?=@route()?>" class="-koowa-grid">
 <table class="zebra-striped" id="sortTableExample">
 	<thead>
