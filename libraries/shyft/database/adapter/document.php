@@ -99,12 +99,16 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 			}
 		}
 
+		$query->reset();
+
 		return $result;
 	}
 
 	public function insert($collection, $data = array())
 	{
 		$this->_database->selectCollection($collection)->insert((array)$data, array('fsync' => $this->_synced));
+
+		$query->reset();
 
 		return $data;
 	}
@@ -118,6 +122,8 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 		unset($data['_id']);unset($data['id']);
 
 		$collection->update($query, (array)$data, array('fsync' => $this->_synced));
+
+		$query->reset();
 
 		// return affected rows
 		return $collection->find($query)->count();
@@ -133,6 +139,8 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 
 		$collection->remove($query, array('fsync' => $this->_synced));
 
+		$query->reset();
+		
 		// return affected rows
 		return $collection->find($query)->count();
 	}
