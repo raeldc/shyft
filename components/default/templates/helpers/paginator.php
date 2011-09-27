@@ -39,10 +39,8 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
         
         $this->_initialize($config);
 
-        $html  = '<div class="container">';
-        $html  = '<div class="pagination">';
+        $html  = '<div class="container pagination">';
         $html .=  $this->_pages($this->_items($config));
-        $html .= '</div>';
         $html .= '</div>';
         
         return $html;
