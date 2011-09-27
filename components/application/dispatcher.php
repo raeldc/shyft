@@ -7,6 +7,8 @@
  */
 class ComApplicationDispatcher extends KControllerAbstract implements KObjectInstantiatable
 {
+    public $_component;
+
     public function __construct(KConfig $config)
     {
         parent::__construct($config);
@@ -20,7 +22,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
     		// TODO: Behavior can be configurable in database
     		'behaviors'				=> array('routable'),
             // These values, component and request will just be defaults. But routable behavior can override them based on url.
-            'component'             => KRequest::get('get.com', 'cmd', 'content'),
+            'component'             => KRequest::get('get.com', 'cmd', 'pages'), // component should be determined by the router
             'request'               => KRequest::get('get', 'string'),
         ))->append(array(
             // Routable behavior can figure this out. This is just a default value.
@@ -59,7 +61,16 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
 
 	protected function _actionDispatch(KCommandContext $context)
 	{
+        // Get the navigation, assign it to the top-navigation container
+        KFactory::get('theme.container')->append('top-navigation',
+            KFactory::get('com://site/pages.controller.page')
+                ->view('pages')
+                ->layout('navigation')
+                ->display()
+        );
+
         $context->application = $this;
+
         return $this->getComponent()->execute('dispatch', $context);
 	}
 
@@ -71,13 +82,17 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
     public function getComponent()
     {
         if(!($this->_component instanceof KDispatcherAbstract))
-        {  
+        {
             //Make sure we have a dispatcher identifier
             if(!($this->_component instanceof KIdentifier)) {
                 $this->setComponent($this->_component);
             }
 
-            $this->_component = KFactory::get($this->_component);
+            $config = array(
+                'request' => $this->getRequest(),
+            );
+
+            $this->_component = KFactory::get($this->_component, $config);
         }
     
         return $this->_component;
@@ -96,14 +111,9 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
         if(!($component instanceof KDispatcherAbstract))
         {
             if(is_string($component) && strpos($component, '.') === false ) 
-            {
-                // Dispatcher names are always singular
-                if(KInflector::isPlural($component)) {
-                    $component = KInflector::singularize($component);
-                } 
-                
+            {   
                 $identifier             = clone $this->_identifier;
-                $identifier->package    = $this->_component;
+                $identifier->package    = $component;
                 $identifier->path       = array();
                 $identifier->name       = 'dispatcher';
             }
@@ -115,9 +125,24 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
 
             $component = $identifier;
         }
-        
+
         $this->_component = $component;
-    
+
+        return $this;
+    }
+
+    /**
+     * Set the request information
+     *
+     * @param array An associative array of request information
+     * @return KControllerBread
+     */
+    public function setRequest(array $request)
+    {
+        foreach($request as $key => $value) {
+            $this->$key = $value;
+        }
+        
         return $this;
     }
 }
