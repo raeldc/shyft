@@ -19,15 +19,8 @@
         <div class="fill">
             <div class="container">
                 <h3><a class="brand" href="index.php">Shyfted</a></h3>
-                <nav>
-                    <ul class="nav">
-                        <li class="active"><a href="index.php">Home</a></li>
-                        <li><a href="index.php?com=pages">Pages</a></li>
-                        <li><a href="index.php?com=widgets">Widgets</a></li>
-                        <li><a href="index.php?com=content">Contents</a></li>
-                        <li><a href="index.php?com=forms">Forms</a></li>
-                    </ul>
-                </nav>
+
+                <?=@container('top-navigation')?>
 
                 <form action="" class="pull-right">
                     <input class="input-small" type="text" placeholder="Username">
