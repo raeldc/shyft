@@ -17,7 +17,7 @@
 		<tr>
 			<td><?=@helper('grid.checkbox',array('row' => $page))?></td>
 			<td><a href="index.php?com=pages&id=<?=$page->id;?>&layout=form"><?=$page->title;?></a></td>
-			<td><?=$page->url?></td>
+			<td>index.php?page=<?=$page->slug?></td>
 		</tr>
 		<?php endforeach ?>
 	</tbody>

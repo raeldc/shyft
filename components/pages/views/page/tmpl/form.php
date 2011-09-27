@@ -15,10 +15,10 @@
     </div>
 
     <div class="clearfix">
-        <label for="form-alias">SEF URL</label>
+        <label for="form-slug">SEF URL</label>
         <div class="input input-prepend">
             <span class="add-on"><?=KRequest::base()?>/</span>
-            <input id="form-alias" name="alias" size="5" type="text">
+            <input id="form-slug" name="slug" size="5" type="text" value="<?=$page->slug?>">
         </div>
     </div>
 
@@ -66,10 +66,10 @@
                 <div class="clearfix">
                     <label for="form-position">Content Type</label>
                     <div class="input">
-                        <select class="medium" name="container">
-                            <option value="html">Static HTML Page</option>
-                            <option value="content-news">News</option>
-                            <option value="content-event">Events</option>
+                        <select class="medium" name="type">
+                            <option value="com://site/html">Static HTML Page</option>
+                            <option value="com://site/pages">Pages</option>
+                            <option value="com://site/widgets">Widgets</option>
                         </select>
                         <span class="help-block">
                             You can point this page to a Shyft Component.
@@ -83,7 +83,7 @@
                 <div class="clearfix">
                     <h5>Content</h5>
                     <div>
-                        <textarea class="xxlarge" name="content" rows="10"><?=$page->content?></textarea>
+                        <textarea class="xxlarge" name="component[content]" rows="10"><?=$page->component['content']?></textarea>
                         <span class="help-block">Content of the Page</span>
                     </div>
                 </div>
