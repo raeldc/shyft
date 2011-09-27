@@ -123,4 +123,19 @@ class SDatabaseQueryDocument extends KObject
 
         return empty($this->query) ? new stdclass : (object)$this->query;
     }
+
+    public function reset()
+    {
+        $this->from;
+
+        $this->where = array();
+
+        $this->sort = array();
+
+        $this->limit = 0;
+
+        $this->offset = 0;
+
+        $this->query = null;
+    }
 }
