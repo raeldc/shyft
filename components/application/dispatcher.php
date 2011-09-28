@@ -139,9 +139,11 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
      */
     public function setRequest(array $request)
     {
-        foreach($request as $key => $value) {
-            $this->$key = $value;
+        if(!($this->_request instanceof KConfig)) {
+            $this->_request = new KConfig($this->_request);
         }
+        
+        $this->_request->append($request);
         
         return $this;
     }
