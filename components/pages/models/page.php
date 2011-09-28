@@ -1,6 +1,10 @@
 <?php
 
-class ComPagesModelPages extends SModelDefault
+/*
+ * Model to get a single page. 
+ * This is used by the application dispatcher to get the current page.
+ */
+class ComPagesModelPage extends SModelDefault
 {
 	public function __construct(KConfig $config)
 	{

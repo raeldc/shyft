@@ -14,7 +14,7 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
 	protected function _beforeDispatch(KCommandContext $context)
     {
     	// Get the page model to get the current item
-    	$model = KFactory::get('com://site/pages.model.pages');
+    	$model = KFactory::get('com://site/pages.model.page');
     	$page = $model->page(KRequest::get('get.page', 'cmd', 'default'))
     		->getItem();
 
