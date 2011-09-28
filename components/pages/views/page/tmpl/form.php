@@ -70,6 +70,7 @@
                             <option value="com://site/static">Static HTML Page</option>
                             <option value="com://site/pages">Pages</option>
                             <option value="com://site/widgets">Widgets</option>
+                            <option value="com://site/content">Contents</option>
                         </select>
                         <span class="help-block">
                             You can point this page to a Shyft Component.
@@ -81,10 +82,9 @@
              <!--start: #page-component-->
             <div id="page-component">
                 <div class="clearfix">
-                    <h5>Content</h5>
-                    <div>
-                        <textarea class="xxlarge" name="component[content]" rows="10"><?=$page->component['content']?></textarea>
-                        <span class="help-block">Content of the Page</span>
+                    <label for="form-parameters">Parameters</label>
+                    <div class="input">
+                        <input class="xlarge" id="form-parameters" name="parameters[view]" size="30" type="text" value="<?=$page->parameters['view']?>">
                     </div>
                 </div>
              </div><!--end: #page-component-->
