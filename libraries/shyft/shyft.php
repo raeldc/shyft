@@ -149,3 +149,9 @@ class Shyft
         return false;
     }
 }
+
+function debug($value)
+{
+    require_once 'ChromePhp.php';
+    ChromePhp::log($value);
+}
