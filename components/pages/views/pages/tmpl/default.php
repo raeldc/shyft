@@ -16,7 +16,7 @@
 		<?php foreach ($pages as $page): ?>
 		<tr>
 			<td><?=@helper('grid.checkbox',array('row' => $page))?></td>
-			<td><a href="index.php?com=pages&id=<?=$page->id;?>&layout=form"><?=$page->title;?></a></td>
+			<td><a href="<?=@route('view=page&id='.$page->id)?>&layout=form"><?=$page->title;?></a></td>
 			<td>index.php?page=<?=$page->slug?></td>
 		</tr>
 		<?php endforeach ?>

@@ -16,7 +16,7 @@
 		<?php foreach ($widgets as $widget): ?>
 		<tr>
 			<td><?=@helper('grid.checkbox',array('row' => $widget))?></td>
-			<td><a href="index.php?com=widgets&id=<?=$widget->id;?>&layout=form"><?=$widget->title;?></a></td>
+			<td><a href="<?=@route('id='.$widget->id.'&layout=form')?>"><?=$widget->title;?></a></td>
 			<td><?=$widget->url?></td>
 		</tr>
 		<?php endforeach ?>
