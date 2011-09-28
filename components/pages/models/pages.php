@@ -6,7 +6,7 @@ class ComPagesModelPages extends SModelDefault
 	{
 		parent::__construct($config);
 	
-		$this->_state->insert('page', 'cmd', 'default', true);
+		$this->_state->insert('page', 'cmd', null, true);
 	}
 
 	public function getList()
