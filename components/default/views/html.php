@@ -2,7 +2,25 @@
 
 class ComDefaultViewHtml extends KViewHtml
 {
-	public function createRoute( $route = '')
+	protected $_page;
+
+	public function __construct(KConfig $config)
+	{
+		parent::__construct($config);
+	
+		$this->_page = $config->page;
+	}
+	
+	protected function _initialize(KConfig $config)
+	{
+		$config->append(array(
+			'page' => KRequest::get('get.page','cmd'),
+		));
+	
+		parent::_initialize($config);
+	}
+	
+	public function createRoute($route = '')
 	{
 		$route = trim($route);
 
@@ -28,37 +46,37 @@ class ComDefaultViewHtml extends KViewHtml
 				$route = substr($route, 10);
 			}
 
-			// Parse route
+			// Parse route that we want to generate
 			$parts = array();
 			parse_str($route, $parts);
-			$result = array();
 
-			// Check to see if there is component information in the route if not add it
-			if(!isset($parts['com'])) {
-				$result[] = 'com='.$this->_identifier->package;
+			if(isset($parts['com']))
+			{
+				// If com is specified, find the page that is attached to the component
 			}
+			else $parts['page'] = $this->_page;
 
 			// Add the layout information to the route only if it's not 'default'
 			if(!isset($parts['view']))
 			{
-				$result[] = 'view='.$this->getName();
+				$parts['view'] = $this->getName();
 				if(!isset($parts['layout']) && $this->_layout != $this->_layout_default) {
-					$result[] = 'layout='.$this->getLayout();
+					$parts['layout'] = $this->getLayout();
 				}
 			}
-			
+
 			// Add the format information to the URL only if it's not 'html'
 			if(!isset($parts['format']) && $this->_identifier->name != 'html') {
-				$result[] = 'format='.$this->_identifier->name;
+				$parts['format'] = $this->_identifier->name;
 			}
 
-			// Reconstruct the route
-			if(!empty($route)) {
-				$result[] = $route;
+			$result = array();
+			foreach($parts as $key => $value)
+			{
+				$result[] = $key.'='.$value;
 			}
 
-			$result = 'index.php?'.implode('&', $result);
-			
+			return 'index.php?'.implode('&', $result);
 		}
 
 		return $result;
