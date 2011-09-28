@@ -67,7 +67,7 @@
                     <label for="form-position">Content Type</label>
                     <div class="input">
                         <select class="medium" name="type">
-                            <option value="com://site/html">Static HTML Page</option>
+                            <option value="com://site/static">Static HTML Page</option>
                             <option value="com://site/pages">Pages</option>
                             <option value="com://site/widgets">Widgets</option>
                         </select>
