@@ -108,25 +108,25 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 	{
 		$this->_database->selectCollection($collection)->insert((array)$data, array('fsync' => $this->_synced));
 
-		$query->reset();
-
 		return $data;
 	}
 
 	public function update($collection, $query, $data = array())
 	{
-		$query = $query->build();
+		$q = $query->build();
 
 		$collection = $this->_database->selectCollection($collection);
 
 		unset($data['_id']);unset($data['id']);
 
-		$collection->update($query, (array)$data, array('fsync' => $this->_synced));
+		$collection->update($q, (array)$data, array('fsync' => $this->_synced));
+
+		// return affected rows
+		$result = $collection->find($q)->count();
 
 		$query->reset();
 
-		// return affected rows
-		return $collection->find($query)->count();
+		return $result;
 	}
 
 	public function delete($collection, $query, $data = array())
