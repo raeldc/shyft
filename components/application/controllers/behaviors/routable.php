@@ -22,19 +22,11 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
     		// TODO: redirect to 404 page not found
     	}
 
-    	// Determine the type of content the page is trying to access
-    	if ($page->type == 'page') 
-    	{
-    		// We use page because we simply want to display the content of the page
-    		$context->caller->setComponent('pages');
-    		$context->caller->setRequest(array('view' => 'page'));
-    	}
-    	else
-    	{
-    		$component = KIdentifier::identify($page->type);
-    		$component->name = 'dispatcher';
-
-    		$context->caller->setComponent($component);
-    	}
+    	// Determine the type of content the page is trying to access and call it.
+    	$component = KIdentifier::identify($page->type);
+		$component->name = 'dispatcher';
+		
+		$context->caller->setRequest($page->parameters);
+		$context->caller->setComponent($component);
     }
 }
