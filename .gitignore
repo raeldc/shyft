@@ -15,3 +15,5 @@ Thumbs.db
 # My Files #
 ############
 #libraries/koowa
+
+logs/last_run.json
