@@ -161,5 +161,5 @@ function debug($value)
 {
     require_once 'ChromePhp.php';
     ChromePhp::useFile(SYSTEM_ROOT.'/logs', 'logs');
-    ChromePhp::log($value);
+    call_user_func_array(array('ChromePhp', 'log'), func_get_args());
 }
