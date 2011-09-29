@@ -128,9 +128,7 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
 			    }
 
 		        try {
-		            $this->_document = KFactory::get($this->_document, array(
-		            	'collection' => $this->_identifier->name
-			        ));
+		            $this->_document = KFactory::get($this->_document);
                 } catch (KDatabaseDocumentException $e) {
                     $this->_document = false;
                 }
