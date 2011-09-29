@@ -7,9 +7,6 @@
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
-//Instantiate the loader singleton
-SLoader::getInstance();
-
 /**
  * SLoader class derived from KLoader class
  *
@@ -25,35 +22,42 @@ class SLoader
      *
      * @var array
      */
-    protected static $_registry = null;
+    protected $_registry = null;
     
     /**
      * Adapter list
      *
      * @var array
      */
-    protected static $_adapters = null;
+    protected static $_adapters = array();
     
     /**
      * Prefix map
      *
      * @var array
      */
-    protected static $_prefix_map = null;
+    protected static $_prefix_map = array();
     
     /**
      * Constructor
      *
      * Prevent creating instances of this class by making the contructor private
      */
-    final private function __construct() 
+    final private function __construct($config = array()) 
     { 
-        //Created the adapter registry
-        self::$_adapters   = array();
-        self::$_prefix_map = array();
-        self::$_registry = new KLoaderRegistry();
+        //Create the class registry 
+        $this->_registry = new KLoaderRegistry();
+
+        if (isset($config['koowa_adapter'])) {
+            $this->addAdapter($config['koowa_adapter']);
+        }
+
+        if (isset($config['shyft_adapter'])) {
+            $this->addAdapter($config['shyft_adapter']);
+        }
         
-        self::register();
+        //Auto register the loader
+        $this->register();
     }
         
     /**
@@ -75,7 +79,7 @@ class SLoader
         static $instance;
         
         if ($instance === NULL) {
-            $instance = new self();
+            $instance = new self($config);
         }
         
         return $instance;
@@ -86,9 +90,9 @@ class SLoader
      *
      * @return void
      */
-    public static function register()
+    public function register()
     {
-        spl_autoload_register(array(__CLASS__, 'loadClass'));
+        spl_autoload_register(array($this, 'loadClass'));
 
         if (function_exists('__autoload')) {
             spl_autoload_register('__autoload');
@@ -101,12 +105,24 @@ class SLoader
      * 
      * @return object KLoaderRegistry
      */
-    public static function getRegistry()
+    public function getRegistry()
     {
-        return self::$_registry;
+        return $this->_registry;
     }
     
-	/**
+    /**
+     * Add a loader adapter
+     *
+     * @param object    A KLoaderAdapter
+     * @return void
+     */
+    public static function addAdapter(KLoaderAdapterInterface $adapter)
+    {
+        self::$_adapters[$adapter->getType()]     = $adapter;
+        self::$_prefix_map[$adapter->getPrefix()] = $adapter->getType();
+    }
+    
+    /**
      * Get the registered adapters
      * 
      * @return array
@@ -123,7 +139,7 @@ class SLoader
      * @param string    The basepath
      * @return boolean  Returns TRUE on success throws exception on failure
      */
-    public static function loadClass($class, $basepath = null)
+    public function loadClass($class, $basepath = null)
     {
         $result = false;
          
@@ -148,13 +164,13 @@ class SLoader
         return $result;
     }
     
-	/**
+    /**
      * Load a class based on an identifier
      *
      * @param string|object The identifier or identifier object
      * @return boolean      Returns TRUE on success throws exception on failure
      */
-    public static function loadIdentifier($identifier)
+    public function loadIdentifier($identifier)
     {
         $result = false;
          
@@ -173,10 +189,10 @@ class SLoader
     /**
      * Load a class based on a path
      *
-     * @param string	The file path
+     * @param string    The file path
      * @return boolean  Returns TRUE on success throws exception on failure
      */
-    public static function loadFile($path)
+    public function loadFile($path)
     {
         $result = false;
         
@@ -203,18 +219,18 @@ class SLoader
     /**
      * Get the path based on a class name
      *
-     * @param string	The class name
+     * @param string    The class name
      * @param string    The basepath
      * @return string   Returns canonicalized absolute pathname
      */
-    public static function findPath($class, $basepath = null)
+    public function findPath($class, $basepath = null)
     {
-        if(!self::$_registry->offsetExists((string) $class)) 
+        if(!$this->_registry->offsetExists((string) $class)) 
         {
             $result = false;
                 
-            $word  = preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $class);
-            $parts = explode('_', $word);
+            $word  = preg_replace('/(?<=\\w)([A-Z])/', ' \\1', $class);
+            $parts = explode(' ', $word);
             
             if(isset(self::$_prefix_map[$parts[0]])) {
                 $result = self::$_adapters[self::$_prefix_map[$parts[0]]]->findPath( $class, $basepath);
@@ -227,22 +243,10 @@ class SLoader
                 $result = $path !== false ? $path : $result;
             }
             
-            self::$_registry->offsetSet((string) $class, $result);
+            $this->_registry->offsetSet((string) $class, $result);
         }
-        else $result = self::$_registry->offsetGet((string)$class);
+        else $result = $this->_registry->offsetGet((string)$class);
         
         return $result;
-    }
-    
-    /**
-     * Add a loader adapter
-     *
-     * @param object    A KLoaderAdapter
-     * @return void
-     */
-    public static function addAdapter(KLoaderAdapterInterface $adapter)
-    {
-        self::$_adapters[$adapter->getType()]     = $adapter;
-        self::$_prefix_map[$adapter->getPrefix()] = $adapter->getType();
     }
 }

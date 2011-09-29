@@ -52,9 +52,6 @@ class Shyft
         self::$paths['languages']   = (isset($paths['languages']))  ? $paths['languages']   : SYSTEM_LANGUAGES;
         self::$paths['site']        = (isset($paths['site']))       ? $paths['site']        : SYSTEM_ROOT;
 
-        // Get Koowa, for some reason, this serves nothing critical
-        require_once self::findFile('koowa/koowa.php',                    self::$paths['libraries']);
-
         // Exception Classes
         require_once self::findFile('koowa/exception/interface.php',      self::$paths['libraries']);
         require_once self::findFile('koowa/exception/exception.php',      self::$paths['libraries']);
@@ -63,30 +60,40 @@ class Shyft
         require_once self::findFile('koowa/loader/adapter/interface.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/exception.php', self::$paths['libraries']);
         require_once self::findFile('koowa/loader/adapter/abstract.php',  self::$paths['libraries']);
-        require_once self::findFile('shyft/loader/adapter/koowa.php',      self::$paths['libraries']);
-        require_once self::findFile('shyft/loader/adapter/shyft.php',       self::$paths['libraries']);
+        require_once self::findFile('shyft/loader/adapter/koowa.php',     self::$paths['libraries']);
+        require_once self::findFile('shyft/loader/adapter/shyft.php',     self::$paths['libraries']);
 
         // Registry Classes
         require_once self::findFile('koowa/loader/registry.php',          self::$paths['libraries']);
 
         // Get Shyft Loader
-        require_once self::findFile('shyft/loader/loader.php',             self::$paths['libraries']);
+        require_once self::findFile('shyft/loader/loader.php',            self::$paths['libraries']);
+        
+        // Inject the Koowa and Shyft loader adapters into the SLoader.
+        $loader = SLoader::getInstance(array(
+            'koowa_adapter' => new SLoaderAdapterKoowa(array('basepath' => self::$paths['libraries'])),
+            'shyft_adapter' => new SLoaderAdapterShyft(array('basepath' => self::$paths['libraries']))
+        ));
+
+        // Register the Koowa and Shyft Identifier Adapters
+        KIdentifier::addAdapter(new SIdentifierAdapterKoowa());
+        KIdentifier::addAdapter(new SIdentifierAdapterShyft());
+
+        //Setup the factory
+        KFactory::getInstance()->set('shyft:loader', $loader);
+        KFactory::getInstance()->set('koowa:loader', $loader);
 
         /*
          *      We have a special loader adapter for Shyft which looks for "fallback" directories
          *      Fallback directories is searched in this order sites/site -> sites/all -> system
          */
 
-        // Register the necessary Loader Adapters
-        SLoader::addAdapter(new SLoaderAdapterKoowa(self::$paths['libraries']));
-        SLoader::addAdapter(new SLoaderAdapterShyft(self::$paths['libraries']));
-        SLoader::addAdapter(new SLoaderAdapterComponent(self::$paths['components']));
-        SLoader::addAdapter(new SLoaderAdapterWidget(self::$paths['widgets']));
-        SLoader::addAdapter(new SLoaderAdapterAction(self::$paths['actions']));
+        // Register the application's Loader Adapters
+        SLoader::addAdapter(new SLoaderAdapterComponent(array('basepath' => self::$paths['components'])));
+        SLoader::addAdapter(new SLoaderAdapterWidget(array('basepath'    => self::$paths['widgets'])));
+        SLoader::addAdapter(new SLoaderAdapterAction(array('basepath'    => self::$paths['actions'])));
 
-        // Register the necessary Identifier Adapaters
-        KIdentifier::addAdapter(new SIdentifierAdapterKoowa());
-        KIdentifier::addAdapter(new SIdentifierAdapterShyft());
+        // Register the application's Identifier Adapaters
         KIdentifier::addAdapter(new SIdentifierAdapterComponent());
         KIdentifier::addAdapter(new SIdentifierAdapterWidget());
         KIdentifier::addAdapter(new SIdentifierAdapterAction());
