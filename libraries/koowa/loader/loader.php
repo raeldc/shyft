@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 	$Id$
- * @category	Koowa
- * @package		Koowa_Loader
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @version     $Id$
+ * @category    Koowa
+ * @package     Koowa_Loader
+ * @copyright   Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
 require_once dirname(__FILE__).'/adapter/interface.php';
@@ -111,7 +111,7 @@ class KLoader
         return $this->_registry;
     }
     
- 	/**
+    /**
      * Add a loader adapter
      *
      * @param object    A KLoaderAdapter
@@ -123,19 +123,7 @@ class KLoader
         self::$_prefix_map[$adapter->getPrefix()] = $adapter->getType();
     }
     
- 	/**
-     * Add a loader adapter
-     *
-     * @param object    A KLoaderAdapter
-     * @return void
-     */
-    public static function addAdapter(KLoaderAdapterInterface $adapter)
-    {
-        self::$_adapters[$adapter->getType()]     = $adapter;
-        self::$_prefix_map[$adapter->getPrefix()] = $adapter->getType();
-    }
-    
-	/**
+    /**
      * Get the registered adapters
      * 
      * @return array
@@ -177,7 +165,7 @@ class KLoader
         return $result;
     }
     
-	/**
+    /**
      * Load a class based on an identifier
      *
      * @param string|object The identifier or identifier object
@@ -202,7 +190,7 @@ class KLoader
     /**
      * Load a class based on a path
      *
-     * @param string	The file path
+     * @param string    The file path
      * @return boolean  Returns TRUE on success throws exception on failure
      */
     public function loadFile($path)
@@ -232,7 +220,7 @@ class KLoader
     /**
      * Get the path based on a class name
      *
-     * @param string	The class name
+     * @param string    The class name
      * @param string    The basepath
      * @return string   Returns canonicalized absolute pathname
      */
