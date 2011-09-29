@@ -29,8 +29,8 @@ class SLoaderAdapterComponent extends KLoaderAdapterComponent
 	{
 		$path = false;
 	
-		$word  = strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $classname));
-		$parts = explode('_', $word);
+		$word  = strtolower(preg_replace('/(?<=\\w)([A-Z])/', ' \\1', $classname));
+		$parts = explode(' ', $word);
 
 		if (array_shift($parts) == 'com') 
 		{
@@ -40,10 +40,11 @@ class SLoaderAdapterComponent extends KLoaderAdapterComponent
 			//Merge the basepath
 			if (is_array($basepath)) 
 			{
-				$basepaths = $this->_basepath;
+				$basepaths = $basepath;
 				foreach ($basepaths as $base) {
+					$base = $base.'/components';
 					// We need to do this so that it won't search for components/components folder.
-					$basepaths[] = rtrim($base, 'components').'components';
+					$basepaths[] = str_replace('components/components', 'components', $base);
 				}
 
 				$basepath = array_unique($basepaths);
@@ -67,7 +68,6 @@ class SLoaderAdapterComponent extends KLoaderAdapterComponent
 
 			$path = Shyft::findFile($component.'/'.$path.'.php', $basepath);
 		}
-	
 		return $path;
 	}
 }
