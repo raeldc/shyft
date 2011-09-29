@@ -17,7 +17,7 @@
 		<tr>
 			<td><?=@helper('grid.checkbox',array('row' => $page))?></td>
 			<td><a href="<?=@route('view=page&id='.$page->id)?>&layout=form"><?=$page->title;?></a></td>
-			<td>index.php?page=<?=$page->slug?></td>
+			<td>index.php?page=<?=$page->permalink?></td>
 		</tr>
 		<?php endforeach ?>
 	</tbody>

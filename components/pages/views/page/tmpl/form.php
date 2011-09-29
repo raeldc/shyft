@@ -15,10 +15,10 @@
     </div>
 
     <div class="clearfix">
-        <label for="form-slug">SEF URL</label>
+        <label for="form-slug">Permalink</label>
         <div class="input input-prepend">
             <span class="add-on"><?=KRequest::base()?>/</span>
-            <input id="form-slug" name="slug" size="5" type="text" value="<?=$page->slug?>">
+            <input id="form-slug" name="permalink" size="5" type="text" value="<?=$page->permalink?>">
         </div>
     </div>
 
@@ -51,7 +51,6 @@
                 <a href="#" class="dropdown-toggle">More Options</a>
                 <ul class="dropdown-menu">
                     <li><a href="#page-search">SEO</a></li>
-                    <li><a href="#">Tags</a></li>
                     <li><a href="#">Redirections</a></li>
                     <li><a href="#page-revisions">Revision History</a></li>
                     <li class="divider"></li>

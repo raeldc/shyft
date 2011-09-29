@@ -27,7 +27,7 @@ class ComPagesModelPage extends SModelDefault
 			$query->where('default', '=', true);
 		}
 		elseif (!empty($this->_state->page)) {
-			$query->where('slug', '=', $this->_state->page);
+			$query->where('permalink', '=', $this->_state->page);
 		}
 	}
 }
