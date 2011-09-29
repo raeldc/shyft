@@ -16,6 +16,8 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 			$connect = 'mongodb://';
 			$connect .= (!empty($config->options->username) && !empty($config->options->password)) ? $config->options->username.':'.$config->options->password.'@' : '';
 			$connect .= (!empty($config->options->host)) ? $config->options->host : '';
+			$connect .= (!empty($config->options->port)) ? ':'. $config->options->port : '';
+			$connect .= (!empty($config->database)) ? '/'. $config->database : '';
 
 			$this->setConnection(new Mongo($connect));
 
@@ -39,17 +41,17 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
     {
     	$config->append(array(
     		'connection'		=> null,
-    		'database'			=> 'flowku',
+    		'database'			=> 'shyft',
     		'synced'			=> true,
 			'options'	=> array(
-    			'host'		=> 'localhost', 
-    			'username'	=> null,
-    			'password'  => null,
-    			'port'		=> null,
+    			'host'		=> 'dbh55.mongolab.com', 
+    			'username'	=> 'admin',
+    			'password'  => 'admin',
+    			'port'		=> 27557,
     			'socket'	=> null
     		)
         ));
-         
+
         parent::_initialize($config);
     }
 
