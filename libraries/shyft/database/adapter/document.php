@@ -44,10 +44,10 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
     		'database'			=> 'shyft',
     		'synced'			=> true,
 			'options'	=> array(
-    			'host'		=> 'dbh55.mongolab.com', 
-    			'username'	=> 'admin',
-    			'password'  => 'admin',
-    			'port'		=> 27557,
+    			'host'		=> 'localhost', 
+    			'username'	=> '',
+    			'password'  => '',
+    			'port'		=> null,
     			'socket'	=> null
     		)
         ));
