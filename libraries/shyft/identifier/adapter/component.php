@@ -83,29 +83,26 @@ class SIdentifierAdapterComponent extends KIdentifierAdapterAbstract
 			 *                     -> Framework Specific
 			 *                     -> Framework Default
 			 */
-			if(class_exists('Com'.ucfirst($identifier->package).ucfirst($classtype).$path.ucfirst($identifier->name))) {
-				$classname = 'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.ucfirst($identifier->name);
-			} elseif(class_exists('Com'.ucfirst($identifier->package).ucfirst($classtype).$path.'Default')) {
-				$classname = 'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.'Default';
-			} elseif(class_exists('ComDefault'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
-				$classname = 'ComDefault'.ucfirst($classtype).$path.ucfirst($identifier->name);
-			} elseif(class_exists('ComDefault'.ucfirst($classtype).$path.'Default')) {
-				$classname = 'ComDefault'.ucfirst($classtype).$path.'Default';
-			} elseif(class_exists( 'S'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
-				$classname = 'S'.ucfirst($classtype).$path.ucfirst($identifier->name);
-			}elseif(class_exists( 'S'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
-				$classname = 'S'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default';
-			}elseif(class_exists('S'.ucfirst($classtype).$path.'Default')) {
-				$classname = 'S'.ucfirst($classtype).$path.'Default';
-			}elseif(class_exists( 'K'.ucfirst($classtype).$path.ucfirst($identifier->name))) {
-				$classname = 'K'.ucfirst($classtype).$path.ucfirst($identifier->name);
-			}elseif(class_exists( 'K'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default')) {
-				$classname = 'K'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default';
-			} elseif(class_exists('K'.ucfirst($classtype).$path.'Default')) {
-				$classname = 'K'.ucfirst($classtype).$path.'Default';
-			} else {
-				$classname = false;
+
+			$classnames = array(
+				'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.ucfirst($identifier->name),
+				'Com'.ucfirst($identifier->package).ucfirst($classtype).$path.'Default',
+				'ComDefault'.ucfirst($classtype).$path.ucfirst($identifier->name),
+				'ComDefault'.ucfirst($classtype).$path.'Default',
+				'S'.ucfirst($classtype).$path.ucfirst($identifier->name),
+				'S'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default',
+				'S'.ucfirst($classtype).$path.'Default',
+				'K'.ucfirst($classtype).$path.ucfirst($identifier->name),
+				'K'.ucfirst($classtype).$path.ucfirst($identifier->name).'Default',
+				'K'.ucfirst($classtype).$path.'Default'
+			);
+
+			foreach ($classnames as $classname) 
+			{
+				if(class_exists($classname)) return $classname;
 			}
+
+			$classname = false;
 		}
 
 		return $classname;
