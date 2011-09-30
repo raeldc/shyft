@@ -8,8 +8,9 @@
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<link href="css://bootstrap.css" rel="stylesheet">
+<link href="css://less/bootstrap.less" rel="stylesheet/less">
 <link href="css://theme.css" rel="stylesheet">
+<script src="js://less.js"></script>
 <script src="js://jquery.js"></script>
 <script src="js://tabs.js"></script>
 <script src="js://dropdown.js"></script>
@@ -31,7 +32,7 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container layout">
 
         <!--layout-->
         <div class="content">
@@ -39,10 +40,10 @@
                 <h1>Page name <small>Supporting text or tagline</small></h1>
             </div>
             <div class="row">
-                <div class="span4">
+                <div class="span3">
                     <?=@container('left', 'wrapper')?>
                 </div>
-                <div class="span10">
+                <div class="span13">
                     <?=@container('page')?>
                 </div>
             </div>
