@@ -12,7 +12,7 @@
 		<?php foreach ($contents as $content): ?>
 		<tr>
 			<td><?=@helper('grid.checkbox',array('row' => $content))?></td>
-			<td><a href="index.php?com=content&id=<?=$content->id;?>&layout=form"><?=$content->title;?></a></td>
+			<td><a href="<?=@route('view=content&layout=form&id='.$content->id)?>"><?=$content->title;?></a></td>
 			<td><?=$content->body?></td>
 		</tr>
 		<?php endforeach ?>

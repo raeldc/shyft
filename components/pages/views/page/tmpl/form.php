@@ -81,11 +81,18 @@
              <!--start: #page-component-->
             <div id="page-component">
                 <div class="clearfix">
-                    <label for="form-parameters">Parameters</label>
+                    <label for="form-component">Page Title</label>
                     <div class="input">
-                        <input class="xlarge" id="form-parameters" name="parameters[view]" size="30" type="text" value="<?=$page->parameters['view']?>">
+                        <input class="xlarge" id="form-component" name="component[title]" size="30" type="text" value="<?=$component->title?>">
                     </div>
                 </div>
+
+                <div class="clearfix">
+                <label for="form-body">Body</label>
+                <div class="input">
+                    <textarea class="xlarge" id="form-body" name="body" rows="5"><?=$component->body?></textarea>
+                </div>
+            </div>
              </div><!--end: #page-component-->
 
              <!--start: #page-search-->
