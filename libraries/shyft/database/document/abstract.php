@@ -327,7 +327,7 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
             } 
               
 		    // TODO: Add the behavior
-            // $this->getSchema()->behaviors[$behavior->getIdentifier()->name] = $behavior;
+            $this->getSchema()->behaviors[$behavior->getIdentifier()->name] = $behavior;
             $this->getCommandChain()->enqueue($behavior);
         }
         
@@ -362,6 +362,22 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
        
        return $behavior;
     }
+
+    public function getSchema()
+    {
+        static $schema;
+
+        if (is_null($schema)) {
+            $schema = array();
+        }
+
+        $identifier = (string) $this->getIdentifier();
+        if (!isset($schema[$identifier])) {
+            $schema[$identifier] = new SDatabaseSchemaDocument();
+        }
+        
+        return $schema[$identifier];
+    }
        
     /**
      * Gets the behaviors of the table
@@ -371,6 +387,11 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
     public function getBehaviors()
     {
         return $this->getSchema()->behaviors;
+    }
+
+    public function getDatabase()
+    {
+        return $this->_database;
     }
 
     /**
