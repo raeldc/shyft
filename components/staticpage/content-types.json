@@ -1,7 +1,7 @@
 {
 	"staticpage" : {
 		"name": "Static Page",
-		"description": "A basic HTML page that won't change much.",
+		"description": "A basic HTML or Text page",
 		"view": "staticpage",
 		"layout": "default"
 	}
