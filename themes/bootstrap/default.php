@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title><?=@container('title')?></title>
+<title>Shyfted - Cutting Edge CMS for Modern Websites</title>
 
 <!-- HTML5 shim, for IE6-8 support of HTML elements -->
 <!--[if lt IE 9]>
@@ -9,11 +9,13 @@
 <![endif]-->
 
 <link href="css://less/bootstrap.less" rel="stylesheet/less">
-<link href="css://theme.css" rel="stylesheet">
 <script src="js://less.js"></script>
+
+<link href="css://theme.css" rel="stylesheet">
 <script src="js://jquery.js"></script>
 <script src="js://tabs.js"></script>
 <script src="js://dropdown.js"></script>
+<script src="js://modal.js"></script>
 </head>
 <body>
     <header class="topbar">
