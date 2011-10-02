@@ -8,9 +8,7 @@
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<link href="css://less/bootstrap.less" rel="stylesheet/less">
-<script src="js://less.js"></script>
-
+<link href="css://bootstrap.css" rel="stylesheet">
 <link href="css://theme.css" rel="stylesheet">
 <script src="js://jquery.js"></script>
 <script src="js://tabs.js"></script>
@@ -42,10 +40,10 @@
                 <h1>Page name <small>Supporting text or tagline</small></h1>
             </div>
             <div class="row">
-                <div class="span3">
-                    <?=@container('left', 'wrapper')?>
+                <div class="span4">
+                    <?=@container('left')?>
                 </div>
-                <div class="span13">
+                <div class="span12">
                     <?=@container('page')?>
                 </div>
             </div>
