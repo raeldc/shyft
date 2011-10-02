@@ -1,7 +1,15 @@
-<ul class="toolbar">
-	<li><a data-controls-modal="page-content-types" data-backdrop="static" href="<?=@route('view=page&layout=form')?>">Add a Page</a></li>
-	<li><a href="<?=@route('view=pages')?>">All Pages</a></li>
-</ul>
+<div class="well">
+	<h3>Main Navigation</h3>
+	<?php
+	// Get the navigation tree
+    echo KFactory::get('com://site/pages.controller.page')
+        ->view('pages')
+        ->layout('manage_tree')
+        ->display();
+	?>
+
+</div>
+
 <div id="page-content-types" class="modal hide fade">
 	<div class="modal-header">
 		<a href="#" class="close">&times;</a>
