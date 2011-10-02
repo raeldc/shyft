@@ -33,7 +33,7 @@ class ComDefaultTemplateHelperToolbar extends KTemplateHelperAbstract
             'form' => null
         ));
         
-        $html	= '<menu class="toolbar well" id="toolbar-'.$config->toolbar->getName().'">';
+        $html	= '<menu type="toolbar" class="toolbar well" id="toolbar-'.$config->toolbar->getName().'">';
         
 	    foreach ($config->toolbar->getCommands() as $command) 
 	    {
