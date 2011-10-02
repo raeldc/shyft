@@ -2,7 +2,7 @@
     <?=@template('manage')?>
 </section>
 
-<form method="get" action="<?=@route()?>" class="-koowa-grid">
+<form action="<?=@route()?>" method="get" class="-koowa-grid">
 <table class="zebra-striped" id="sortTableExample">
 	<thead>
 		<tr>
