@@ -3,18 +3,21 @@
 class ComDefaultViewHtml extends KViewHtml
 {
 	protected $_page;
+	protected $_mode;
 
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
 	
 		$this->_page = $config->page;
+		$this->_mode = $config->mode;
 	}
 	
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
 			'page' => KRequest::get('get.page','cmd'),
+			'mode' => KRequest::get('get.mode','cmd', null),
 		));
 	
 		parent::_initialize($config);
@@ -52,9 +55,13 @@ class ComDefaultViewHtml extends KViewHtml
 
 			if(isset($parts['com']))
 			{
-				// If com is specified, find the page that is attached to the component
+				// TODO: If com is specified, find the page that is attached to the component
 			}
 			else $parts['page'] = $this->_page;
+
+			if (!empty($this->_mode)) {
+				$parts['mode'] = $this->_mode;
+			}
 
 			// Add the layout information to the route only if it's not 'default'
 			if(!isset($parts['view']))
