@@ -20,16 +20,17 @@ class ComDefaultTemplateFilterToolbar extends KTemplateFilterAbstract implements
 
     public function write(&$text)
     {
-        $formname = $this->getFormName();
+        $form = $this->getForm();
+
+        $toolbar = $this->getTemplate()->getHelper('toolbar')->render(array(
+            'toolbar' => $this->_toolbar,
+            'form' => $form,
+        ));
 
         // Add name of form based on the layout's identifier
-        $text    = preg_replace('/(<form(.*)>)/i', '<form \\2 name="'.$formname.'">', $text);
+        $text = preg_replace('/(<form(.*)>)/i', '<form id="'.$form.'" \\2>', $text);
 
-        // Prepend the toolbar to the output
-        $text = $this->getTemplate()->getHelper('toolbar')->render(array(
-            'toolbar' => $this->_toolbar,
-            'form' => $formname,
-        )).$text;
+        $text = $toolbar.$text;
 
         return $this;
     }
@@ -39,7 +40,7 @@ class ComDefaultTemplateFilterToolbar extends KTemplateFilterAbstract implements
      *
      * @return string The layout name
      */
-    public function getFormName()
+    public function getForm()
     {
         $view = $this->getTemplate()->getView();
 
