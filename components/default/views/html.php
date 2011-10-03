@@ -73,8 +73,8 @@ class ComDefaultViewHtml extends KViewHtml
 			}
 
 			// Add the format information to the URL only if it's not 'html'
-			if(!isset($parts['format']) && $this->_identifier->name != 'html') {
-				$parts['format'] = $this->_identifier->name;
+			if(!isset($parts['format']) && $this->getIdentifier()->name != 'html') {
+				$parts['format'] = $this->getIdentifier()->name;
 			}
 
 			$result = array();

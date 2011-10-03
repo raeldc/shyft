@@ -17,7 +17,7 @@
  * @package     Shyft_Database
  * @subpackage  Document
  */
-abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdentifiable
+abstract class SDatabaseDocumentAbstract extends KObject
 {
 	protected $_database;
 	protected $_name;
@@ -49,9 +49,9 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
 	protected function _initialize(KConfig $config)
 	{
 		// TODO: Set the database to be a singleton, use com:application.database
-		$database = KFactory::get('shyft:database.adapter.document');
-		$package = $this->_identifier->package;
-        $name    = $this->_identifier->name;
+		$database = $this->getService('shyft:database.adapter.document');
+		$package = $this->getIdentifier()->package;
+        $name    = $this->getIdentifier()->name;
 
 		$config->append(array(
 			'command_chain'     => new KCommandChain(),
@@ -65,11 +65,6 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
 		));
 	
 		parent::_initialize($config);
-	}
-
-	public function getIdentifier()
-	{
-		return $this->_identifier;
 	}
 
 	public function find($query = null, $mode = KDatabase::FETCH_ROWSET)
@@ -272,14 +267,14 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
      */
     public function getRow(array $options = array())
     {
-        $identifier         = clone $this->_identifier;
+        $identifier         = clone $this->getIdentifier();
         $identifier->path   = array('database', 'row');
-        $identifier->name   = KInflector::singularize($this->_identifier->name);
+        $identifier->name   = KInflector::singularize($identifier->name);
             
         //The row default options
         $options['document'] = $this; 
              
-        return KFactory::get($identifier, $options); 
+        return $this->getService($identifier, $options); 
     }
 
     /**
@@ -290,13 +285,13 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
      */
     public function getRowset(array $options = array())
     {
-        $identifier         = clone $this->_identifier;
+        $identifier         = clone $this->getIdentifier();
         $identifier->path   = array('database', 'rowset');
             
         //The rowset default options
         $options['document'] = $this;
 
-        return KFactory::get($identifier, $options);
+        return $this->getService($identifier, $options);
     }
 
 	public function getQuery()
@@ -342,23 +337,28 @@ abstract class SDatabaseDocumentAbstract extends KObject implements KObjectIdent
      */
     public function getBehavior($behavior, $config = array())
     {
-       if(!($behavior instanceof KIdentifier))
+       if(!($behavior instanceof KServiceIdentifier))
        {
             //Create the complete identifier if a partial identifier was passed
            if(is_string($behavior) && strpos($behavior, '.') === false )
            {
-               $identifier = clone $this->_identifier;
+               $identifier = clone $this->getIdentifier();
                $identifier->path = array('database', 'behavior');
                $identifier->name = $behavior;
            }
-           else $identifier = KIdentifier::identify($behavior);
+           else $identifier = $this->getIdentifier($behavior);
        }
        
-       if(!isset($this->getSchema()->behaviors[$identifier->name])) {
-           $behavior = KDatabaseBehavior::factory($identifier, array_merge($config, array('mixer' => $this)));
-       } else {
-           $behavior = $this->getSchema()->behaviors[$identifier->name];
-       }
+       if(!isset($this->getSchema()->behaviors[$identifier->name])) 
+       {
+           $behavior = $this->getService($identifier, array_merge($config, array('mixer' => $this)));
+           
+           //Check the behavior interface
+		   if(!($behavior instanceof KDatabaseBehaviorInterface)) {
+			   throw new KDatabaseTableException("Database behavior $identifier does not implement KDatabaseBehaviorInterface");
+		   }
+       } 
+       else $behavior = $this->getSchema()->behaviors[$identifier->name];
        
        return $behavior;
     }

@@ -10,7 +10,6 @@
 
 /**
  * Default Template
-.*
  * @author      Israel Canasa <raeldc@gmail.com>
  * @category    Shyft
  * @package     Shyft_Components
@@ -34,16 +33,16 @@ class ComDefaultTemplateDefault extends KTemplateAbstract
 	public function loadIdentifier($template, $data = array(), $process = true)
 	{
 	    //Identify the template
-	    $identifier = KIdentifier::identify($template);
+	    $identifier = $this->getIdentifier($template);
 	    $file = $identifier->filepath;
 
-	    //TODO: Suggest to Johan that map identifiers should also be checked by KFactory::exists()
+	    //TODO: Suggest to Johan that map identifiers should also be checked by KService::has()
 	    if ($identifier->type == 'com') 
 	    {
 	    	// Check for theme overrides first. This will look for template files inside the theme directory.
-	    	if (KFactory::has('theme')) 
+	    	if (KService::has('theme')) 
 	    	{
-	    		$theme = clone KFactory::get('theme')->getLayout();
+	    		$theme = clone $this->getService('theme')->getLayout();
 
 		    	$path = array();
 		    	if (!empty($identifier->path) && $identifier->path[0] == 'view')

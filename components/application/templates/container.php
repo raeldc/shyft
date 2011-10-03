@@ -1,6 +1,6 @@
 <?php
 
-class ComApplicationTemplateContainer extends KObject implements KObjectIdentifiable, KObjectInstantiatable
+class ComApplicationTemplateContainer extends KObject implements KServiceInstantiatable
 {
 	/**
 	 * The containers
@@ -33,23 +33,11 @@ class ComApplicationTemplateContainer extends KObject implements KObjectIdentifi
 
 		parent::_initialize($config);
 	}
-	
-	
-	/**
-     * Get the object identifier
-     * 
-     * @return  KIdentifier 
-     * @see     KObjectIdentifiable
-     */
-	public function getIdentifier()
-	{
-		$this->_identifier;
-	}
 
 	/**
      * Get the identifier registry object
      * 
-     * @return object KFactoryRegistry
+     * @return object ArrayObject
      */
     public function getContainers()
     {
@@ -61,18 +49,18 @@ class ComApplicationTemplateContainer extends KObject implements KObjectIdentifi
      *
      * @return ComApplicationTemplateContainer
      */
-    public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
-    { 
-       // Check if an instance with this identifier already exists or not
-        if (!$factory->has($config->identifier))
+    public static function getInstance(KConfigInterface $config, KServiceInterface $container)
+    {
+        // Check if an instance with this identifier already exists or not
+        if (!$container->has($config->service_identifier))
         {
             //Create the singleton
-            $classname = $config->identifier->classname;
+            $classname = $config->service_identifier->classname;
             $instance  = new $classname($config);
-            $factory->set($config->identifier, $instance);
+            $container->set($config->service_identifier, $instance);
         }
         
-        return $factory->get($config->identifier);
+        return $container->get($config->service_identifier);
     }
 
     /**
@@ -133,8 +121,7 @@ class ComApplicationTemplateContainer extends KObject implements KObjectIdentifi
                 	->getTemplate()
                     ->loadIdentifier($chrome, $content)
                     ->render();
-            }
-            
+            }   
         }
 
         return $result;

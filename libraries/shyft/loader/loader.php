@@ -174,7 +174,7 @@ class SLoader
     {
         $result = false;
          
-        $identifier = KIdentifier::identify($identifier);
+        $identifier = $this->getIdentifier($identifier);
         
         //Get the path
         $path = $identifier->filepath;

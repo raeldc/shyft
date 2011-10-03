@@ -14,7 +14,7 @@ class ComPagesDatabaseBehaviorRelatable extends KDatabaseBehaviorAbstract
     	$config->append(array(
 			'priority'   => KCommand::PRIORITY_LOW,
 			// array field => collection
-			'relationships' => array('content' => KFactory::get('com://site/content.model.contents')),
+			'relationships' => array('content' => $this->getService('com://site/content.model.contents')),
 	  	));
 
     	parent::_initialize($config);

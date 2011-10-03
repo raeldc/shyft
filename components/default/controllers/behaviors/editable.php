@@ -39,7 +39,7 @@ class ComDefaultControllerBehaviorEditable extends KControllerBehaviorEditable
 		        $view   	= KInflector::pluralize($identifier->name);
 		        $url    	= 'index.php?com='.$component.'&view='.$view;
 		    
-		        $referrer = KFactory::get('koowa:http.url',array('url' => $url));
+		        $referrer = $this->getService('koowa:http.url',array('url' => $url));
 		    }
 	        
 			KRequest::set('cookie.referrer_'.md5(KRequest::url()), (string) $referrer);

@@ -16,7 +16,7 @@
  * @subpackage 	Adapter
  * @uses 		KInflector
  */
-class SIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
+class SIdentifierAdapterKoowa extends KServiceLocatorKoowa
 {	
 	/**
 	 * Get the path based on an identifier
@@ -24,7 +24,7 @@ class SIdentifierAdapterKoowa extends KIdentifierAdapterKoowa
 	 * @param  object  	Identifier or Identifier object - koowa.[.path].name
 	 * @return string	Returns the path
 	 */
-	public function findPath(KIdentifier $identifier)
+	public function findPath(KServiceIdentifier $identifier)
 	{
 		$path = '';
 		

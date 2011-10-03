@@ -61,6 +61,6 @@ Shyft::getInstance(array(
     'site'       => array(SITE_ROOT,       SITES_ROOT,         SYSTEM_ROOT),
 ));
 
-echo KFactory::get('com://site/application.dispatcher', array(
-    //'behaviors' => KFactory::get('com:config')->get('application.behaviors')
+echo KService::get('com://site/application.dispatcher', array(
+    //'behaviors' => $this->getService('com:config')->get('application.behaviors')
 ))->dispatch();

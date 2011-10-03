@@ -17,7 +17,7 @@
  * @uses 		KInflector
  * @uses 		Shyft
  */
-class SIdentifierAdapterAction extends KIdentifierAdapterAbstract
+class SIdentifierAdapterAction extends KServiceLocatorAbstract
 {
     /** 
 	 * The adapter type
@@ -32,7 +32,7 @@ class SIdentifierAdapterAction extends KIdentifierAdapterAbstract
 	 * @param  mixed  		 Identifier or Identifier object - plg.type.plugin.[.path].name
 	 * @return string|false  Return object on success, returns FALSE on failure
 	 */
-	public function findClass(KIdentifier $identifier)
+	public function findClass(KServiceIdentifier $identifier)
 	{
 	    $classpath = KInflector::camelize(implode('_', $identifier->path));
 		$classname = 'Action'.ucfirst($identifier->package).$classpath.ucfirst($identifier->name);
@@ -51,7 +51,7 @@ class SIdentifierAdapterAction extends KIdentifierAdapterAbstract
 	 * @param  object  			An Identifier object - plg.type.plugin.[.path].name
 	 * @return string|false		Returns the path on success FALSE on failure
 	 */
-	public function findPath(KIdentifier $identifier)
+	public function findPath(KServiceIdentifier $identifier)
 	{
 	    $parts = $identifier->path;
 			

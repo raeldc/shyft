@@ -17,7 +17,7 @@
  * @subpackage 	Adapter
  * @uses 		KInflector
  */
-class SIdentifierAdapterShyft extends KIdentifierAdapterAbstract
+class SIdentifierAdapterShyft extends KServiceLocatorAbstract
 {
 	/** 
 	 * The adapter type
@@ -32,7 +32,7 @@ class SIdentifierAdapterShyft extends KIdentifierAdapterAbstract
 	 * @param 	mixed  		 Identifier or Identifier object - shyft.[.path].name
 	 * @return string|false  Return object on success, returns FALSE on failure
 	 */
-	public function findClass(KIdentifier $identifier)
+	public function findClass(KServiceIdentifier $identifier)
 	{
         $classname = 'S'.ucfirst($identifier->package).KInflector::implode($identifier->path).ucfirst($identifier->name);
 			
@@ -55,7 +55,7 @@ class SIdentifierAdapterShyft extends KIdentifierAdapterAbstract
 	 * @param  object  	Identifier or Identifier object - shyft.[.path].name
 	 * @return string	Returns the path
 	 */
-	public function findPath(KIdentifier $identifier)
+	public function findPath(KServiceIdentifier $identifier)
 	{
 		if(count($identifier->path)) {
 			$path .= implode('/',$identifier->path);

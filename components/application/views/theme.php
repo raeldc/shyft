@@ -1,6 +1,6 @@
 <?php
 
-class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiatable
+class ComApplicationViewTheme extends KViewAbstract implements KServiceInstantiatable
 {
 	/**
      * Template identifier (theme://APP/template.NAME)
@@ -120,7 +120,7 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
     protected function _initialize(KConfig $config)
     {
         //Clone the identifier
-        $identifier = clone $this->_identifier;
+        $identifier = clone $this->getIdentifier();
         
         $config->append(array(
             'data'			   => array(),
@@ -159,18 +159,18 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
      *
      * @return ComApplicationViewTheme
      */
-    public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
-    { 
-       // Check if an instance with this identifier already exists or not
-        if (!$factory->has($config->identifier))
+    public static function getInstance(KConfigInterface $config, KServiceInterface $container)
+    {
+        // Check if an instance with this identifier already exists or not
+        if (!$container->has($config->service_identifier))
         {
             //Create the singleton
-            $classname = $config->identifier->classname;
+            $classname = $config->service_identifier->classname;
             $instance  = new $classname($config);
-            $factory->set($config->identifier, $instance);
+            $container->set($config->service_identifier, $instance);
         }
         
-        return $factory->get($config->identifier);
+        return $container->get($config->service_identifier);
     }
 
     /**
@@ -297,13 +297,13 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
 
         if((is_string($layout) && strpos($layout, '.') === false)) 
 		{
-            $identifier = clone $this->_identifier;
+            $identifier = clone $this->getIdentifier();
             $identifier->type = 'theme';
             $identifier->package = $this->_theme;
             $identifier->path = array();
             $identifier->name = $layout;
 	    }
-		else $identifier = KIdentifier::identify($layout);
+		else $identifier = $this->getIdentifier($layout);
         
         $this->_layout = $identifier;
         return $this;
@@ -342,7 +342,7 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
             	'view' => $this
             );
 
-            $this->_template = KFactory::get($this->_template, $options);
+            $this->_template = $this->getService($this->_template, $options);
         }
         
         return $this->_template;
@@ -351,7 +351,7 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
     /**
      * Method to set a template object attached to the view
      *
-     * @param   mixed   An object that implements KObjectIdentifiable, an object that 
+     * @param   mixed   An object that implements KObject, an object that 
      *                  implements KIdentifierInterface or valid identifier string
      * @throws  KDatabaseRowsetException    If the identifier is not a table identifier
      * @return  KViewAbstract
@@ -362,11 +362,11 @@ class ComApplicationViewTheme extends KViewAbstract implements KObjectInstantiat
         {
             if(is_string($template) && strpos($template, '.') === false ) 
             {
-                $identifier = clone $this->_identifier; 
+                $identifier = clone $this->getIdentifier(); 
                 $identifier->path = array('template');
                 $identifier->name = $template;
             }
-            else $identifier = KIdentifier::identify($template);
+            else $identifier = $this->getIdentifier($template);
             
             if($identifier->path[0] != 'template') {
                 throw new KViewException('Identifier: '.$identifier.' is not a template identifier');

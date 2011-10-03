@@ -5,7 +5,7 @@
  *	- Redirect where necessary
  *  - Render the Template
  */
-class ComApplicationDispatcher extends KControllerAbstract implements KObjectInstantiatable
+class ComApplicationDispatcher extends KControllerAbstract implements KServiceInstantiatable
 {
     public $_component;
 
@@ -45,25 +45,25 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
      *
      * @return ComApplicationDispatcher
      */
-    public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
-    { 
-       // Check if an instance with this identifier already exists or not
-        if (!$factory->has($config->identifier))
+    public static function getInstance(KConfigInterface $config, KServiceInterface $container)
+    {
+        // Check if an instance with this identifier already exists or not
+        if (!$container->has($config->service_identifier))
         {
             //Create the singleton
-            $classname = $config->identifier->classname;
+            $classname = $config->service_identifier->classname;
             $instance  = new $classname($config);
-            $factory->set($config->identifier, $instance);
+            $container->set($config->service_identifier, $instance);
         }
         
-        return $factory->get($config->identifier);
+        return $container->get($config->service_identifier);
     }
 
 	protected function _actionDispatch(KCommandContext $context)
 	{
         // Get the navigation, assign it to the top-navigation container
-        KFactory::get('theme.container')->append('top-navigation',
-            KFactory::get('com://site/pages.controller.page')
+        $this->getService('theme.container')->append('top-navigation',
+            $this->getService('com://site/pages.controller.page')
                 ->view('pages')
                 ->layout('navigation')
                 ->display()
@@ -92,7 +92,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
                 'request' => $this->getRequest(),
             );
 
-            $this->_component = KFactory::get($this->_component, $config);
+            $this->_component = $this->getService($this->_component, $config);
         }
     
         return $this->_component;
@@ -112,12 +112,12 @@ class ComApplicationDispatcher extends KControllerAbstract implements KObjectIns
         {
             if(is_string($component) && strpos($component, '.') === false ) 
             {   
-                $identifier             = clone $this->_identifier;
+                $identifier             = clone $this->getIdentifier();
                 $identifier->package    = $component;
                 $identifier->path       = array();
                 $identifier->name       = 'dispatcher';
             }
-            else $identifier = KIdentifier::identify($component);
+            else $identifier = $this->getIdentifier($component);
 
             if($identifier->name != 'dispatcher') {
                 throw new KDispatcherException('Identifier: '.$identifier.' is not a component dispatcher identifier');

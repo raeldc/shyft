@@ -76,12 +76,12 @@ class Shyft
         ));
 
         // Register the Koowa and Shyft Identifier Adapters
-        KIdentifier::addAdapter(new SIdentifierAdapterKoowa());
-        KIdentifier::addAdapter(new SIdentifierAdapterShyft());
+        KServiceIdentifier::addLocator(new SIdentifierAdapterKoowa());
+        KServiceIdentifier::addLocator(new SIdentifierAdapterShyft());
 
         //Setup the factory
-        KFactory::getInstance()->set('shyft:loader', $loader);
-        KFactory::getInstance()->set('koowa:loader', $loader);
+        KService::getInstance()->set('shyft:loader', $loader);
+        KService::getInstance()->set('koowa:loader', $loader);
 
         /*
          *      We have a special loader adapter for Shyft which looks for "fallback" directories
@@ -94,12 +94,12 @@ class Shyft
         SLoader::addAdapter(new SLoaderAdapterAction(array('basepath'    => self::$paths['actions'])));
 
         // Register the application's Identifier Adapaters
-        KIdentifier::addAdapter(new SIdentifierAdapterComponent());
-        KIdentifier::addAdapter(new SIdentifierAdapterWidget());
-        KIdentifier::addAdapter(new SIdentifierAdapterAction());
-        KIdentifier::addAdapter(new SIdentifierAdapterTheme());
+        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.component'));
+        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.widget'));
+        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.action'));
+        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.theme'));
 
-        KIdentifier::setApplication('site' , self::$paths['site']);
+        KServiceIdentifier::setApplication('site' , self::$paths['site']);
 
         define('FLOW', true);
     }

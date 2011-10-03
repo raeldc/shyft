@@ -14,7 +14,7 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
 	protected function _beforeDispatch(KCommandContext $context)
     {
     	// Get the page model to get the current item
-    	$page = KFactory::get('com://site/pages.model.page')
+    	$page = $this->getService('com://site/pages.model.page')
     		->page(KRequest::get('get.page', 'cmd', 'default'))
     		->getItem();
 
@@ -23,7 +23,7 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
     	}
 
     	// Determine the type of content the page is trying to access and call it.
-    	$component = KIdentifier::identify($page->type);
+    	$component = $this->getIdentifier($page->type);
 		$component->name = 'dispatcher';
 		
 		$context->caller->setRequest($page->parameters);

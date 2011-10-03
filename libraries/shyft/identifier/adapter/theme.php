@@ -15,7 +15,7 @@
  * @package     Shyft_Identifier
  * @subpackage 	Adapter
  */
-class SIdentifierAdapterTheme extends KIdentifierAdapterAbstract
+class SIdentifierAdapterTheme extends KServiceLocatorAbstract
 {
 	/** 
 	 * The adapter type
@@ -29,7 +29,7 @@ class SIdentifierAdapterTheme extends KIdentifierAdapterAbstract
 	 *
 	 * @return string|false  Return FALSE
 	 */
-	public function findClass(KIdentifier $identifier)
+	public function findClass(KServiceIdentifier $identifier)
 	{ 
 	    return false;
 	}
@@ -40,7 +40,7 @@ class SIdentifierAdapterTheme extends KIdentifierAdapterAbstract
 	 * @param  object  	An Identifier object - com:[//application/]component.view.[.path].name
 	 * @return string	Returns the path
 	 */
-	public function findPath(KIdentifier $identifier)
+	public function findPath(KServiceIdentifier $identifier)
 	{
 		if(empty($identifier->application)) {
 			throw new KIdentifierAdapterException("Application not specified in theme: " . $identifier);

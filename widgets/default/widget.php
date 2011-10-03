@@ -1,6 +1,6 @@
 <?php
 
-abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiable
+abstract class WidgetDefaultWidget extends KObject
 {
 	/**
 	 * View object or identifier (widget://APP/COMPONENT.view.NAME.FORMAT)
@@ -50,8 +50,8 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
     protected function _initialize(KConfig $config)
     {
     	$config->append(array(
-    	    'model'	     => $this->_identifier->package,
-        	'view'	     => $this->_identifier->package,
+    	    'model'	     => $this->getIdentifier()package,
+        	'view'	     => $this->getIdentifier()package,
         ));
 
         parent::_initialize($config);
@@ -63,15 +63,21 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
     }
 
     /**
-     * Get the object identifier
-     * 
-     * @return  KIdentifier 
-     * @see     KObjectIdentifiable
-     */
-    public function getIdentifier()
-    {
-        return $this->_identifier;
-    }
+	 * Gets the service identifier.
+	 *
+	 * @return	KServiceIdentifier
+	 * @see 	KObjectServiceable
+	 */
+	final public function getIdentifier($identifier = null)
+	{
+		if(isset($identifier)) {
+		    $result = $this->__service_container->getIdentifier($identifier);
+		} else {
+		    $result = $this->__service_identifier; 
+		}
+	    
+	    return $result;
+	}
 
     /**
 	 * Get the request information
@@ -108,7 +114,7 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
 			    'model'  => $this->getModel(),
         	);
 
-			$this->_view = KFactory::get($this->_view, $config);
+			$this->_view = $this->getService($this->_view, $config);
 
 			//Set the layout
 			if(isset($this->_request->layout)) {
@@ -127,7 +133,7 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
 	/**
 	 * Method to set a view object attached to the controller
 	 *
-	 * @param	mixed	An object that implements KObjectIdentifiable, an object that
+	 * @param	mixed	An object that implements KObject, an object that
 	 *                  implements KIdentifierInterface or valid identifier string
 	 * @throws	KControllerException	If the identifier is not a view identifier
 	 * @return	object	A KViewAbstract object or a KIdentifier object
@@ -138,11 +144,11 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
 		{
 			if(is_string($view) && strpos($view, '.') === false ) 
 		    {
-			    $identifier			= clone $this->_identifier;
+			    $identifier			= clone $this->getIdentifier();
 			    $identifier->path	= array('view', $view);
 			    $identifier->name	= 'html';
 			}
-			else $identifier = KIdentifier::identify($view);
+			else $identifier = $this->getIdentifier($view);
 
 			if($identifier->path[0] != 'view') {
 				throw new KControllerException('Identifier: '.$identifier.' is not a view identifier');
@@ -175,7 +181,7 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
 				'state' => $this->getRequest()
             );
 		    
-		    $this->_model = KFactory::get($this->_model)->set($this->getRequest());
+		    $this->_model = $this->getService($this->_model)->set($this->getRequest());
 		}
 
 		return $this->_model;
@@ -184,7 +190,7 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
 	/**
 	 * Method to set a model object attached to the controller
 	 *
-	 * @param	mixed	An object that implements KObjectIdentifiable, an object that
+	 * @param	mixed	An object that implements KObject, an object that
 	 *                  implements KIdentifierInterface or valid identifier string
 	 * @throws	KControllerException	If the identifier is not a model identifier
 	 * @return	object	A KModelAbstract object or a KIdentifier object
@@ -200,11 +206,11 @@ abstract class WidgetDefaultWidget extends KObject implements KObjectIdentifiabl
 				    $model = KInflector::pluralize($model);
 			    } 
 		        
-			    $identifier			= clone $this->_identifier;
+			    $identifier			= clone $this->getIdentifier();
 			    $identifier->path	= array('model');
 			    $identifier->name	= $model;
 			}
-			else $identifier = KIdentifier::identify($model);
+			else $identifier = $this->getIdentifier($model);
 
 			if($identifier->path[0] != 'model') {
 				throw new KControllerException('Identifier: '.$identifier.' is not a model identifier');

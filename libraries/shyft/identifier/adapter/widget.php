@@ -15,7 +15,7 @@
  * @package     Shyft_Identifier
  * @subpackage 	Adapter
  */
-class SIdentifierAdapterWidget extends KIdentifierAdapterAbstract
+class SIdentifierAdapterWidget extends KServiceLocatorAbstract
 {
 	/** 
 	 * The adapter type
@@ -40,7 +40,7 @@ class SIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 	 * @param mixed  		 Identifier or Identifier object - com:[//application/]component.view.[.path].name
 	 * @return string|false  Return object on success, returns FALSE on failure
 	 */
-	public function findClass(KIdentifier $identifier)
+	public function findClass(KServiceIdentifier $identifier)
 	{ 
 	    $path      = KInflector::camelize(implode('_', $identifier->path));
         $classname = 'Widget'.ucfirst($identifier->package).$path.ucfirst($identifier->name);
@@ -50,7 +50,7 @@ class SIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 			return false;
 
       	//Manually load the class to set the basepath
-		if (!SLoader::loadClass($classname, $identifier->basepath))
+		if (!$this->getService('shyft:loader')->loadClass($classname, $identifier->basepath))
 		{
 			$classname = false;
 		    $classpath = $identifier->path;
@@ -123,7 +123,7 @@ class SIdentifierAdapterWidget extends KIdentifierAdapterAbstract
 	 * @param  object  	An Identifier object - com:[//application/]component.view.[.path].name
 	 * @return string	Returns the path
 	 */
-	public function findPath(KIdentifier $identifier)
+	public function findPath(KServiceIdentifier $identifier)
 	{
         $path  = '';
 	    $parts = $identifier->path;

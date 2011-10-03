@@ -1,6 +1,6 @@
 <?php
 
-class ComConfigDefault extends KObject implements KObjectIdentifiable
+class ComConfigDefault extends KObject
 {
     protected $_registry;
 
@@ -42,7 +42,7 @@ class ComConfigDefault extends KObject implements KObjectIdentifiable
         	$component = array_shift($parts);
         	$field = array_shift($parts);
 
-            $values = KFactory::get('com:config.model.config')
+            $values = $this->getService('com:config.model.config')
             	->name($component)
             	->field($field)
             	->getList();

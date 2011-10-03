@@ -39,7 +39,7 @@ class ComDefaultControllerBehaviorManageable  extends KControllerBehaviorAbstrac
         	$toolbar = $this->getTemplateToolbar();
 
             $view->getTemplate()->addFilter(array(
-				KFactory::get($toolbar, array(
+				$this->getService($toolbar, array(
 					'toolbar' => $context->caller->getToolbar(),
 				))
             ));

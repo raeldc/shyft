@@ -2,7 +2,7 @@
 	<h3>Main Navigation</h3>
 	<?php
 	// Get the navigation tree
-    echo KFactory::get('com://site/pages.controller.page')
+    echo @service('com://site/pages.controller.page')
         ->view('pages')
         ->layout('manage_tree')
         ->display();

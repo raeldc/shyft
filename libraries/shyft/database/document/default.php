@@ -17,31 +17,24 @@
  * @package     Shyft_Database
  * @subpackage  Table
  */
-class SDatabaseDocumentDefault extends SDatabaseDocumentAbstract implements KObjectInstantiatable
-{
-	/**
-     * Associative array of table instances
-     * 
-     * @var array
-     */
-    private static $_instances = array();
-    
+class SDatabaseDocumentDefault extends SDatabaseDocumentAbstract implements KServiceInstantiatable
+{ 
 	/**
      * Force creation of a singleton
      *
      * @return SDatabaseDocumentDefault
      */
-    public static function getInstance(KConfigInterface $config, KFactoryInterface $factory)
+    public static function getInstance(KConfigInterface $config, KServiceInterface $container)
     {
-       // Check if an instance with this identifier already exists or not
-        if (!$factory->has($config->identifier))
+        // Check if an instance with this identifier already exists or not
+        if (!$container->has($config->service_identifier))
         {
             //Create the singleton
-            $classname = $config->identifier->classname;
+            $classname = $config->service_identifier->classname;
             $instance  = new $classname($config);
-            $factory->set($config->identifier, $instance);
+            $container->set($config->service_identifier, $instance);
         }
         
-        return $factory->get($config->identifier);
+        return $container->get($config->service_identifier);
     }
 }

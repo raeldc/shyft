@@ -1,6 +1,6 @@
 <?php
 
-class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable 
+class SDatabaseAdapterDocument extends KObject
 {
 	protected $_connection;
 	protected $_database;
@@ -30,11 +30,6 @@ class SDatabaseAdapterDocument extends KObject implements KObjectIdentifiable
 
         // More sure that data has been inserted/updated
         $this->_synced = $config->synced;
-	}
-
-	public function getIdentifier()
-	{
-		return $this->_identifier;
 	}
 
 	protected function _initialize(KConfig $config)

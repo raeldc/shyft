@@ -41,7 +41,7 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
-			'document'	=> $this->_identifier->name
+			'document'	=> $this->getIdentifier()->name
 		));
 
 		parent::_initialize($config);
@@ -128,7 +128,7 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
 			    }
 
 		        try {
-		            $this->_document = KFactory::get($this->_document);
+		            $this->_document = $this->getService($this->_document);
                 } catch (KDatabaseDocumentException $e) {
                     $this->_document = false;
                 }
@@ -141,7 +141,7 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
     /**
      * Method to set a document object attached to the model
      *
-     * @param   mixed   An object that implements KObjectIdentifiable, an object that
+     * @param   mixed   An object that implements KObject, an object that
      *                  implements KIdentifierInterface or valid identifier string
      * @throws  KDatabaseRowsetException    If the identifier is not a document identifier
      * @return  KModelDocument
@@ -152,11 +152,11 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
 		{
 			if(is_string($document) && strpos($document, '.') === false ) 
 		    {
-		        $identifier         = clone $this->_identifier;
+		        $identifier         = clone $this->getIdentifier();
 		        $identifier->path   = array('database', 'document');
 		        $identifier->name   = KInflector::tableize($document);
 		    }
-		    else  $identifier = KIdentifier::identify($document);
+		    else  $identifier = $this->getIdentifier($document);
 
 			if($identifier->path[1] != 'document') {
 				throw new KDatabaseRowsetException('Identifier: '.$identifier.' is not a document identifier');

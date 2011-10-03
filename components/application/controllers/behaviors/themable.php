@@ -7,7 +7,7 @@ class ComApplicationControllerBehaviorThemable extends KControllerBehaviorAbstra
 		parent::__construct($config);
 
 		// Map a shortcut to the theme
-		KIdentifier::setAlias('theme', 'com://site/application.view.theme');
+		KService::setAlias('theme', 'com://site/application.view.theme');
 	}
 
     protected function _afterDispatch(KCommandContext $context)
@@ -31,7 +31,7 @@ class ComApplicationControllerBehaviorThemable extends KControllerBehaviorAbstra
             if(KRequest::type() != 'AJAX')
             {
             	// Wrap it around the template
-                $context->result = KFactory::get('theme')
+                $context->result = $this->getService('theme')
 					->display();
             }
             else return $context->result;

@@ -16,7 +16,7 @@
  * 
  * Filter will parse elements of the form <section class="widget top|bottom container">[content]</section> 
  * and prepend or append the content to the container. 
-.*
+ *
  * It's using div so the template can still be compatible on different platforms. 
  *
  * @author      Israel Canasa <raeldc@gmail.com>
@@ -34,7 +34,7 @@ class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements 
 	 */
     public function write(&$text)
     {
-    	if (!KFactory::has('theme.container'))
+    	if (!KService::has('theme.container'))
     		return $this;
 
 		$matches = array();
@@ -59,7 +59,7 @@ class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements 
 		        	$container = array_shift($properties);
 		        }
 
-			    KFactory::get('theme.container')->append($container, $matches[2][$key], $position);
+			    $this->getService('theme.container')->append($container, $matches[2][$key], $position);
 			}
 		}
 

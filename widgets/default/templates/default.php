@@ -10,7 +10,7 @@
 
 /**
  * Default Template for widgets
-.*
+ *
  * @author      Israel Canasa <raeldc@gmail.com>
  * @category    Shyft
  * @package     Shyft_Widgets
@@ -34,14 +34,14 @@ class WidgetDefaultTemplateDefault extends ComDefaultTemplateDefault
 	public function loadIdentifier($template, $data = array(), $process = true)
 	{
 	    //Identify the template
-	    $identifier = KIdentifier::identify($template);
+	    $identifier = $this->getIdentifier($template);
 	    $file = $identifier->filepath;
 
 	    if ($identifier->type == 'widget') 
 	    {
-	    	if (KFactory::has('theme')) 
+	    	if (KService::has('theme')) 
 	    	{
-		    	$theme = clone KFactory::get('theme')->getLayout();
+		    	$theme = clone $this->getService('theme')->getLayout();
 
 		    	$path = array();
 		    	if (!empty($identifier->path) && $identifier->path[0] == 'view')

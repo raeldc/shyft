@@ -7,21 +7,21 @@ class ComApplicationControllerBehaviorWidgetable extends KControllerBehaviorAbst
         parent::__construct($config);
     
         // Create the container identifier
-        $identifier = 'com://'.$this->_identifier->application.'/application.template.container';
-        KIdentifier::setAlias('theme.container', $identifier);
+        $identifier = 'com://'.$this->getIdentifier()->application.'/application.template.container';
+        KService::setAlias('theme.container', $identifier);
     }
     
     protected function _beforeDispatch(KCommandContext $context)
     {
         if($context->caller->isThemable())
         {
-            $container = KFactory::get('theme.container', array(
+            $container = $this->getService('theme.container', array(
                 // Make sure we inject the theme
-                'view' => KFactory::get('theme'),
+                'view' => $this->getService('theme'),
             ));
 
             // Set the container for the theme
-            KFactory::get('theme')->setContainer($container);
+            $this->getService('theme')->setContainer($container);
         }
     }
 
@@ -31,7 +31,7 @@ class ComApplicationControllerBehaviorWidgetable extends KControllerBehaviorAbst
         {   
             // Inject the dispatcher's result into the 'page' container.
             // This assumes that widgetable's _afterDispatch is executed before themeable's
-            KFactory::get('theme.container')->append('page', $context->result);
+            $this->getService('theme.container')->append('page', $context->result);
         }
     }
 }
