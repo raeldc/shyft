@@ -2,19 +2,19 @@
 /**
  * @version 	$Id$
  * @category	Koowa
- * @package		Koowa_Identifier
+ * @package		Koowa_Service
  * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
 /**
- * Identifier Registry Class
+ * Service Identifier Registry Class
  *
  * @author      Johan Janssens <johan@nooku.org>
  * @category    Koowa
- * @package     Koowa_Identifier
+ * @package     Koowa_Service
  */
-class KIdentifierRegistry extends ArrayObject
+class KServiceIdentifierRegistry extends ArrayObject
 {
  	/**
  	 * Cache
@@ -28,7 +28,7 @@ class KIdentifierRegistry extends ArrayObject
  	 * 
  	 * @var boolean
  	 */
-    protected $_cache_prefix = 'koowa.identifier.registry';
+    protected $_cache_prefix = 'koowa.service.identifier.registry';
     
 	/**
      * Enable class caching
@@ -112,7 +112,7 @@ class KIdentifierRegistry extends ArrayObject
      * @return  bool
      */
     public function offsetExists($offset)
-    {
+    { 
         if(false === $result = parent::offsetExists($offset)) 
         {
             if($this->_cache) {

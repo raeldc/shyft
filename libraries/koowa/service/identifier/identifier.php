@@ -2,13 +2,13 @@
 /**
  * @version 	$Id$
  * @category	Koowa
- * @package		Koowa_Identifier
+ * @package		Koowa_Service
  * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
 /**
- * Domain Object Identifier
+ * Service Identifier
  *
  * Wraps identifiers of the form [application::]type.package.[.path].name
  * in an object, providing public accessors and methods for derived formats.
@@ -18,15 +18,8 @@
  * @package     Koowa_Factory
  * @subpackage  Identifier
  */
-class KIdentifier implements KIdentifierInterface
+class KServiceIdentifier implements KServiceIdentifierInterface
 {
-    /**
-     * The identifier container
-     *
-     * @var array
-     */
-    protected static $_registry = null;
-    
     /**
      * An associative array of application paths
      * 
@@ -39,15 +32,8 @@ class KIdentifier implements KIdentifierInterface
      *
      * @var array
      */
-    protected static $_adapters = array();
-    
-    /**
-	 * The identifier alias map
-	 *
-	 * @var	array
-	 */
-	protected static $_aliases = array();
-    
+    protected static $_locators = array();
+     
     /**
      * The identifier
      *
@@ -115,18 +101,18 @@ class KIdentifier implements KIdentifierInterface
      * Constructor
      *
      * @param   string   Identifier string or object in [application::]type.package.[.path].name format
-     * @throws  KIdentifierException if the identfier is not valid
+     * @throws  KServiceIdentifierException if the identfier is not valid
      */
-    private function __construct($identifier)
+    public function __construct($identifier)
     { 
         //Check if the identifier is valid
         if(strpos($identifier, ':') === FALSE) {
-            throw new KIdentifierException('Malformed identifier : '.$identifier);
+            throw new KServiceIdentifierException('Malformed identifier : '.$identifier);
         }
         
         //Get the parts
         if(false === $parts = parse_url($identifier)) {
-            throw new KIdentifierException('Malformed identifier : '.$identifier);
+            throw new KServiceIdentifierException('Malformed identifier : '.$identifier);
         }
   
         // Set the type
@@ -153,49 +139,6 @@ class KIdentifier implements KIdentifierInterface
         $this->_identifier = $identifier;
     }
     
-	/**
-	 * Returns an identifier object. 
-	 * 
-	 * Accepts various types of parameters and returns a valid identifier. Parameters can either be an 
-	 * object that implements KObjectIdentifiable, or a KIdentifierInterface, or valid identifier 
-	 * string. Function will also check for identifier mappings and return the mapped identifier.
-	 *
-	 * @param	mixed	An object that implements KObjectIdentifiable, an object that 
-	 *                  implements KIdentifierInterface or valid identifier string
-	 * @return KIdentifier
-	 * @see __construct()
-	 */
-	public static function identify($identifier)
-	{		
-	    if(!isset(self::$_registry)) {
-	        self::$_registry = new KIdentifierRegistry();
-	    }
-	      
-	    if(!self::$_registry->offsetExists((string) $identifier)) 
-        {  
-            if(!is_string($identifier)) 
-		    {
-			    if($identifier instanceof KObjectIdentifiable) {
-			        $identifier = $identifier->getIdentifier();
-		        }   
-		    } 
-		
-		    $alias = (string) $identifier;
-		    if(array_key_exists($alias, self::$_aliases)) {
-			    $identifier = self::$_aliases[$alias];
-		    }
-		
-		    if(is_string($identifier)) {
-		        $identifier = new KIdentifier($identifier);
-		    }
-		     
-		    self::$_registry->offsetSet((string) $identifier, $identifier);
-        }
-        else $identifier = self::$_registry->offsetGet((string)$identifier);
-		
-		return $identifier;
-	}
-	
 	/**
 	 * Serialize the identifier
 	 *
@@ -233,40 +176,6 @@ class KIdentifier implements KIdentifierInterface
 	}
 
 	/**
-	 * Set an alias for an identifier
-	 *
-	 * @param string  The alias 
-	 * @param mixed   The class indentifier or identifier object
-	 */
-	public static function setAlias($alias, $identifier)
-	{		
-		$identifier = self::identify($identifier);
-		
-		self::$_aliases[$alias] = $identifier;
-	}
-	
-	/**
-	 * Get an alias for an identifier
-	 *
-	 * @param  string  The alias 
-	 * @return mixed   The class indentifier or identifier object, or NULL if no alias was found.
-	 */
-	public static function getAlias($alias)
-	{		
-		return isset(self::$_aliases[$alias])  ? self::$_aliases[$alias] : null;
-	}
-	
-	/**
-     * Get a list of aliasses
-     * 
-     * @return array
-     */
-    public static function getAliases()
-    {
-        return self::$_aliases;
-    }
-    
-	/**
 	 * Set an application path
 	 * 
 	 * @param string	The name of the application
@@ -302,12 +211,12 @@ class KIdentifier implements KIdentifierInterface
 	/**
      * Add a identifier adapter
      *
-     * @param object    A KFactoryAdapter
+     * @param object    A KServiceLocator
      * @return void
      */
-    public static function addAdapter(KIdentifierAdapterInterface $adapter)
+    public static function addLocator(KServiceLocatorInterface $locator)
     {
-        self::$_adapters[$adapter->getType()] = $adapter;
+        self::$_locators[$locator->getType()] = $locator;
     }
     
 	/**
@@ -315,9 +224,9 @@ class KIdentifier implements KIdentifierInterface
      * 
      * @return array
      */
-    public static function getAdapters()
+    public static function getLocators()
     {
-        return self::$_adapters;
+        return self::$_locators;
     }
        
     /** 
@@ -344,7 +253,7 @@ class KIdentifier implements KIdentifierInterface
             if($property == 'application')
             { 
                if(!isset(self::$_applications[$value])) {
-                    throw new KIdentifierException('Unknow application : '.$value);  
+                    throw new KServiceIdentifierException('Unknow application : '.$value);  
                }
                
                $this->_basepath = self::$_applications[$value];
@@ -354,14 +263,8 @@ class KIdentifier implements KIdentifierInterface
             if($property == 'type') 
             {
                 //Check the type
-                if(!isset(self::$_adapters[$value])) 
-                {
-                    //Auto-load the koowa adapter
-                    if($value == 'koowa') {
-                        $this->addAdapter(new KIdentifierAdapterKoowa());
-                    } else {
-                        throw new KIdentifierException('Unknow type : '.$value); 
-                    }
+                if(!isset(self::$_locators[$value]))  {
+                    throw new KServiceIdentifierException('Unknow type : '.$value); 
                 }
             }
             
@@ -387,11 +290,11 @@ class KIdentifier implements KIdentifierInterface
         if(isset($this->{'_'.$property})) 
         { 
             if($property == 'filepath' && empty($this->_filepath)) {
-                $this->_filepath = self::$_adapters[$this->_type]->findPath($this);
+                $this->_filepath = self::$_locators[$this->_type]->findPath($this);
             }
               
             if($property == 'classname' && empty($this->_classname)) {
-                $this->_classname = self::$_adapters[$this->_type]->findClass($this);
+                $this->_classname = self::$_locators[$this->_type]->findClass($this);
             }
             
             return $this->{'_'.$property};

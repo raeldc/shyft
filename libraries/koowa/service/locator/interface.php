@@ -2,37 +2,37 @@
 /**
  * @version 	$Id$
  * @category	Koowa
- * @package		Koowa_Identifier
- * @subpackage 	Adapter
+ * @package		Koowa_Service
+ * @subpackage 	Locator
  * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
 /**
- * Identifier Adapter Interface
+ * Service Locator Interface
  *
  * @author		Johan Janssens <johan@nooku.org>
  * @category	Koowa
- * @package     Koowa_Identifier
- * @subpackage 	Adapter
+ * @package     Koowa_Service
+ * @subpackage 	Locator
  */
-interface KIdentifierAdapterInterface
+interface KServiceLocatorInterface
 {
 	/**
 	 * Get the classname based on an identifier
 	 *
-	 * @param 	object 			An Identifier object - [application::]type.package.[.path].name
+	 * @param 	object 			An identifier object - [application::]type.package.[.path].name
 	 * @return 	string|false 	Returns the class on success, returns FALSE on failure
 	 */
-	public function findClass(KIdentifier $identifier);
+	public function findClass(KServiceIdentifier $identifier);
 	
 	 /**
      * Get the path based on an identifier
      *
-     * @param  object   An Identifier object - [application::]type.package.[.path].name
+     * @param  object   An identifier object - [application::]type.package.[.path].name
      * @return string	Returns the path
      */
-    public function findPath(KIdentifier $identifier);
+    public function findPath(KServiceIdentifier $identifier);
 	
 	/**
 	 * Get the type

@@ -2,24 +2,24 @@
 /**
  * @version 	$Id$
  * @category	Koowa
- * @package		Koowa_Identifier
- * @subpackage 	Adapter
+ * @package		Koowa_Service
+ * @subpackage 	Locator
  * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  */
 
 /**
- * Identifier Adapter for a plugin
+ * Service Locator for a plugin
  *
  * @author		Johan Janssens <johan@nooku.org>
  * @category	Koowa
- * @package     Koowa_Identifier
- * @subpackage 	Adapter
+ * @package     Koowa_Service
+ * @subpackage 	Locator
  */
-class KIdentifierAdapterPlugin extends KIdentifierAdapterAbstract
+class KServiceLocatorPlugin extends KServiceLocatorAbstract
 {
     /** 
-	 * The adapter type
+	 * The type
 	 * 
 	 * @var string
 	 */
@@ -28,10 +28,10 @@ class KIdentifierAdapterPlugin extends KIdentifierAdapterAbstract
 	/**
 	 * Get the classname based on an identifier
 	 * 
-	 * @param  mixed  		 Identifier or Identifier object - plg.type.plugin.[.path].name
+	 * @param  mixed  		 An identifier object - plg.type.plugin.[.path].name
 	 * @return string|false  Return object on success, returns FALSE on failure
 	 */
-	public function findClass(KIdentifier $identifier)
+	public function findClass(KServiceIdentifier $identifier)
 	{
 	    $classpath = KInflector::camelize(implode('_', $identifier->path));
 		$classname = 'Plg'.ucfirst($identifier->package).$classpath.ucfirst($identifier->name);
@@ -50,7 +50,7 @@ class KIdentifierAdapterPlugin extends KIdentifierAdapterAbstract
 	 * @param  object  			An Identifier object - plg.type.plugin.[.path].name
 	 * @return string|false		Returns the path on success FALSE on failure
 	 */
-	public function findPath(KIdentifier $identifier)
+	public function findPath(KServiceIdentifier $identifier)
 	{
 	    $path  = ''; 
 	    $parts = $identifier->path;
