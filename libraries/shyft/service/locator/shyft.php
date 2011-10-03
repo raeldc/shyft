@@ -17,7 +17,7 @@
  * @subpackage 	Adapter
  * @uses 		KInflector
  */
-class SIdentifierAdapterShyft extends KServiceLocatorAbstract
+class SServiceLocatorShyft extends KServiceLocatorAbstract
 {
 	/** 
 	 * The adapter type

@@ -17,7 +17,7 @@
  * @uses 		KInflector
  * @uses 		Shyft
  */
-class SIdentifierAdapterAction extends KServiceLocatorAbstract
+class SServiceLocatorAction extends KServiceLocatorAbstract
 {
     /** 
 	 * The adapter type

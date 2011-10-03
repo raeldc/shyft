@@ -76,8 +76,8 @@ class Shyft
         ));
 
         // Register the Koowa and Shyft Identifier Adapters
-        KServiceIdentifier::addLocator(new SIdentifierAdapterKoowa());
-        KServiceIdentifier::addLocator(new SIdentifierAdapterShyft());
+        KServiceIdentifier::addLocator(new SServiceLocatorKoowa());
+        KServiceIdentifier::addLocator(new SServiceLocatorShyft());
 
         //Setup the factory
         KService::getInstance()->set('shyft:loader', $loader);
@@ -94,10 +94,10 @@ class Shyft
         SLoader::addAdapter(new SLoaderAdapterAction(array('basepath'    => self::$paths['actions'])));
 
         // Register the application's Identifier Adapaters
-        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.component'));
-        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.widget'));
-        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.action'));
-        KServiceIdentifier::addLocator(KService::get('shyft:identifier.adapter.theme'));
+        KServiceIdentifier::addLocator(KService::get('shyft:service.locator.component'));
+        KServiceIdentifier::addLocator(KService::get('shyft:service.locator.widget'));
+        KServiceIdentifier::addLocator(KService::get('shyft:service.locator.action'));
+        KServiceIdentifier::addLocator(KService::get('shyft:service.locator.theme'));
 
         KServiceIdentifier::setApplication('site' , self::$paths['site']);
 

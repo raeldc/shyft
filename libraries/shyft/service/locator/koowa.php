@@ -16,7 +16,7 @@
  * @subpackage 	Adapter
  * @uses 		KInflector
  */
-class SIdentifierAdapterKoowa extends KServiceLocatorKoowa
+class SServiceLocatorKoowa extends KServiceLocatorKoowa
 {	
 	/**
 	 * Get the path based on an identifier

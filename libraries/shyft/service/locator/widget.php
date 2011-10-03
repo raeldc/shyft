@@ -15,7 +15,7 @@
  * @package     Shyft_Identifier
  * @subpackage 	Adapter
  */
-class SIdentifierAdapterWidget extends KServiceLocatorAbstract
+class SServiceLocatorWidget extends KServiceLocatorAbstract
 {
 	/** 
 	 * The adapter type
