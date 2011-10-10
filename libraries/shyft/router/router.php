@@ -48,10 +48,15 @@ abstract class SRouter extends KObject
          
         foreach($routes as $uri => $query)
         {
+        	$object = new stdclass;
+        	$object->rule = $uri;
+        	$object->uri = $this->compile($uri);
+        	$object->query = $query;
+
             //Add the routes
-            $this->_routes[$uri] = $query;
+            $this->_routes[$uri] = $object;
         }
-        
+
         return $this;
     }
 
@@ -143,6 +148,40 @@ abstract class SRouter extends KObject
 
 	}
 
+	public static function compile($uri, array $regex = NULL)
+	{
+		if ( ! is_string($uri))
+			return;
+
+		// The URI should be considered literal except for keys and optional parts
+		// Escape everything preg_quote would escape except for : ( ) < >
+		$expression = preg_replace('#'.SRouter::REGEX_ESCAPE.'#', '\\\\$0', $uri);
+
+		if (strpos($expression, '[') !== FALSE)
+		{
+			// Make optional parts of the URI non-capturing and optional
+			$expression = str_replace(array('[', ']'), array('[?:', ']?'), $expression);
+		}
+
+		// Insert default regex for keys
+		$expression = str_replace(array('<', '>'), array('(?P<', '>'.SRouter::REGEX_PARAMETER.')'), $expression);
+
+		if ($regex)
+		{
+			$search = $replace = array();
+			foreach ($regex as $key => $value)
+			{
+				$search[]  = "<$key>".SRouter::REGEX_PARAMETER;
+				$replace[] = "<$key>$value";
+			}
+
+			// Replace the default regex with the user-specified regex
+			$expression = str_replace($search, $replace, $expression);
+		}
+
+		return '#^'.$expression.'$#uD';
+	}
+
 	/**
 	 * Find the rule that best matches the query string
 	 *
@@ -160,10 +199,10 @@ abstract class SRouter extends KObject
 		$best_match = 'default';
 		$similarities = array('default' => 0);
 
-		foreach ($this->_routes as $rule => $rule_query) 
+		foreach ($this->_routes as $route) 
 		{
-			$similarities[$rule] = $this->calculateSimilarity($rule_query, $query);
-			$best_match = ($similarities[$rule] > $similarities[$best_match]) ? $rule : $best_match;
+			$similarities[$route->rule] = $this->calculateSimilarity($route->query, $query);
+			$best_match = ($similarities[$route->rule] > $similarities[$best_match]) ? $route->rule : $best_match;
 		}
 
 		return $best_match;
