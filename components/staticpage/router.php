@@ -12,8 +12,8 @@ class ComStaticpageRouter extends ComDefaultRouter
 			// string after # is the filter that will be used for the parameter. # is legal after :paramter e.g. :paramter#filter
 			// string inside [] is optional
 			'routes' => array(
-				':id#slug'                    => 'view=staticpage&id=:id',
-				'pages[/page-:page][/:limit]' => 'view=staticpages&page=:page|1&limit=:limit|10',
+				'<id>'                    => 'view=staticpage&id=:id',
+				'pages[/page-<page>][/<limit>]' => 'view=staticpages&page=:page|1&limit=:limit|10',
 			),
 		));
 

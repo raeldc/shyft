@@ -6,9 +6,9 @@ class ComDefaultRouter extends SRouterDefault
 	{
 		$config->append(array(
 			'routes' => array(
-				':view'          => 'view=:view',
-				':view/new'      => 'view=:view&layout=form',
-				':view/edit/:id' => 'view=:view&layout=form&id=:id',
+				'<view>'          => 'view=<view>',
+				'<view>/new'      => 'view=<view>&layout=form',
+				'<view>/edit/<id>' => 'view=<view>&layout=form&id=<id>',
 			),
 		));
 	

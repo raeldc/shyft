@@ -7,7 +7,7 @@
 abstract class SRouter extends KObject
 {
 	// Define the pattern of a :parameter
-	const REGEX_KEY     = ':([a-zA-Z0-9_]++)';
+	const REGEX_KEY     = '<([a-zA-Z0-9_]++)>';
 
 	// Legal Characters for a :parameter
 	const REGEX_PARAMETER = '[^/.,;-?\n]++';
@@ -65,7 +65,7 @@ abstract class SRouter extends KObject
 
 		$uri = $this->getMatchingRoute($query);
 
-		if (strpos($uri, ':') === FALSE AND strpos($uri, '[') === FALSE)
+		if (strpos($uri, '<') === FALSE AND strpos($uri, '[') === FALSE)
 		{
 			// This is a static route, no need to replace anything
 			return $uri;
@@ -90,6 +90,9 @@ abstract class SRouter extends KObject
 				{
 					// Replace the key with the parameter value
 					$replace = str_replace($key, $query[$param], $replace);
+
+					// Remove the param because it's already injected into the URI
+					unset($query[$param]);
 				}
 				else
 				{
@@ -114,10 +117,19 @@ abstract class SRouter extends KObject
 			}
 
 			$uri = str_replace($key, $query[$param], $uri);
+			
+			// Remove the param because it's already injected into the URI
+			unset($query[$param]);
 		}
 
 		// Remove unnecessary slashes
 		$uri = preg_replace('#//+#', '/', rtrim($uri, '/'));
+
+		// Remove query parameters that are already in the defaults of the route
+
+		if (count($query)) {
+			$uri .= '?'. http_build_query($query);
+		}
 
 		return $uri;
 	}
