@@ -71,6 +71,9 @@ abstract class SRouter extends KObject
 			return $uri;
 		}
 
+		// Remove filters as they are used only in parsing
+		$uri = preg_replace('#(\#[a-zA-Z0-9_]+)#', '', $uri);
+
 		while (preg_match('#\[[^\[\]]++\]#', $uri, $match))
 		{
 			// Search for the matched value
