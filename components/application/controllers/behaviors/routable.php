@@ -13,13 +13,22 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
 	
 	protected function _beforeDispatch(KCommandContext $context)
     {
-    	// Get the page model to get the current item
-    	$page = $this->getService('com://site/pages.model.page')
-    		->page(KRequest::get('get.page', 'cmd', 'default'))
-    		->getItem();
+    	$uri = $this->getUri();
 
-    	if ($page->isNew()) {
-    		// TODO: redirect to 404 page not found
+    	// Get the page alias from the URI
+    	$segments = explode('/', $uri, 2);
+
+    	// @TODO: Cache the pages
+    	// Get the page model to get the current item
+    	$pages = $this->getService('com://site/pages.model.page')
+    		->getList();
+
+    	// @TODO: Cache the page result
+    	// Find the page that has the page alias or just use the default page
+    	$page = ($page = $pages->find(array('permalink' => $segments[0]))->current()) === false ? $pages->find(array('default' => true))->current() : $page;
+
+    	if (!$page) {
+    		// @TODO: redirect to 404 page not found
     	}
 
     	// Determine the type of content the page is trying to access and call it.
@@ -37,7 +46,7 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
 	 * @return  string  URI of the request
 	 * @throws  KDispatcherException
 	 */
-	protected static function _getURI()
+	public static function getUri()
 	{
 		if (!empty($_SERVER['PATH_INFO']))
 		{
@@ -84,7 +93,7 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
 			}
 
 			// Get the path from the base URL, including the index file
-			$base_url = parse_url(KRequest::base(), PHP_URL_PATH);
+			$base_url = parse_url(KRequest::url(), PHP_URL_PATH);
 
 			if(strpos($uri, $base_url) === 0)
 			{
@@ -96,6 +105,6 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
 				$uri = (string) substr($uri, strlen('index.php'));
 		}
 
-		return $uri;
+		return trim($uri, '/');
 	}
 }
