@@ -23,6 +23,13 @@ abstract class SRouter extends KObject
 	protected $_routes;
 
 	/**
+     * List of regex rules for a paramter
+     *
+     * @var array
+     */
+	protected $_regex;
+
+	/**
      * The alias of a component
      *
      * @var string
@@ -38,6 +45,7 @@ abstract class SRouter extends KObject
 		}
 
 		$this->_routes = new ArrayObject();
+		$this->_regex = $config->regex->toArray();
 
 		$this->addRoutes($config->routes);
 	}
@@ -50,7 +58,7 @@ abstract class SRouter extends KObject
         {
         	$object = new KConfig();
         	$object->rule = $uri;
-        	$object->uri = $this->compile($uri);
+        	$object->uri = $this->compile($uri, $this->_regex);
         	$object->query = $query;
 
             //Add the routes
@@ -169,10 +177,9 @@ abstract class SRouter extends KObject
 		{
 			if(!isset($params[$key]) or $params[$key] === '')
 			{
-				$values = explode('|', $value, 2);
-				if (isset($values[1])) {
+				if (!strpos($value, ':')) {
 					// Set default values for any key that was not matched
-					$params[$key] = $values[1];
+					$params[$key] = $value;
 				}
 			}
 		}
@@ -189,7 +196,7 @@ abstract class SRouter extends KObject
 		// Escape everything preg_quote would escape except for : ( ) < >
 		$expression = preg_replace('#'.SRouter::REGEX_ESCAPE.'#', '\\\\$0', $uri);
 
-		if (strpos($expression, '[') !== FALSE)
+		if (strpos($expression, '[') !== false)
 		{
 			// Make optional parts of the URI non-capturing and optional
 			$expression = str_replace(array('[', ']'), array('(?:', ')?'), $expression);
