@@ -50,6 +50,17 @@ abstract class SRouter extends KObject
 		$this->addRoutes($config->routes);
 	}
 
+	protected function _initialize(KConfig $config)
+	{
+		$config->append(array(
+			'alias'  => $this->getIdentifier()->package,
+			'routes' => array(),
+			'regex'  => array()
+		));
+	
+		parent::_initialize($config);
+	}
+
 	public function addRoutes($routes)
 	{ 
         $routes = (array) KConfig::unbox($routes);
