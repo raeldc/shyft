@@ -6,14 +6,14 @@
 */
 abstract class SRouter extends KObject
 {
-	// Define the pattern of a :parameter
+	// Define the pattern of a <parameter>
 	const REGEX_KEY     = '<([a-zA-Z0-9_]++)>';
 
-	// Legal Characters for a :parameter
-	const REGEX_PARAMETER = '[^/.,;-?\n]++';
+	// Legal Characters for a <parameter>
+	const REGEX_PARAMETER = '[^/.,;?\n]++';
 
 	// What must be escaped in the route regex
-	const REGEX_ESCAPE  = '[.\\+*?[^\\]${}=!|]';
+	const REGEX_ESCAPE  = '[.\\+*?(^\\)${}=!|]';
 
 	/**
      * List of route rules
@@ -48,7 +48,7 @@ abstract class SRouter extends KObject
          
         foreach($routes as $uri => $query)
         {
-        	$object = new stdclass;
+        	$object = new KConfig();
         	$object->rule = $uri;
         	$object->uri = $this->compile($uri);
         	$object->query = $query;
@@ -143,8 +143,35 @@ abstract class SRouter extends KObject
 	 * Returns an array of variables parsed from the Route
 	 *
 	 */
-	public function parse($route)
+	public function parse($uri)
 	{
+		foreach ($this->_routes as $route) {
+			if (preg_match($route->uri, $uri, $matches)) break;
+		}
+
+		$params = array();
+		foreach ($matches as $key => $value)
+		{
+			if (is_int($key))
+			{
+				// Skip all unnamed keys
+				continue;
+			}
+
+			// Set the value for all matched keys
+			$params[$key] = $value;
+		}
+
+		/*
+		foreach ($this->_defaults as $key => $value)
+		{
+			if ( ! isset($params[$key]) OR $params[$key] === '')
+			{
+				// Set default values for any key that was not matched
+				$params[$key] = $value;
+			}
+		}
+		*/
 
 	}
 
@@ -160,7 +187,7 @@ abstract class SRouter extends KObject
 		if (strpos($expression, '[') !== FALSE)
 		{
 			// Make optional parts of the URI non-capturing and optional
-			$expression = str_replace(array('[', ']'), array('[?:', ']?'), $expression);
+			$expression = str_replace(array('[', ']'), array('(?:', ')?'), $expression);
 		}
 
 		// Insert default regex for keys
