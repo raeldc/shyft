@@ -20,7 +20,7 @@ class ComDefaultViewHtml extends KViewHtml
 		{
 			$result = $route;
 		} 
-		else if (substr($route, 0, 1) == '&') 
+		elseif (substr($route, 0, 1) == '&') 
 		{
 			$url   = clone KRequest::url();
 			$vars  = array();
@@ -65,9 +65,9 @@ class ComDefaultViewHtml extends KViewHtml
 			{
 				$result[] = $key.'='.$value;
 			}
-			
+
 			// @TODO: Make this optional
-			$result = KRequest::base().'/'.$this->getService($this->getRouter())->build(implode('&', $result));
+			$result = 'index.php?'.implode('&', $result);
 		}
 
 		return $result;
