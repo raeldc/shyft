@@ -160,6 +160,6 @@ class Shyft
 function debug($value)
 {
     require_once 'ChromePhp.php';
-    ChromePhp::useFile(SYSTEM_ROOT.'/logs', 'logs');
+    ChromePhp::useFile(SYSTEM_ROOT.'/logs', KRequest::base().'/logs');
     call_user_func_array(array('ChromePhp', 'log'), func_get_args());
 }
