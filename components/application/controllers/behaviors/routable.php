@@ -23,7 +23,6 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
     	$pages = $this->getService('com://site/pages.model.page')
     		->getList();
 
-    	// @TODO: Cache the page result
     	// Find the page that has the page alias or just use the default page
     	$page = ($page = $pages->find(array('permalink' => $segments[0]))->current()) === false ? $pages->find(array('default' => true))->current() : $page;
 
@@ -31,8 +30,18 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
     		// @TODO: redirect to 404 page not found
     	}
 
+    	// If page is the default, use the whole URI, if not use the 2nd segment
+    	$uri = ($page->default) ? $uri : $segments[1];
+
+    	// Get the component's router
+    	$router = clone $this->getIdentifier($page->type);
+    	$router->name = 'router';
+
+    	// Get the parameters based on the route
+    	$parameters = $this->getService($router)->parse($uri);
+
     	// Determine the type of content the page is trying to access and call it.
-    	$component = $this->getIdentifier($page->type);
+    	$component = clone $this->getIdentifier($page->type);
 		$component->name = 'dispatcher';
 		
 		$context->caller->setRequest($page->parameters);
