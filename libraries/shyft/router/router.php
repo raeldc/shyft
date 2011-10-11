@@ -159,6 +159,15 @@ abstract class SRouter extends KObject
 	}
 
 	/**
+	 * Create a route based on a query string. Aliased as @route in the template.
+	 *
+	 */
+	public function create($route = '')
+	{
+		return $route;
+	}
+
+	/**
 	 * Returns an array of variables parsed from the Route
 	 *
 	 */
