@@ -87,7 +87,10 @@ abstract class SRouter extends KObject
 	{
 		parse_str($query_string, $query);
 
-		$uri = $this->getMatchingRoute($query);
+		$route = $this->getMatchingRoute($query);
+
+		$uri = $route->rule;
+		parse_str($route->query, $defaults);
 
 		if (strpos($uri, '<') === FALSE AND strpos($uri, '[') === FALSE)
 		{
@@ -131,14 +134,12 @@ abstract class SRouter extends KObject
 		{
 			list($key, $param) = $match;
 
-			if ( ! isset($query[$param]))
-			{
-				// Ungrouped parameters are required
+			if(!isset($query[$param])) {
 				throw new SRouterException('Required route parameter not passed');
 			}
 
 			$uri = str_replace($key, $query[$param], $uri);
-			
+
 			// Remove the param because it's already injected into the URI
 			unset($query[$param]);
 		}
@@ -146,9 +147,14 @@ abstract class SRouter extends KObject
 		// Remove unnecessary slashes
 		$uri = preg_replace('#//+#', '/', rtrim($uri, '/'));
 
-		// Remove query parameters that are already in the defaults of the route
+		// Remove params from query if it's already in the defaults
+		foreach ($query as $key => $value) {
+			if (array_key_exists($key, $defaults)) {
+				unset($query[$key]);
+			}
+		}
 
-
+		// Add the remaining parameters as regular url queries
 		if (count($query)) {
 			$uri .= '?'. http_build_query($query);
 		}
@@ -253,7 +259,7 @@ abstract class SRouter extends KObject
 			$best_match = ($similarities[$route->rule] > $similarities[$best_match]) ? $route->rule : $best_match;
 		}
 
-		return $best_match;
+		return $this->_routes[$best_match];
 	}
 
 	/**
