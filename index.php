@@ -61,9 +61,6 @@ Shyft::getInstance(array(
     'site'       => array(SITE_ROOT,       SITES_ROOT,         SYSTEM_ROOT),
 ));
 
-//echo KService::get('com://site/staticpage.router')->build('view=staticpages&page=2&limit=10');
-
-exit();
 echo KService::get('com://site/application.dispatcher', array(
     //'behaviors' => $this->getService('com:config')->get('application.behaviors')
 ))->dispatch();
