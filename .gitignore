@@ -18,3 +18,5 @@ Thumbs.db
 
 logs/last_run.json
 update-koowa
+
+.htaccess
