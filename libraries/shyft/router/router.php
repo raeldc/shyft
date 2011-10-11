@@ -150,9 +150,9 @@ abstract class SRouter extends KObject
 		}
 
 		$params = array();
-		foreach ($matches as $key => $value)
+		foreach($matches as $key => $value)
 		{
-			if (is_int($key))
+			if(is_int($key))
 			{
 				// Skip all unnamed keys
 				continue;
@@ -162,17 +162,22 @@ abstract class SRouter extends KObject
 			$params[$key] = $value;
 		}
 
-		/*
-		foreach ($this->_defaults as $key => $value)
+		parse_str($route->query, $query);
+
+		// Populate params with default values based on the query
+		foreach($query as $key => $value)
 		{
-			if ( ! isset($params[$key]) OR $params[$key] === '')
+			if(!isset($params[$key]) or $params[$key] === '')
 			{
-				// Set default values for any key that was not matched
-				$params[$key] = $value;
+				$values = explode('|', $value, 2);
+				if (isset($values[1])) {
+					// Set default values for any key that was not matched
+					$params[$key] = $values[1];
+				}
 			}
 		}
-		*/
 
+		return $params;
 	}
 
 	public static function compile($uri, array $regex = NULL)
