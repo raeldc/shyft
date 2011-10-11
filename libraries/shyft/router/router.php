@@ -148,7 +148,8 @@ abstract class SRouter extends KObject
 		$uri = preg_replace('#//+#', '/', rtrim($uri, '/'));
 
 		// Remove params from query if it's already in the defaults
-		foreach ($query as $key => $value) {
+		foreach ($query as $key => $value) 
+		{
 			if (array_key_exists($key, $defaults)) {
 				unset($query[$key]);
 			}
