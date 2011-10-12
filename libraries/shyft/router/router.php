@@ -83,9 +83,9 @@ class SRouter extends KObject
 	 * Returns a string of pretty URL based on query that matches a route
 	 *
 	 */
-	public function build($query_string)
+	public function build($httpquery)
 	{
-		parse_str($query_string, $query);
+		parse_str($httpquery, $query);
 
 		$route = $this->getMatch($query);
 
@@ -242,14 +242,14 @@ class SRouter extends KObject
 	 * Find the rule that best matches the query string
 	 *
 	 */
-	public function getMatch($query_string)
+	public function getMatch($httpquery)
 	{
 		// @TODO: Cache the results
 
-		if (!is_array($query_string)) {
-			parse_str($query_string, $query);
+		if (!is_array($httpquery)) {
+			parse_str($httpquery, $query);
 		}
-		else $query = $query_string;
+		else $query = $httpquery;
 
 		// We will match the query based on how similar they are
 		$best_match = 'default';
