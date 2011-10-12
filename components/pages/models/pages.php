@@ -10,7 +10,7 @@ class ComPagesModelPages extends SModelDefault
 	{
 		parent::__construct($config);
 	
-		$this->_state->insert('enabled', 'cmd', true);
+		$this->_state->insert('enabled', 'boolean', false);
 	}
 
 	protected function _buildQueryWhere(SDatabaseQueryDocument $query)
