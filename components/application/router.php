@@ -8,13 +8,14 @@ final class ComApplicationRouter extends SRouterDefault
 {
 	protected $_context;
 	protected $_sefurl;
+	protected $_pages;
 
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
 	
 		// Get pages from the database using a model
-		$this->getPages($config->pages);
+		$this->_pages = $config->pages;
 
 		// Get the confiugration if SEF URL is activated
 		$this->_sefurl = $config->sefurl;
@@ -35,10 +36,10 @@ final class ComApplicationRouter extends SRouterDefault
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
 				'uri'    => '[a-zA-Z0-9\-+.:_/]*',
 				'format' => '[a-z]+$',
+				// @TODO: must be populated by all installed components.
+				'com'	 => array('widgets', 'pages', 'staticpage', 'content', 'dashboard'),
 				// @TODO: must be populated by all installed components
-				'com'	 => 'widgets|pages|staticpage|content|dashboard',
-				// @TODO: must be populated by all installed components
-				'page'   => 'home'
+				'page'   => array('dashboard'),
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
@@ -52,15 +53,18 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		if(!($this->_context instanceof KConfig)) 
 		{
-			if ($this->_sefurl) {
+			if ($this->_sefurl) 
+			{
 				$this->_context = parent::parse($this->getUri());	
 			}
 			else
 			{
 				$this->_context = new KConfig(array(
 					'mode'   => KRequest::get('mode', 'cmd', 'site'),
-					'format' => KRequest::get('format', 'cmd', 'html'),
 					'lang'   => KRequest::get('lang', 'cmd', 'default'),
+					'format' => KRequest::get('format', 'cmd', 'html'),
+					'page'   => KRequest::get('page', 'cmd', 'default'),
+					'com'    => KRequest::get('com', 'cmd', 'dashboard'),
 				));
 			}
 		}
@@ -81,25 +85,42 @@ final class ComApplicationRouter extends SRouterDefault
 	public function getPages()
 	{
 		// @TODO: Cache the pages. Which one is faster, db querying? or using Rowset::find()?
+		if(!$this->_pages instanceof KDatabaseRowsetAbstract)
+		{	   
+		    //Make sure we have a view identifier
+		    if(!($this->_pages instanceof KServiceIdentifier)) {
+		        $this->setPages($this->_pages);
+			}
 
-		if(!$this->_pages) 
-		{
-			$uri = $this->getUri();
+			$model = $this->getService($this->_pages);
 
-	    	// Get the page alias from the URI
-	    	$segments = explode('/', $uri, 2);
+			if (!($model instanceof KModelAbstract)) {
+				throw new KRouterException('Pages is not an instance of KModelAbstract');
+			}
 
-			$this->_pages = $this->getService('com://site/pages.model.pages')
-    			->enabled(true)
-    			->getList();
-
-    		// Find the page that has the page alias or just use the default page
-	    	if(($page = $this->_pages->find(array('permalink' => $segments[0]))->current()) === false) {
-	    		$page = $this->_pages->find(array('default' => true))->current();
-	    	}
-			// If page is the default, use the whole URI, if not use the 2nd segment
-    		$page->uri = ($page->default) ? $uri : $segments[1];
+			$this->_pages = $model->enabled(true)->getList();
 		}
+		
+		return $this->_pages;
+	}
+
+	public function setPages($pages)
+	{
+		if(!($pages instanceof KDatabaseRowsetAbstract))
+		{
+			if(is_string($pages) && strpos($pages, '.') === false ) 
+		    {
+			    $identifier          = clone $this->getIdentifier();
+			    $identifier->package = 'pages';
+			    $identifier->path    = array('model');
+			    $identifier->name    = 'pages';
+			}
+			else $identifier = $this->getIdentifier($pages);
+
+			$pages = $identifier;
+		}
+
+		$this->_pages = $pages;
 
 		return $this->_pages;
 	}
