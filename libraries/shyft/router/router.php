@@ -4,7 +4,7 @@
  * Routers build pretty urls from a URL Query, they can also parse pretty URLs into a query array 
  *		First, create rules on how a URL is parsed or built.
 */
-abstract class SRouter extends KObject
+class SRouter extends KObject
 {
 	// Define the pattern of a <parameter>
 	const REGEX_KEY     = '<([a-zA-Z0-9_]++)>';
