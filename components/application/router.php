@@ -87,7 +87,7 @@ final class ComApplicationRouter extends SRouterDefault
 		// @TODO: Cache the pages. Which one is faster, db querying? or using Rowset::find()?
 		if(!$this->_pages instanceof KDatabaseRowsetAbstract)
 		{	   
-		    //Make sure we have a view identifier
+		    //Make sure we have an identifier
 		    if(!($this->_pages instanceof KServiceIdentifier)) {
 		        $this->setPages($this->_pages);
 			}
@@ -95,7 +95,7 @@ final class ComApplicationRouter extends SRouterDefault
 			$model = $this->getService($this->_pages);
 
 			if (!($model instanceof KModelAbstract)) {
-				throw new KRouterException('Pages is not an instance of KModelAbstract');
+				throw new SRouterException('Pages is not an instance of KModelAbstract');
 			}
 
 			$this->_pages = $model->enabled(true)->getList();
@@ -163,7 +163,7 @@ final class ComApplicationRouter extends SRouterDefault
 				$uri = $_SERVER['REDIRECT_URL'];
 			}
 			else{ 
-				throw new KDispatcherException('Unable to get the URI using PATH_INFO, REQUEST_URI, PHP_SELF or REDIRECT_URL');
+				throw new SRouterException('Unable to get the URI using PATH_INFO, REQUEST_URI, PHP_SELF or REDIRECT_URL');
 			}
 
 			// Get the path from the base URL, including the index file
