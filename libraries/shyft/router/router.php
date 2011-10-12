@@ -28,21 +28,10 @@ class SRouter extends KObject
      * @var array
      */
 	protected $_regex;
-
-	/**
-     * The alias of a component
-     *
-     * @var string
-     */
-	protected $_alias;
 	
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
-
-		if (empty($config->alias)) {
-			throw new SRouterException('Alias was not set for the router');
-		}
 
 		$this->_routes = new ArrayObject();
 		$this->_regex = $config->regex->toArray();
@@ -53,7 +42,6 @@ class SRouter extends KObject
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
-			'alias'  => $this->getIdentifier()->package,
 			'routes' => array(),
 			'regex'  => array()
 		));
@@ -85,8 +73,11 @@ class SRouter extends KObject
 	 */
 	public function build($httpquery)
 	{
-		parse_str($httpquery, $query);
-
+		if (!is_array($httpquery)) {
+			parse_str($httpquery, $query);
+		}
+		else $query = $httpquery;
+		
 		$route = $this->getMatch($query);
 
 		$uri = $route->rule;
