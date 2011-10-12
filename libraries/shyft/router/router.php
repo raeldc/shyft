@@ -284,9 +284,18 @@ class SRouter extends KObject
 		{
 			if (array_key_exists($key, $match))
 			{
+				// Add 1 point if the key exists
 				$points++;
+
+				// Add 1 point if the parameter is equal to the current value
 				if ($match[$key] == $value) {
 					$points++;
+				}
+				elseif(substr($value, 0, 1) === '#') 
+				{
+					// Add 2 points if the required parameter is different from default
+					if(substr($value, 1) != $match[$key])
+						 $points+=2;
 				}
 			}
 		}
