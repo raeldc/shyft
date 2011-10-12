@@ -41,11 +41,6 @@ class ComDefaultViewHtml extends KViewHtml
 			$parts = array();
 			parse_str($route, $parts);
 
-			if(isset($parts['com']))
-			{
-				// TODO: If com is specified, find the page that is attached to the component
-			}
-
 			// Add the layout information to the route only if it's not 'default'
 			if(!isset($parts['view']))
 			{
@@ -60,31 +55,10 @@ class ComDefaultViewHtml extends KViewHtml
 				$parts['format'] = $this->getIdentifier()->name;
 			}
 
-			$result = array();
-			foreach($parts as $key => $value)
-			{
-				$result[] = $key.'='.$value;
-			}
-
-			// @TODO: Make this optional
-			$result = 'index.php?'.implode('&', $result);
+			$result = $this->getService('com://site/application.router')->build($parts);
 		}
 
 		return $result;
-	}
-
-	public function getRouter()
-	{
-		if (is_null($this->_router)) 
-		{
-			$identifier = clone $this->getIdentifier();
-			$identifier->path = array();
-			$identifier->name = 'router';
-
-			$this->_router = $identifier;
-		}
-
-		return $this->_router;
 	}
 }
 

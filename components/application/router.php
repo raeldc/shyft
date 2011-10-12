@@ -27,11 +27,10 @@ final class ComApplicationRouter extends SRouterDefault
 	
 	protected function _initialize(KConfig $config)
 	{
-		$default = 'mode=site&page=default&format=html&lang=default';
-
 		$config->append(array(
 			'routes' => array(
-				'[<lang>/]admin/manage/<uri>[.<format>]'    => 'mode=admin&com=pages&format=html&lang=default',
+				'[<lang>/]admin/pages'					    => 'mode=admin&com=pages&format=html&lang=default',
+				'[<lang>/]admin/pages/<uri>[.<format>]'     => 'mode=admin&com=pages&format=html&lang=default&uri=#',
 				'[<lang>/]admin[/<com>][/<uri>][.<format>]' => 'com=dashboard&mode=admin&format=html&lang=default',
 				'<lang>[.<format>]'                         => 'mode=site&page=default&format=html&lang=#default',
 				'<lang>/<page>[.<format>]'                  => 'mode=site&page=#default&format=html&lang=#default',
@@ -82,6 +81,12 @@ final class ComApplicationRouter extends SRouterDefault
 			{
 				$this->_context->page             = $this->getPage($this->_context->application->page);
 				$this->_context->application->com = $this->_context->page->component;
+
+				if (!$this->_context->component->count()) 
+				{
+					// If the uri is empty, get request from page's default parameters
+					$this->_context->component->append($this->_context->page->parameters);
+				}
 			}
 
 			if (!empty($this->_context->application->uri) && $this->_sefurl) 
@@ -95,11 +100,7 @@ final class ComApplicationRouter extends SRouterDefault
 			// Else we just get the request values from $_GET
 			else $this->_context->component->append(KRequest::get('get', 'string'));
 
-			if (!$this->_context->component->count()) 
-			{
-				// If the uri is empty, get request from page's default parameters
-				$this->_context->component->append($this->_context->page->parameters);
-			}
+			
 
 			// Merge the request to the request from the application URI
 			$this->_context->component = $this->_context->application->append($this->_context->component);
@@ -114,8 +115,30 @@ final class ComApplicationRouter extends SRouterDefault
 	public function build($httpquery)
 	{
 		// $httpquery is expected to come from the component.
-		// @TODO: This method should decide if it will use SEF URLs or not.
-		return parent::build($httpquery);
+		if (!is_array($httpquery)) {
+			parse_str($httpquery, $query);	
+		}
+		else $query = $httpquery;
+
+		$application = $this->_context->application->toArray();
+
+		// Merge the new values to the application context if it exists
+		foreach ($query as $key => $value) 
+		{
+			if (!$this->_sefurl) {
+				$application[$key] = $value;	
+			}elseif (array_key_exists($key, $application)) {
+				$application[$key] = $value;
+			}
+		}
+
+		if ($this->_sefurl) 
+		{
+			$application['uri'] = $this->getRouter($application['com'])->build($query);
+			return parent::build($application);
+		}
+
+		return http_build_query($application);
 	}
 
 	public function getRouter($component)
