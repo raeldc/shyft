@@ -47,7 +47,7 @@ class SRouter extends KObject
 		$this->_routes = new ArrayObject();
 		$this->_regex = $config->regex->toArray();
 
-		$this->addRoutes($config->routes);
+		$this->addRoutes($config->routes, $this->_regex);
 	}
 
 	protected function _initialize(KConfig $config)
@@ -61,7 +61,7 @@ class SRouter extends KObject
 		parent::_initialize($config);
 	}
 
-	public function addRoutes($routes)
+	public function addRoutes($routes, $regex = array())
 	{ 
         $routes = (array) KConfig::unbox($routes);
          
@@ -69,7 +69,7 @@ class SRouter extends KObject
         {
         	$object = new KConfig();
         	$object->rule = $uri;
-        	$object->uri = $this->compile($uri, $this->_regex);
+        	$object->uri = $this->compile($uri, $regex);
         	$object->query = $query;
 
             //Add the routes
