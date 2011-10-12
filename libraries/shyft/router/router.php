@@ -196,7 +196,7 @@ class SRouter extends KObject
 			if(!isset($params[$key]) or $params[$key] === '')
 			{
 				// In finding the route rule to use, # indicates that a different value gets higher points
-				if (strpos($value, '#')) {
+				if (strpos($value, '#') !== false) {
 					$params[$key] = substr($value, 1);
 				}
 				else $params[$key] = $value;
