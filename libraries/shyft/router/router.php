@@ -192,12 +192,14 @@ class SRouter extends KObject
 		// Populate params with default values based on the query
 		foreach($query as $key => $value)
 		{
+			// Set default values for any key that was not matched
 			if(!isset($params[$key]) or $params[$key] === '')
 			{
-				if (!strpos($value, ':')) {
-					// Set default values for any key that was not matched
-					$params[$key] = $value;
+				// In finding the route rule to use, # indicates that a different value gets higher points
+				if (strpos($value, '#')) {
+					$params[$key] = substr($value, 1);
 				}
+				else $params[$key] = $value;
 			}
 		}
 
