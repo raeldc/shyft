@@ -56,7 +56,13 @@ final class ComApplicationRouter extends SRouterDefault
 			if ($this->_sefurl) 
 			{
 				$this->_context = new KConfig(parent::parse($this->getUri()));
-				$this->_context->page = $this->getPage();
+
+				// If the mode is site, automatically set the page to current page
+				if ($this->_context->mode == 'site') 
+				{
+					$this->_context->page = $this->getPage();
+					$this->_context->com = $page->component;
+				}
 			}
 			else
 			{
