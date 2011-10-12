@@ -59,41 +59,53 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		if(!($this->_context instanceof KConfig)) 
 		{
-			if ($this->_sefurl) 
-			{
-				$this->_context = new KConfig(parent::parse($this->getUri()));
+			$this->_context = new KConfig();
 
-				// If the mode is site, automatically set the page to current page
-				if ($this->_context->mode == 'site') 
-				{
-					$this->_context->page = $this->getPage();
-					$this->_context->com = $this->_context->page->component;
-					$this->_context->request = array();
-
-					if (!empty($this->_context->uri)) 
-					{
-						// Get the component's router and parse the rest of the URI
-						$this->_context->request = $this->getRouter($this->_context->page->component)
-							->parse($this->_context->uri);	
-					}
-
-					if (empty($this->_context->request)) 
-					{
-						// If the uri is empty, get request from page's default parameters
-						$this->_context->request = $this->_context->page->parameters;
-					}
-				}
+			if ($this->_sefurl) {
+				$this->_context->application = new KConfig(parent::parse($this->getUri()));
 			}
 			else
 			{
-				$this->_context = new KConfig(array(
-					'mode'   => KRequest::get('mode', 'cmd', 'site'),
-					'lang'   => KRequest::get('lang', 'cmd', 'default'),
-					'format' => KRequest::get('format', 'cmd', 'html'),
-					'page'   => KRequest::get('page', 'cmd', 'default'),
-					'com'    => KRequest::get('com', 'cmd', 'dashboard'),
+				$this->_context->application = new KConfig(array(
+					'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
+					'lang'   => KRequest::get('get.lang', 'cmd', 'default'),
+					'format' => KRequest::get('get.format', 'cmd', 'html'),
+					'page'   => KRequest::get('get.page', 'cmd', 'default'),
+					'com'    => KRequest::get('get.com', 'cmd', 'dashboard'),
 				));
 			}
+
+			$this->_context->component = new KConfig();
+
+			// If the mode is site, get the component request from the current page
+			if ($this->_context->application->mode == 'site') 
+			{
+				$this->_context->page             = $this->getPage($this->_context->application->page);
+				$this->_context->application->com = $this->_context->page->component;
+			}
+
+			if (!empty($this->_context->application->uri) && $this->_sefurl) 
+			{
+				// Get the component's router and parse the rest of the URI
+				$this->_context->component->append(
+					$this->getRouter($this->_context->application->com)
+						->parse($this->_context->application->uri)
+				);
+			}
+			// Else we just get the request values from $_GET
+			else $this->_context->component->append(KRequest::get('get', 'string'));
+
+			if (!$this->_context->component->count()) 
+			{
+				// If the uri is empty, get request from page's default parameters
+				$this->_context->component->append($this->_context->page->parameters);
+			}
+
+			// Merge the request to the request from the application URI
+			$this->_context->component = $this->_context->application->append($this->_context->component);
+
+			// We don't want the URI to be accessible in the component level
+			unset($this->_context->component->uri);
 		}
 
 		return $this->_context;
@@ -101,6 +113,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 	public function build($httpquery)
 	{
+		// $httpquery is expected to come from the component.
 		// @TODO: This method should decide if it will use SEF URLs or not.
 		return parent::build($httpquery);
 	}
@@ -109,7 +122,7 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		if (!isset($this->_routers[$component])) 
 		{
-			$identifier = clone $this->getIdentifier();
+			$identifier          = clone $this->getIdentifier();
 			$identifier->package = $component;
 			$identifier->path    = array();
 			$identifier->name    = 'router';
