@@ -89,6 +89,16 @@ final class ComApplicationRouter extends SRouterDefault
 		return KRequest::base().'/'.$prefix.'/'.$uri;
 	}
 
+	public function getRouter($component)
+	{
+		$identifier = clone $this->getIdentifier();
+		$identifier->package = $component;
+		$identifier->path    = array();
+		$identifier->name    = 'router';
+
+		return $this->getService($identifier);
+	}
+
 	public function getPage($permalink = null)
 	{
 		$page = null;
