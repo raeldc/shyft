@@ -87,7 +87,7 @@ class SRouter extends KObject
 	{
 		parse_str($query_string, $query);
 
-		$route = $this->getMatchingRoute($query);
+		$route = $this->getMatch($query);
 
 		$uri = $route->rule;
 		parse_str($route->query, $defaults);
@@ -242,7 +242,7 @@ class SRouter extends KObject
 	 * Find the rule that best matches the query string
 	 *
 	 */
-	public function getMatchingRoute($query_string)
+	public function getMatch($query_string)
 	{
 		// @TODO: Cache the results
 
@@ -257,7 +257,7 @@ class SRouter extends KObject
 
 		foreach ($this->_routes as $route) 
 		{
-			$similarities[$route->rule] = $this->calculateSimilarity($route->query, $query);
+			$similarities[$route->rule] = $this->getSimilarity($route->query, $query);
 			$best_match = ($similarities[$route->rule] > $similarities[$best_match]) ? $route->rule : $best_match;
 		}
 
@@ -269,7 +269,7 @@ class SRouter extends KObject
 	 * 		Add one point for each similar key or value
 	 *
 	 */
-	public function calculateSimilarity($base_string, $match_string)
+	public function getSimilarity($base_string, $match_string)
 	{
 		if (!is_array($match_string)) {
 			parse_str($match_string, $match);
