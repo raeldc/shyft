@@ -110,7 +110,8 @@ class SRouter extends KObject
 			{
 				list($key, $param) = $match;
 
-				if (isset($query[$param]))
+				// If the optional parameter is equal to defaults, don't replace it.
+				if (isset($query[$param]) && $query[$param] != $defaults[$param] && $query[$param] != '#'.$defaults[$param])
 				{
 					// Replace the key with the parameter value
 					$replace = str_replace($key, $query[$param], $replace);
@@ -293,9 +294,9 @@ class SRouter extends KObject
 				}
 				elseif(substr($value, 0, 1) === '#') 
 				{
-					// Add 2 points if the required parameter is different from default
+					// Add a point if the required parameter is different from default
 					if(substr($value, 1) != $match[$key])
-						 $points+=2;
+						 $points++;
 				}
 			}
 		}
