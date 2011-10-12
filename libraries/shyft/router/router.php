@@ -67,27 +67,16 @@ class SRouter extends KObject
          
         foreach($routes as $uri => $query)
         {
-        	// If the uri rule has a | pipe, make them as separate routes
-        	if (strpos($uri, '|')) 
-        	{
-        		$rules = explode('|', $uri);
-        		foreach ($rules as $rule) {
-        			$this->_routes[$uri] = $this->_createRoute($rule, $query, $regex);
-        		}
-        	}
-        	else $this->_routes[$uri] = $this->_createRoute($uri, $query, $regex);
+        	$object = new KConfig();
+        	$object->rule = $uri;
+        	$object->uri = $this->compile($uri, $regex);
+        	$object->query = $query;
+
+            //Add the routes
+            $this->_routes[$uri] = $object;
         }
 
         return $this;
-    }
-
-    protected function _createRoute($uri, $query, $regex)
-    {
-    	$route = new KConfig();
-    	$route->rule = $uri;
-    	$route->uri = $this->compile($uri, $regex);
-    	$route->query = $query;
-    	return $route;
     }
 
 	/**
