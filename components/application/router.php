@@ -9,6 +9,7 @@ final class ComApplicationRouter extends SRouterDefault
 	protected $_context;
 	protected $_sefurl;
 	protected $_pages;
+	protected $_routers = array();
 
 	public function __construct(KConfig $config)
 	{
@@ -26,20 +27,25 @@ final class ComApplicationRouter extends SRouterDefault
 	
 	protected function _initialize(KConfig $config)
 	{
+		$default = 'mode=site&page=default&format=html&lang=default';
+
 		$config->append(array(
 			'routes' => array(
 				'[<lang>/]admin/manage/<uri>[.<format>]'    => 'mode=admin&com=pages&format=html&lang=default',
 				'[<lang>/]admin[/<com>][/<uri>][.<format>]' => 'com=dashboard&mode=admin&format=html&lang=default',
-				'[<lang>/][<page>/]<uri>[.<format>]'        => 'mode=site&page=default&format=html&lang=default',
+				'<lang>[.<format>]'                         => 'mode=site&page=default&format=html&lang=#default',
+				'<lang>/<page>[.<format>]'                  => 'mode=site&page=#default&format=html&lang=#default',
+				'<page>[.<format>]'                         => 'mode=site&page=#default&format=html&lang=default',
+				'[<lang>/][<page>/][<uri>][.<format>]'      => 'mode=site&page=#default&format=#html&lang=#default&uri=#',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
-				'uri'    => '[a-zA-Z0-9\-+.:_/]*',
+				'uri'    => '[a-zA-Z0-9\-+.:_/]+',
 				'format' => '[a-z]+$',
 				// @TODO: must be populated by all installed components.
 				'com'	 => array('dashboard'),
-				// @TODO: must be populated by all installed components
-				'page'   => array('default'),
+				// @TODO: must be populated by all enabled pages
+				'page'   => array('default', 'home'),
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
@@ -61,7 +67,21 @@ final class ComApplicationRouter extends SRouterDefault
 				if ($this->_context->mode == 'site') 
 				{
 					$this->_context->page = $this->getPage();
-					$this->_context->com = $page->component;
+					$this->_context->com = $this->_context->page->component;
+					$this->_context->request = array();
+
+					if (!empty($this->_context->uri)) 
+					{
+						// Get the component's router and parse the rest of the URI
+						$this->_context->request = $this->getRouter($this->_context->page->component)
+							->parse($this->_context->uri);	
+					}
+
+					if (empty($this->_context->request)) 
+					{
+						// If the uri is empty, get request from page's default parameters
+						$this->_context->request = $this->_context->page->parameters;
+					}
 				}
 			}
 			else
@@ -79,24 +99,25 @@ final class ComApplicationRouter extends SRouterDefault
 		return $this->_context;
 	}
 
-	public function build($httpquery, $router)
+	public function build($httpquery)
 	{
 		// @TODO: This method should decide if it will use SEF URLs or not.
-
-		$prefix = parent::build($this->_context);
-		$uri    = $router->build($httpquery);
-
-		return KRequest::base().'/'.$prefix.'/'.$uri;
+		return parent::build($httpquery);
 	}
 
 	public function getRouter($component)
 	{
-		$identifier = clone $this->getIdentifier();
-		$identifier->package = $component;
-		$identifier->path    = array();
-		$identifier->name    = 'router';
+		if (!isset($this->_routers[$component])) 
+		{
+			$identifier = clone $this->getIdentifier();
+			$identifier->package = $component;
+			$identifier->path    = array();
+			$identifier->name    = 'router';
 
-		return $this->getService($identifier);
+			$this->_routers[$component] = $this->getService($identifier);
+		}
+		
+		return $this->_routers[$component];
 	}
 
 	public function getPage($permalink = null)
