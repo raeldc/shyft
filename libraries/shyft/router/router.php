@@ -226,6 +226,7 @@ class SRouter extends KObject
 			$search = $replace = array();
 			foreach ($regex as $key => $value)
 			{
+				$value = is_array($value) ? implode('|', $value) : $value;
 				$search[]  = "<$key>".SRouter::REGEX_PARAMETER;
 				$replace[] = "<$key>$value";
 			}
