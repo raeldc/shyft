@@ -55,7 +55,8 @@ final class ComApplicationRouter extends SRouterDefault
 		{
 			if ($this->_sefurl) 
 			{
-				$this->_context = parent::parse($this->getUri());	
+				$this->_context = new KConfig(parent::parse($this->getUri()));
+				$this->_context->page = $this->getPage();
 			}
 			else
 			{
@@ -80,6 +81,30 @@ final class ComApplicationRouter extends SRouterDefault
 		$uri    = $router->build($httpquery);
 
 		return KRequest::base().'/'.$prefix.'/'.$uri;
+	}
+
+	public function getPage($permalink = null)
+	{
+		$page = null;
+		$pages = $this->getPages();
+
+		if (!is_null($permalink)) 
+		{
+			if (!in_array($permalink, array('default', 'admin','manage')))
+			{
+				$page = $pages->find(array('permalink' => $permalink))->current();
+			}
+		}
+
+		if (is_null($page)) {
+			$page = $pages->find(array('default' => true))->current();	
+		}
+
+		if (is_null($page)) {
+			// @TODO: Redirect to 404 Not Found
+		}
+
+		return $page;
 	}
 
 	public function getPages()
