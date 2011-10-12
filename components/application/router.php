@@ -37,9 +37,9 @@ final class ComApplicationRouter extends SRouterDefault
 				'uri'    => '[a-zA-Z0-9\-+.:_/]*',
 				'format' => '[a-z]+$',
 				// @TODO: must be populated by all installed components.
-				'com'	 => array('widgets', 'pages', 'staticpage', 'content', 'dashboard'),
+				'com'	 => array('dashboard'),
 				// @TODO: must be populated by all installed components
-				'page'   => array('dashboard'),
+				'page'   => array('default'),
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
