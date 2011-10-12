@@ -137,7 +137,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
      * @param array An associative array of request information
      * @return KControllerBread
      */
-    public function setRequest(array $request)
+    public function setRequest($request)
     {
         if(!($this->_request instanceof KConfig)) {
             $this->_request = new KConfig($this->_request);
