@@ -13,22 +13,32 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		parent::__construct($config);
 	
+		// Get pages from the database using a model
+		$this->getPages($config->pages);
+
+		// Get the confiugration if SEF URL is activated
 		$this->_sefurl = $config->sefurl;
-		$this->_context = $this->getContext();
+
+		// Get the context based on the URI
+		$this->getContext();
 	}
 	
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
 			'routes' => array(
-				'[<lang>/]admin/manage/<uri>[.<format>]' => 'mode=admin&com=pages&format=html&lang=default',
-				'[<lang>/]admin[/<uri>][.<format>]'      => 'mode=admin&format=html&lang=default',
-				'[<lang>/]<uri>[.<format>]'              => 'mode=site&format=html&lang=default',
+				'[<lang>/]admin/manage/<uri>[.<format>]'    => 'mode=admin&com=pages&format=html&lang=default',
+				'[<lang>/]admin[/<com>][/<uri>][.<format>]' => 'com=dashboard&mode=admin&format=html&lang=default',
+				'[<lang>/][<page>/]<uri>[.<format>]'        => 'mode=site&page=default&format=html&lang=default',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
 				'uri'    => '[a-zA-Z0-9\-+.:_/]*',
 				'format' => '[a-z]+$',
+				// @TODO: must be populated by all installed components
+				'com'	 => 'widgets|pages|staticpage|content|dashboard',
+				// @TODO: must be populated by all installed components
+				'page'   => 'home'
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
@@ -40,24 +50,60 @@ final class ComApplicationRouter extends SRouterDefault
 
 	public function getContext()
 	{
-		if(is_null($this->_context)) 
+		if(!($this->_context instanceof KConfig)) 
 		{
 			if ($this->_sefurl) {
 				$this->_context = parent::parse($this->getUri());	
 			}
 			else
 			{
-				$this->_context = array(
+				$this->_context = new KConfig(array(
 					'mode'   => KRequest::get('mode', 'cmd', 'site'),
 					'format' => KRequest::get('format', 'cmd', 'html'),
 					'lang'   => KRequest::get('lang', 'cmd', 'default'),
-				);
+				));
 			}
 		}
 
 		return $this->_context;
 	}
 
+	public function build($httpquery, $router)
+	{
+		// @TODO: This method should decide if it will use SEF URLs or not.
+
+		$prefix = parent::build($this->_context);
+		$uri    = $router->build($httpquery);
+
+		return KRequest::base().'/'.$prefix.'/'.$uri;
+	}
+
+	public function getPages()
+	{
+		// @TODO: Cache the pages. Which one is faster, db querying? or using Rowset::find()?
+
+		if(!$this->_pages) 
+		{
+			$uri = $this->getUri();
+
+	    	// Get the page alias from the URI
+	    	$segments = explode('/', $uri, 2);
+
+			$this->_pages = $this->getService('com://site/pages.model.pages')
+    			->enabled(true)
+    			->getList();
+
+    		// Find the page that has the page alias or just use the default page
+	    	if(($page = $this->_pages->find(array('permalink' => $segments[0]))->current()) === false) {
+	    		$page = $this->_pages->find(array('default' => true))->current();
+	    	}
+			// If page is the default, use the whole URI, if not use the 2nd segment
+    		$page->uri = ($page->default) ? $uri : $segments[1];
+		}
+
+		return $this->_pages;
+	}
+	
 	/**
 	 * Get the URI of the request using PATH_INFO,
 	 * REQUEST_URI, PHP_SELF or REDIRECT_URL.
@@ -117,12 +163,6 @@ final class ComApplicationRouter extends SRouterDefault
 
 	public function __get($name)
 	{
-		$result = null;
-
-        if(isset($this->_context[$name])) {
-            $result = $this->_context[$name];
-        }
-        
-        return $result;
+		return $this->_context->$name;
 	}
 }
