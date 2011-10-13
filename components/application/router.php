@@ -29,13 +29,13 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		$config->append(array(
 			'routes' => array(
-				'[<lang>/]admin/pages'                           => 'mode=admin&com=pages&format=html&lang=default',
-				'[<lang>/]admin/pages/<page>[/<uri>][.<format>]' => 'mode=admin&format=html&lang=default&page=#&uri=#',
+				'[<lang>/]admin/pages'                           => 'mode=#admin&com=pages&format=html&lang=default',
+				'[<lang>/]admin/pages/<page>[/<uri>][.<format>]' => 'mode=#admin&format=html&lang=default&page=!&uri=!',
 				'[<lang>/]admin[/<com>][/<uri>][.<format>]'      => 'com=dashboard&mode=admin&format=html&lang=default',
-				'<lang>[.<format>]'                              => 'mode=site&page=default&format=html&lang=#default',
-				'<page>[.<format>]'                              => 'mode=site&page=#default&format=html&lang=default',
-				'<lang>/<page>[.<format>]'                       => 'mode=site&page=#default&format=html&lang=#default',
-				'[<lang>/][<page>/][<uri>][.<format>]'           => 'mode=site&page=#default&format=#html&lang=#default&uri=#',
+				'<lang>[.<format>]'                              => 'mode=#site&page=default&format=html&lang=!default',
+				'<page>[.<format>]'                              => 'mode=#site&page=!default&format=html&lang=default',
+				'<lang>/<page>[.<format>]'                       => 'mode=#site&page=!default&format=html&lang=!default',
+				'[<lang>/][<page>/][<uri>][.<format>]'           => 'mode=#site&page=!default&format=html&lang=default&uri=!',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -151,7 +151,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 		if($this->_sefurl) 
 		{
-			$component = $application['com'];
+			$component = null;
 
 			// $query['page'] is usually expected in the pages management mode.
 			// If the page is set in the application or in the component's query
@@ -159,10 +159,15 @@ final class ComApplicationRouter extends SRouterDefault
 				// Don't include the application's component in building route
 				unset($application['com']);
 			}
+			else $component = $application['com'];
 
 			// For the frontend, the component can set the page. So if it does, set it in the application context
-			if(isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))) {
+			if(isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))){
 				$application['page'] = $query['page'];
+			}
+
+			if (is_null($component)) {
+				$component = $this->getPage($application['page'])->component;
 			}
 
 			// If base is true, use only the application context to build the route.
