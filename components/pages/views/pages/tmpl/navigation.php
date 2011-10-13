@@ -2,10 +2,7 @@
 <nav>
 	<ul class="nav">
 		<?php foreach ($pages as $page): ?>
-		<?php
-			$url = ($page->default) ? 'index.php' : 'index.php?page='.$page->permalink;
-		?>
-		<li><a href="<?=$url?>"><?=$page->title;?></a></li>
+		<li><a href="<?=@route('index.php?mode=site&page='.$page->permalink);?>"><?=$page->title;?></a></li>
 		<?php endforeach ?>
 	</ul>
 </nav>
