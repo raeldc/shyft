@@ -29,13 +29,13 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		$config->append(array(
 			'routes' => array(
-				'[<lang>/]admin/pages'                      => 'mode=admin&com=pages&format=html&lang=default',
-				'[<lang>/]admin/pages/<uri>[.<format>]'     => 'mode=admin&format=html&lang=default&uri=#',
-				'[<lang>/]admin[/<com>][/<uri>][.<format>]' => 'com=dashboard&mode=admin&format=html&lang=default',
-				'<lang>[.<format>]'                         => 'mode=site&page=default&format=html&lang=#default',
-				'<page>[.<format>]'                         => 'mode=site&page=#default&format=html&lang=default',
-				'<lang>/<page>[.<format>]'                  => 'mode=site&page=#default&format=html&lang=#default',
-				'[<lang>/][<page>/][<uri>][.<format>]'      => 'mode=site&page=#default&format=#html&lang=#default&uri=#',
+				'[<lang>/]admin/pages'                           => 'mode=admin&com=pages&format=html&lang=default',
+				'[<lang>/]admin/pages/<page>[/<uri>][.<format>]' => 'mode=admin&format=html&lang=default&page=#&uri=#',
+				'[<lang>/]admin[/<com>][/<uri>][.<format>]'      => 'com=dashboard&mode=admin&format=html&lang=default',
+				'<lang>[.<format>]'                              => 'mode=site&page=default&format=html&lang=#default',
+				'<page>[.<format>]'                              => 'mode=site&page=#default&format=html&lang=default',
+				'<lang>/<page>[.<format>]'                       => 'mode=site&page=#default&format=html&lang=#default',
+				'[<lang>/][<page>/][<uri>][.<format>]'           => 'mode=site&page=#default&format=#html&lang=#default&uri=#',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -75,12 +75,12 @@ final class ComApplicationRouter extends SRouterDefault
 			}
 
 			$this->_context->component = new KConfig();
+			$this->_context->page = $this->getPage($this->_context->application->page);
 
 			// If the mode is site, get the component request from the current page
 			if ($this->_context->application->mode == 'site') 
 			{
-				$this->_context->page             = $this->getPage($this->_context->application->page);
-				$this->_context->application->com = $this->_context->page->component;
+				$this->_context->component->com = $this->_context->page->component;
 
 				if (!$this->_context->component->count()) 
 				{
@@ -88,6 +88,7 @@ final class ComApplicationRouter extends SRouterDefault
 					$this->_context->component->append($this->_context->page->parameters);
 				}
 			}
+			else $this->_context->application->com = $this->_context->page->component;
 
 			if (!empty($this->_context->application->uri) && $this->_sefurl) 
 			{
@@ -100,8 +101,10 @@ final class ComApplicationRouter extends SRouterDefault
 			// Else we just get the request values from $_GET
 			else $this->_context->component->append(KRequest::get('get', 'string'));
 
+			$application = clone $this->_context->application;
+
 			// Merge the request to the request from the application URI
-			$this->_context->component = $this->_context->application->append($this->_context->component);
+			$this->_context->component = $application->append($this->_context->component);
 
 			// We don't want the URI to be accessible in the component level
 			unset($this->_context->component->uri);
@@ -138,11 +141,11 @@ final class ComApplicationRouter extends SRouterDefault
 			$component = $application['com'];
 
 			// @TODO: Refactor this. There must be a way to make this code prettier.
-			if (isset($query['page'])) {
+			if (isset($query['page']) | isset($application['page'])) {
 				unset($application['com']);
 			}
 
-			if ($application['mode'] == 'site') {
+			if (isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))) {
 				$application['page'] = $query['page'];
 			}
 

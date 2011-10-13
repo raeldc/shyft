@@ -25,6 +25,11 @@ class ComDefaultViewHtml extends KViewHtml
 			parse_str(substr($route, 10), $query);
 			$query['base'] = true;
 			$result = $this->getService('com://site/application.router')->build($query);
+		}elseif (substr($route, 0, 1) == '&') 
+		{
+			parse_str($route, $query);
+			$query['base'] = true;
+			$result = $this->getService('com://site/application.router')->build($query);
 		}
 		else 
 		{
