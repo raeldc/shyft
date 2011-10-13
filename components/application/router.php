@@ -75,6 +75,7 @@ final class ComApplicationRouter extends SRouterDefault
 			}
 
 			$this->_context->component = new KConfig();
+
 			$this->_context->page = $this->getPage($this->_context->application->page);
 
 			// If the mode is site, get the component request from the current page
@@ -87,6 +88,10 @@ final class ComApplicationRouter extends SRouterDefault
 					// If the uri is empty, get request from page's default parameters
 					$this->_context->component->append($this->_context->page->parameters);
 				}
+			}
+			elseif(empty($this->_context->application->page) && !empty($this->_context->application->com))
+			{
+				$this->_context->component->com = $this->_context->application->com;
 			}
 			else $this->_context->application->com = $this->_context->page->component;
 
