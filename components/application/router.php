@@ -60,10 +60,7 @@ final class ComApplicationRouter extends SRouterDefault
 		{
 			$this->_context = new KConfig();
 
-			if ($this->_sefurl) {
-				$this->_context->application = new KConfig(parent::parse($this->getUri()));
-			}
-			else
+			if(!$this->_sefurl) 
 			{
 				$this->_context->application = new KConfig(array(
 					'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
@@ -73,29 +70,33 @@ final class ComApplicationRouter extends SRouterDefault
 					'com'    => KRequest::get('get.com', 'cmd', 'dashboard'),
 				));
 			}
+			else $this->_context->application = new KConfig(parent::parse($this->getUri()));
 
 			$this->_context->component = new KConfig();
 
+			// Get the page, it will use the default page if page is not found
 			$this->_context->page = $this->getPage($this->_context->application->page);
 
 			// If the mode is site, get the component request from the current page
-			if ($this->_context->application->mode == 'site') 
+			if($this->_context->application->mode == 'site') 
 			{
+				// In the frontend, there is no way to access a component without going through a page.
 				$this->_context->component->com = $this->_context->page->component;
 
-				if (!$this->_context->component->count()) 
-				{
-					// If the uri is empty, get request from page's default parameters
-					$this->_context->component->append($this->_context->page->parameters);
-				}
+				// If the page has default parameters, merge them to the component's context
+				$this->_context->component->append($this->_context->page->parameters);
 			}
+			// If we're not on 'site' and the page not set, but there is a component in the parameters, use that component.
 			elseif(empty($this->_context->application->page) && !empty($this->_context->application->com))
 			{
 				$this->_context->component->com = $this->_context->application->com;
 			}
+			// Use the default component from the default page
 			else $this->_context->application->com = $this->_context->page->component;
 
-			if (!empty($this->_context->application->uri) && $this->_sefurl) 
+			// If there is a sub-uri, it will be used as the component context
+			// 		This can only happen in the admin mode
+			if(!empty($this->_context->application->uri) && $this->_sefurl) 
 			{
 				// Get the component's router and parse the rest of the URI
 				$this->_context->component->append(
@@ -106,6 +107,7 @@ final class ComApplicationRouter extends SRouterDefault
 			// Else we just get the request values from $_GET
 			else $this->_context->component->append(KRequest::get('get', 'string'));
 
+			// The application context should stay untouched
 			$application = clone $this->_context->application;
 
 			// Merge the request to the request from the application URI
@@ -121,7 +123,7 @@ final class ComApplicationRouter extends SRouterDefault
 	public function build($httpquery)
 	{
 		// $httpquery is expected to come from the component.
-		if (!is_array($httpquery)) {
+		if(!is_array($httpquery)) {
 			parse_str($httpquery, $query);	
 		}
 		else $query = $httpquery;
@@ -129,37 +131,49 @@ final class ComApplicationRouter extends SRouterDefault
 		$application = $this->_context->application->toArray();
 
 		// Merge the query's values into application's context
-		foreach ($query as $key => $value) 
+		foreach($query as $key => $value) 
 		{
-			if (isset($application[$key])) 
+			// Always merge if not using SEF
+			if(!$this->_sefurl)
 			{
+				$application[$key] = $value;	
+			}
+			elseif(isset($application[$key])) 
+			{
+				// Merge only if the application has the same parameter
 				$application[$key] = $value;
+
+				// Once it is merged, don't include it in the query. Prevents /resource/id?resource=resource&id=id
 				unset($query[$key]);
 			}
-			elseif (!$this->_sefurl) {
-				$application[$key] = $value;
-			}
+			 
 		}
 
-		if ($this->_sefurl) 
+		if($this->_sefurl) 
 		{
 			$component = $application['com'];
 
-			// @TODO: Refactor this. There must be a way to make this code prettier.
-			if (isset($query['page']) | isset($application['page'])) {
+			// $query['page'] is usually expected in the pages management mode.
+			// If the page is set in the application or in the component's query
+			if(isset($query['page']) | isset($application['page'])) {
+				// Don't include the application's component in building route
 				unset($application['com']);
 			}
 
-			if (isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))) {
+			// For the frontend, the component can set the page. So if it does, set it in the application context
+			if(isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))) {
 				$application['page'] = $query['page'];
 			}
 
-			if (isset($query['base'])) {
+			// If base is true, use only the application context to build the route.
+			if(isset($query['base'])) {
 				return KRequest::base().'/'.parent::build($application);
 			}
 
+			// If we're not on base, will use the component's router to build the URI
 			$application['uri'] = $this->getRouter($component)->build($query);
 
+			// Build the complete URI along with the component's URI.
 			$result = KRequest::base().'/'.parent::build($application);
 
 			return $result;
@@ -170,7 +184,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 	public function getRouter($component)
 	{
-		if (!isset($this->_routers[$component])) 
+		if(!isset($this->_routers[$component])) 
 		{
 			$identifier          = clone $this->getIdentifier();
 			$identifier->package = $component;
@@ -188,19 +202,19 @@ final class ComApplicationRouter extends SRouterDefault
 		$page = null;
 		$pages = $this->getPages();
 
-		if (!is_null($permalink)) 
+		if(!is_null($permalink)) 
 		{
-			if (!in_array($permalink, array('default', 'admin','manage')) && is_null($page))
+			if(!in_array($permalink, array('default', 'admin','manage')) && is_null($page))
 			{
 				$page = $pages->find(array('permalink' => $permalink))->current();
 			}
 		}
 
-		if (is_null($page)) {
+		if(is_null($page)) {
 			$page = $pages->find(array('default' => true))->current();	
 		}
 
-		if (is_null($page)) {
+		if(is_null($page)) {
 			// @TODO: Redirect to 404 Not Found
 		}
 
@@ -219,7 +233,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 			$model = $this->getService($this->_pages);
 
-			if (!($model instanceof KModelAbstract)) {
+			if(!($model instanceof KModelAbstract)) {
 				throw new SRouterException('Pages is not an instance of KModelAbstract');
 			}
 
@@ -259,7 +273,7 @@ final class ComApplicationRouter extends SRouterDefault
 	 */
 	public static function getUri()
 	{
-		if (!empty($_SERVER['PATH_INFO']))
+		if(!empty($_SERVER['PATH_INFO']))
 		{
 			// PATH_INFO does not contain the docroot or index
 			$uri = $_SERVER['PATH_INFO'];
@@ -272,7 +286,7 @@ final class ComApplicationRouter extends SRouterDefault
 			{
 				$uri = $_SERVER['REQUEST_URI'];
 
-				if ($request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))
+				if($request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))
 				{
 					// Valid URL path found, set it.
 					$uri = $request_uri;
