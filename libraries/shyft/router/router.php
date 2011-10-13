@@ -191,7 +191,7 @@ class SRouter extends KObject
 			if(!isset($params[$key]) or $params[$key] === '')
 			{
 				// In finding the route rule to use, # indicates that a different value gets higher points
-				if (strpos($value, '#') !== false) {
+				if (strpos($value, '#') !== false || strpos($value, '!') !== false) {
 					$params[$key] = substr($value, 1);
 				}
 				else $params[$key] = $value;
@@ -289,12 +289,21 @@ class SRouter extends KObject
 				if ($match[$key] == $value) {
 					$points++;
 				}
-				elseif(substr($value, 0, 1) === '#') 
+				elseif(substr($value, 0, 1) === '!') 
 				{
+					// Higher points if the parameters are different
 					$parameter = substr($value, 1);
 					// Add a point if the required parameter is different from default
 					if(!empty($parameter) && $parameter != $match[$key])
-						 $points++;
+						 $points+=2;
+				}
+				elseif(substr($value, 0, 1) === '#') 
+				{
+					// Higher points if the parameters are the same
+					$parameter = substr($value, 1);
+					// Add a point if the required parameter is different from default
+					if(!empty($parameter) && $parameter == $match[$key])
+						 $points+=2;
 				}
 			}
 		}
