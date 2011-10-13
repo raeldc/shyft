@@ -83,6 +83,10 @@ class SRouter extends KObject
 		$uri = $route->rule;
 		parse_str($route->query, $defaults);
 
+		foreach($query as $key => $value) {
+			if(empty($value)) unset($query[$key]);
+		}
+
 		if (strpos($uri, '<') === FALSE AND strpos($uri, '[') === FALSE)
 		{
 			// This is a static route, no need to replace anything
@@ -287,8 +291,9 @@ class SRouter extends KObject
 				}
 				elseif(substr($value, 0, 1) === '#') 
 				{
+					$parameter = substr($value, 1);
 					// Add a point if the required parameter is different from default
-					if(substr($value, 1) != $match[$key])
+					if(!empty($parameter) && $parameter != $match[$key])
 						 $points++;
 				}
 			}
