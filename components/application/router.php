@@ -33,8 +33,8 @@ final class ComApplicationRouter extends SRouterDefault
 				'[<lang>/]admin/pages/<uri>[.<format>]'     => 'mode=admin&com=pages&format=html&lang=default&uri=#',
 				'[<lang>/]admin[/<com>][/<uri>][.<format>]' => 'com=dashboard&mode=admin&format=html&lang=default',
 				'<lang>[.<format>]'                         => 'mode=site&page=default&format=html&lang=#default',
-				'<lang>/<page>[.<format>]'                  => 'mode=site&page=#default&format=html&lang=#default',
 				'<page>[.<format>]'                         => 'mode=site&page=#default&format=html&lang=default',
+				'<lang>/<page>[.<format>]'                  => 'mode=site&page=#default&format=html&lang=#default',
 				'[<lang>/][<page>/][<uri>][.<format>]'      => 'mode=site&page=#default&format=#html&lang=#default&uri=#',
 			),
 			'regex' => array(
@@ -100,8 +100,6 @@ final class ComApplicationRouter extends SRouterDefault
 			// Else we just get the request values from $_GET
 			else $this->_context->component->append(KRequest::get('get', 'string'));
 
-			
-
 			// Merge the request to the request from the application URI
 			$this->_context->component = $this->_context->application->append($this->_context->component);
 
@@ -122,23 +120,37 @@ final class ComApplicationRouter extends SRouterDefault
 
 		$application = $this->_context->application->toArray();
 
-		// Merge the new values to the application context if it exists
+		// Merge the query's values into application's context
 		foreach ($query as $key => $value) 
 		{
-			if (!$this->_sefurl) {
-				$application[$key] = $value;	
-			}elseif (array_key_exists($key, $application)) {
+			if (isset($application[$key])) 
+			{
+				$application[$key] = $value;
+				unset($query[$key]);
+			}
+			elseif (!$this->_sefurl) {
 				$application[$key] = $value;
 			}
 		}
 
 		if ($this->_sefurl) 
 		{
+			if (isset($query['base'])) 
+			{
+				if ($application['mode'] == 'site') 
+				{
+					$application['page'] = $query['page'];
+					unset($application['com']);
+				}
+				return KRequest::base().'/'.parent::build($application);
+			}
+
 			$application['uri'] = $this->getRouter($application['com'])->build($query);
-			return parent::build($application);
+
+			return KRequest::base().'/'.parent::build($application);
 		}
 
-		return http_build_query($application);
+		return KRequest::base().'/index.php?'.http_build_query($application);
 	}
 
 	public function getRouter($component)
@@ -163,7 +175,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 		if (!is_null($permalink)) 
 		{
-			if (!in_array($permalink, array('default', 'admin','manage')))
+			if (!in_array($permalink, array('default', 'admin','manage')) && is_null($page))
 			{
 				$page = $pages->find(array('permalink' => $permalink))->current();
 			}

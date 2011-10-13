@@ -18,17 +18,13 @@ class ComDefaultViewHtml extends KViewHtml
 		// Special cases
 		if($route == 'index.php' || $route == 'index.php?') 
 		{
-			$result = $route;
-		} 
-		elseif (substr($route, 0, 1) == '&') 
+			return array('base' => true);
+		}
+		elseif (substr($route, 0, 10) == 'index.php?') 
 		{
-			$url   = clone KRequest::url();
-			$vars  = array();
-			parse_str($route, $vars);
-			
-			$url->setQuery(array_merge($url->getQuery(true), $vars));
-			
-			$result = 'index.php?'.$url->getQuery();
+			parse_str(substr($route, 10), $query);
+			$query['base'] = true;
+			$result = $this->getService('com://site/application.router')->build($query);
 		}
 		else 
 		{
@@ -38,8 +34,9 @@ class ComDefaultViewHtml extends KViewHtml
 			}
 
 			// Parse route that we want to generate
-			$parts = array();
 			parse_str($route, $parts);
+
+			unset($parts['base']);
 
 			// Add the layout information to the route only if it's not 'default'
 			if(!isset($parts['view']))
