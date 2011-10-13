@@ -161,5 +161,15 @@ function debug($value)
 {
     require_once 'ChromePhp.php';
     ChromePhp::useFile(SYSTEM_ROOT.'/logs', KRequest::base().'/logs');
-    call_user_func_array(array('ChromePhp', 'log'), func_get_args());
+    $args = array();
+
+    foreach (func_get_args() as $arg) 
+    {
+        if ($arg instanceof KConfig || $arg instanceof KObjectArray) {
+            $args[] = $arg->toArray();
+        }
+        else $args[] = $arg;
+    }
+    
+    call_user_func_array(array('ChromePhp', 'log'), $args);
 }
