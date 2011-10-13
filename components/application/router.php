@@ -66,7 +66,7 @@ final class ComApplicationRouter extends SRouterDefault
 					'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
 					'lang'   => KRequest::get('get.lang', 'cmd', 'default'),
 					'format' => KRequest::get('get.format', 'cmd', 'html'),
-					'page'   => KRequest::get('get.page', 'cmd', 'default'),
+					'page'   => KRequest::get('get.page', 'cmd', ''),
 					'com'    => KRequest::get('get.com', 'cmd', 'dashboard'),
 				));
 			}
@@ -178,6 +178,9 @@ final class ComApplicationRouter extends SRouterDefault
 
 			return $result;
 		}
+
+		// We don't want base to be included in the URI
+		unset($application['base']);
 
 		return KRequest::base().'/index.php?'.http_build_query($application);
 	}
