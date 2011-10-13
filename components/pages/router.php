@@ -6,9 +6,9 @@ class ComPagesRouter extends ComDefaultRouter
 	{
 		$config->append(array(
 			'routes' => array(
-				'new'       => 'view=page&layout=form',
-				'edit/<id>' => 'view=page&layout=form&id=#',
-				'<id>'      => 'view=page&layout=default&id=#',
+				'new'         => 'view=page&layout=form',
+				'edit/<page>' => 'view=page&layout=form&page=#',
+				'<page>'      => 'view=pages&layout=default&page=#',
 			),
 		));
 

@@ -2,5 +2,5 @@
 
 class ComDefaultRouter extends SRouterDefault
 {
-
+	
 }

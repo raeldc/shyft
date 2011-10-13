@@ -29,8 +29,8 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		$config->append(array(
 			'routes' => array(
-				'[<lang>/]admin/pages'					    => 'mode=admin&com=pages&format=html&lang=default',
-				'[<lang>/]admin/pages/<uri>[.<format>]'     => 'mode=admin&com=pages&format=html&lang=default&uri=#',
+				'[<lang>/]admin/pages'                      => 'mode=admin&com=pages&format=html&lang=default',
+				'[<lang>/]admin/pages/<uri>[.<format>]'     => 'mode=admin&format=html&lang=default&uri=#',
 				'[<lang>/]admin[/<com>][/<uri>][.<format>]' => 'com=dashboard&mode=admin&format=html&lang=default',
 				'<lang>[.<format>]'                         => 'mode=site&page=default&format=html&lang=#default',
 				'<page>[.<format>]'                         => 'mode=site&page=#default&format=html&lang=default',
@@ -44,7 +44,7 @@ final class ComApplicationRouter extends SRouterDefault
 				// @TODO: must be populated by all installed components.
 				'com'	 => array('dashboard'),
 				// @TODO: must be populated by all enabled pages
-				'page'   => array('default', 'home'),
+				'page'   => array('home', 'pages', 'contents', 'widgets'),
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
@@ -135,19 +135,26 @@ final class ComApplicationRouter extends SRouterDefault
 
 		if ($this->_sefurl) 
 		{
-			if (isset($query['base'])) 
-			{
-				if ($application['mode'] == 'site') 
-				{
-					$application['page'] = $query['page'];
-					unset($application['com']);
-				}
+			$component = $application['com'];
+
+			// @TODO: Refactor this. There must be a way to make this code prettier.
+			if (isset($query['page'])) {
+				unset($application['com']);
+			}
+
+			if ($application['mode'] == 'site') {
+				$application['page'] = $query['page'];
+			}
+
+			if (isset($query['base'])) {
 				return KRequest::base().'/'.parent::build($application);
 			}
 
-			$application['uri'] = $this->getRouter($application['com'])->build($query);
+			$application['uri'] = $this->getRouter($component)->build($query);
 
-			return KRequest::base().'/'.parent::build($application);
+			$result = KRequest::base().'/'.parent::build($application);
+
+			return $result;
 		}
 
 		return KRequest::base().'/index.php?'.http_build_query($application);
