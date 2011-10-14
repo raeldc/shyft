@@ -46,9 +46,9 @@ final class ComApplicationRouter extends SRouterDefault
 				'uri'    => '[a-zA-Z0-9\-+.:_/]+',
 				'format' => '[a-z]+$',
 				// @TODO: must be populated by all installed components.
-				'com'	 => array('dashboard'),
+				'com'	 => array('dashboard','widgets'),
 				// @TODO: must be populated by all enabled pages
-				'page'   => array('home', 'pages', 'contents', 'widgets'),
+				'page'   => array('home', 'pages', 'contents'),
 			),
 			'defaults' => array(
 				'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
@@ -79,6 +79,7 @@ final class ComApplicationRouter extends SRouterDefault
 			}
 
 			$this->_context->component = new KConfig();
+			$component = '';
 
 			// Get the page, it will use the default page if page is not found
 			$this->_context->page = $this->getPage($this->_context->application->page);
@@ -87,7 +88,7 @@ final class ComApplicationRouter extends SRouterDefault
 			if($this->_context->application->mode == 'site') 
 			{
 				// In the frontend, there is no way to access a component without going through a page.
-				$this->_context->component->com = $this->_context->page->component;
+				$component = $this->_context->component->com = $this->_context->page->component;
 
 				// If the page has default parameters, merge them to the component's context
 				$this->_context->component->append($this->_context->page->parameters);
@@ -95,19 +96,20 @@ final class ComApplicationRouter extends SRouterDefault
 			// If we're not on 'site' and the page not set, but there is a component in the parameters, use that component.
 			elseif(empty($this->_context->application->page) && !empty($this->_context->application->com))
 			{
-				$this->_context->component->com = $this->_context->application->com;
+				$component = $this->_context->component->com = $this->_context->application->com;
 			}
 			// Use the default component from the default page
-			else $this->_context->application->com = $this->_context->page->component;
+			else $component = $this->_context->application->com = $this->_context->page->component;
 
 			// If there is a sub-uri, it will be used as the component context
 			// 		This can only happen in the admin mode
 			if(!empty($this->_context->application->uri) && $this->_sefurl) 
 			{
 				$this->_context->uri = $this->_context->application->uri;
+
 				// Get the component's router and parse the rest of the URI
 				$this->_context->component->append(
-					$this->getRouter($this->_context->application->com)
+					$this->getRouter($component)
 						->parse($this->_context->application->uri)
 				);
 			}
@@ -170,7 +172,7 @@ final class ComApplicationRouter extends SRouterDefault
 				$application['page'] = $query['page'];
 			}
 
-			if(is_null($component)) {
+			if(is_null($component)){
 				$component = $this->getPage($application['page'])->component;
 			}
 
@@ -233,6 +235,7 @@ final class ComApplicationRouter extends SRouterDefault
 		}
 
 		if(is_null($page)) {
+			throw new SRouterException('No Default page found');
 			// @TODO: Redirect to 404 Not Found
 		}
 
