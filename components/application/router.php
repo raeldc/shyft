@@ -20,22 +20,23 @@ final class ComApplicationRouter extends SRouterDefault
 
 		// Get the confiugration if SEF URL is activated
 		$this->_sefurl = $config->sefurl;
-
-		// Get the context based on the URI
-		$this->getContext();
 	}
 	
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
 			'routes' => array(
-				'[<lang>/]admin/pages'                           => 'mode=#admin&com=pages&format=html&lang=default',
-				'[<lang>/]admin/pages/<page>[/<uri>][.<format>]' => 'mode=#admin&format=html&lang=default&page=!&uri=!',
-				'[<lang>/]admin[/<com>][/<uri>][.<format>]'      => 'com=dashboard&mode=admin&format=html&lang=default',
-				'<lang>[.<format>]'                              => 'mode=#site&page=default&format=html&lang=!default',
-				'<page>[.<format>]'                              => 'mode=#site&page=!default&format=html&lang=default',
-				'<lang>/<page>[.<format>]'                       => 'mode=#site&page=!default&format=html&lang=!default',
-				'[<lang>/][<page>/][<uri>][.<format>]'           => 'mode=#site&page=!default&format=html&lang=default&uri=!',
+				// Get route for the component                      => Use it when com is set, and mode is admin.
+				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'         => 'mode=#admin&com=!&lang=en&format=html&com=pages',
+
+				// Get route for page management                	=> Use it when page is set and mode is admin
+				'[<lang>/]admin/manage[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&lang=en&format=html',
+
+				// Get route for a URI with page                    => Use this route if page or uri is set
+				'[<lang>/][<page>[/<uri>][.<format>]]'              => 'mode=#site&lang=en&format=html&page=!&uri=!',
+
+				// Get route if no page is set but there's a URI    => Use this if no uri or page is set
+				'[<lang>/][<uri>[.<format>]]'                       => 'mode=#site&lang=en&format=html&page=#&uri=#',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -45,6 +46,14 @@ final class ComApplicationRouter extends SRouterDefault
 				'com'	 => array('dashboard'),
 				// @TODO: must be populated by all enabled pages
 				'page'   => array('home', 'pages', 'contents', 'widgets'),
+			),
+			'defaults' => array(
+				'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
+				'lang'   => KRequest::get('get.lang', 'cmd', 'en'),
+				'format' => KRequest::get('get.format', 'cmd', 'html'),
+				'page'   => KRequest::get('get.page', 'cmd', ''),
+				'uri'    => KRequest::get('get.page', 'cmd', ''),
+				'com'    => KRequest::get('get.com', 'cmd', 'dashboard'),
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
@@ -60,17 +69,11 @@ final class ComApplicationRouter extends SRouterDefault
 		{
 			$this->_context = new KConfig();
 
-			if(!$this->_sefurl) 
-			{
-				$this->_context->application = new KConfig(array(
-					'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
-					'lang'   => KRequest::get('get.lang', 'cmd', 'default'),
-					'format' => KRequest::get('get.format', 'cmd', 'html'),
-					'page'   => KRequest::get('get.page', 'cmd', ''),
-					'com'    => KRequest::get('get.com', 'cmd', 'dashboard'),
-				));
+			if(!$this->_sefurl){
+				$this->_context->application = new KConfig($this->_defaults);
+			}else{ 
+				$this->_context->application = new KConfig(parent::parse($this->getUri()));
 			}
-			else $this->_context->application = new KConfig(parent::parse($this->getUri()));
 
 			$this->_context->component = new KConfig();
 
@@ -98,6 +101,7 @@ final class ComApplicationRouter extends SRouterDefault
 			// 		This can only happen in the admin mode
 			if(!empty($this->_context->application->uri) && $this->_sefurl) 
 			{
+				$this->_context->uri = $this->_context->application->uri;
 				// Get the component's router and parse the rest of the URI
 				$this->_context->component->append(
 					$this->getRouter($this->_context->application->com)
@@ -113,8 +117,9 @@ final class ComApplicationRouter extends SRouterDefault
 			// Merge the request to the request from the application URI
 			$this->_context->component = $application->append($this->_context->component);
 
-			// We don't want the URI to be accessible in the component level
+			// We don't want the URI to be accessible after this
 			unset($this->_context->component->uri);
+			unset($this->_context->application->uri);
 		}
 
 		return $this->_context;
@@ -146,7 +151,6 @@ final class ComApplicationRouter extends SRouterDefault
 				// Once it is merged, don't include it in the query. Prevents /resource/id?resource=resource&id=id
 				unset($query[$key]);
 			}
-			 
 		}
 
 		if($this->_sefurl) 
@@ -210,9 +214,9 @@ final class ComApplicationRouter extends SRouterDefault
 		$page = null;
 		$pages = $this->getPages();
 
-		if(!is_null($permalink)) 
+		if(!empty($permalink)) 
 		{
-			if(!in_array($permalink, array('default', 'admin','manage')) && is_null($page))
+			if(!in_array($permalink, array('default','admin','manage')))
 			{
 				$page = $pages->find(array('permalink' => $permalink))->current();
 			}

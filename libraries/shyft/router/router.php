@@ -28,13 +28,21 @@ class SRouter extends KObject
      * @var array
      */
 	protected $_regex;
+
+	/**
+     * Default values of the router
+     *
+     * @var array
+     */
+	protected $_defaults;
 	
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
 
-		$this->_routes = new ArrayObject();
-		$this->_regex = $config->regex->toArray();
+		$this->_routes   = new ArrayObject();
+		$this->_regex    = $config->regex->toArray();
+		$this->_defaults = $config->defaults->toArray();
 
 		$this->addRoutes($config->routes, $this->_regex);
 	}
@@ -42,8 +50,9 @@ class SRouter extends KObject
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
-			'routes' => array(),
-			'regex'  => array()
+			'routes'   => array(),
+			'regex'    => array(),
+			'defaults' => array()
 		));
 	
 		parent::_initialize($config);
@@ -71,17 +80,23 @@ class SRouter extends KObject
 	 * Returns a string of pretty URL based on query that matches a route
 	 *
 	 */
-	public function build($httpquery)
+	public function build($httpquery, $defaults = null)
 	{
 		if (!is_array($httpquery)) {
 			parse_str($httpquery, $query);
 		}
 		else $query = $httpquery;
-		
+
+		if (is_null($defaults)) {
+			$defaults = $this->_defaults;
+		}
+
 		$route = $this->getMatch($query);
 
 		$uri = $route->rule;
-		parse_str($route->query, $defaults);
+		parse_str($route->query, $query_defaults);
+
+		$defaults = array_merge($defaults, $query_defaults);
 
 		foreach($query as $key => $value) {
 			if(empty($value)) unset($query[$key]);
@@ -106,7 +121,8 @@ class SRouter extends KObject
 				list($key, $param) = $match;
 
 				// If the optional parameter is equal to defaults, don't replace it.
-				if (isset($query[$param]) && $query[$param] != $defaults[$param] && $query[$param] != '#'.$defaults[$param])
+				$defaults[$param] = str_replace(array('!', '#'), '', $defaults[$param]);
+				if (isset($query[$param]) && $query[$param] != $defaults[$param])
 				{
 					// Replace the key with the parameter value
 					$replace = str_replace($key, $query[$param], $replace);
@@ -131,7 +147,11 @@ class SRouter extends KObject
 			list($key, $param) = $match;
 
 			if(!isset($query[$param])) {
-				throw new SRouterException('Required route parameter not passed');
+				$query[$param] = str_replace(array('!', '#'), '', $defaults[$param]);
+			}
+
+			if(!isset($query[$param])) {
+				throw new SRouterException('Required route '.$param.' not passed');
 			}
 
 			$uri = str_replace($key, $query[$param], $uri);
@@ -264,46 +284,40 @@ class SRouter extends KObject
 
 	/**
 	 * Calculate similarity based on how much keys and values match.
-	 * 		Add one point for each similar key or value
+	 * 		Add one point for each similar key or value.
 	 *
 	 */
-	public function getSimilarity($base_string, $match_string)
+	public function getSimilarity($base, $query)
 	{
-		if (!is_array($match_string)) {
-			parse_str($match_string, $match);
+		if (!is_array($query)) {
+			parse_str($query, $subject);
 		}
-		else $match = $match_string;
+		else $subject = $query;
 
-		parse_str($base_string, $base);
+		parse_str($base, $model);
 
 		$points = 0;
 
-		foreach ($base as $key => $value) 
+		foreach ($model as $key => $value) 
 		{
-			if (array_key_exists($key, $match))
+			if(array_key_exists($key, $subject))
 			{
-				// Add 1 point if the key exists
-				$points++;
-
-				// Add 1 point if the parameter is equal to the current value
-				if ($match[$key] == $value) {
-					$points++;
-				}
-				elseif(substr($value, 0, 1) === '!') 
+				if(substr($value, 0, 1) === '!') 
 				{
 					// Higher points if the parameters are different
 					$parameter = substr($value, 1);
-					// Add a point if the required parameter is different from default
-					if(!empty($parameter) && $parameter != $match[$key])
-						 $points+=2;
+					if($parameter != $subject[$key]){
+						$points++;
+					}
 				}
 				elseif(substr($value, 0, 1) === '#') 
 				{
 					// Higher points if the parameters are the same
 					$parameter = substr($value, 1);
-					// Add a point if the required parameter is different from default
-					if(!empty($parameter) && $parameter == $match[$key])
-						 $points+=2;
+					if($parameter == $subject[$key]){
+						$points++;
+					}
+						 
 				}
 			}
 		}
