@@ -35,6 +35,9 @@ final class ComApplicationRouter extends SRouterDefault
 				// Get route for a URI with page                    => Use this route if page or uri is set
 				'[<lang>/][<page>[/<uri>][.<format>]]'              => 'mode=#site&lang=en&format=html&page=!&uri=!',
 
+				// Get route if lang is set 					    => Use this if lang is set
+				'[<lang>[/<uri>[.<format>]]]'                       => 'mode=#site&lang=!en&format=html&page=#&uri=#',
+
 				// Get route if no page is set but there's a URI    => Use this if no uri or page is set
 				'[<lang>/][<uri>[.<format>]]'                       => 'mode=#site&lang=en&format=html&page=#&uri=#',
 			),
