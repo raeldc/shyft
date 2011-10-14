@@ -26,20 +26,20 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		$config->append(array(
 			'routes' => array(
-				// Get route for the component                      => Use it when com is set, and mode is admin.
-				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'         => 'mode=#admin&com=!&lang=en&format=html&com=pages',
+				// Get route for the component                     => Use it when com is set, and mode is admin.
+				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=#admin&com=!&lang=en&format=html&com=pages',
 
-				// Get route for page management                	=> Use it when page is set and mode is admin
-				'[<lang>/]admin/manage[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&lang=en&format=html',
+				// Get route for page management                   => Use it when page is set and mode is admin
+				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&lang=en&format=html',
 
-				// Get route for a URI with page                    => Use this route if page or uri is set
-				'[<lang>/][<page>[/<uri>][.<format>]]'              => 'mode=#site&lang=en&format=html&page=!&uri=!',
+				// Get route for a URI with page                   => Use this route if page or uri is set
+				'[<lang>/][<page>[/<uri>][.<format>]]'             => 'mode=#site&lang=en&format=html&page=!&uri=!',
 
-				// Get route if lang is set 					    => Use this if lang is set
-				'[<lang>[/<uri>[.<format>]]]'                       => 'mode=#site&lang=!en&format=html&page=#&uri=#',
+				// Get route if lang is set                        => Use this if lang is set
+				'[<lang>[/<uri>[.<format>]]]'                      => 'mode=#site&lang=!en&format=html&page=#&uri=#',
 
-				// Get route if no page is set but there's a URI    => Use this if no uri or page is set
-				'[<lang>/][<uri>[.<format>]]'                       => 'mode=#site&lang=en&format=html&page=#&uri=#',
+				// Get route if no page is set but there's a URI   => Use this if no uri or page is set
+				'[<lang>/][<uri>[.<format>]]'                      => 'mode=#site&lang=en&format=html&page=#&uri=#',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -48,7 +48,7 @@ final class ComApplicationRouter extends SRouterDefault
 				// @TODO: must be populated by all installed components.
 				'com'	 => array('dashboard','widgets'),
 				// @TODO: must be populated by all enabled pages
-				'page'   => array('home', 'pages', 'contents'),
+				'page'   => array('home', 'contents'),
 			),
 			'defaults' => array(
 				'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
