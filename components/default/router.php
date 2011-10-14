@@ -6,10 +6,10 @@ class ComDefaultRouter extends SRouterDefault
 	{
 		$config->append(array(
 			'routes' => array(
-				'[<view>[/<layout>]]' => 'view=!&layout',
+				'[<view>[/<layout>]]' => 'view=!&layout=default',
 			),
 		));
-	
+
 		parent::_initialize($config);
 	}
 	
