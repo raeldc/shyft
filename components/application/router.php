@@ -170,7 +170,7 @@ final class ComApplicationRouter extends SRouterDefault
 				$application['page'] = $query['page'];
 			}
 
-			if (is_null($component)) {
+			if(is_null($component)) {
 				$component = $this->getPage($application['page'])->component;
 			}
 
@@ -182,8 +182,14 @@ final class ComApplicationRouter extends SRouterDefault
 			// If we're not on base, will use the component's router to build the URI
 			$application['uri'] = $this->getRouter($component)->build(http_build_query($query));
 
+			$getvars = '';
+			if(strpos($application['uri'], '?') !== false) {
+				list($application['uri'], $getvars) = explode('?', $application['uri'], 2);
+				$getvars = '?'.$getvars;
+			}
+
 			// Build the complete URI along with the component's URI.
-			$result = KRequest::base().'/'.parent::build(http_build_query($application));
+			$result = KRequest::base().'/'.parent::build(http_build_query($application)).$getvars;
 
 			return $result;
 		}
