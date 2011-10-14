@@ -131,10 +131,7 @@ final class ComApplicationRouter extends SRouterDefault
 	public function build($httpquery)
 	{
 		// $httpquery is expected to come from the component.
-		if(!is_array($httpquery)) {
-			parse_str($httpquery, $query);	
-		}
-		else $query = $httpquery;
+		parse_str($httpquery, $query);	
 
 		$application = $this->_context->application->toArray();
 
@@ -179,14 +176,14 @@ final class ComApplicationRouter extends SRouterDefault
 
 			// If base is true, use only the application context to build the route.
 			if(isset($query['base'])) {
-				return KRequest::base().'/'.parent::build($application);
+				return KRequest::base().'/'.parent::build(http_build_query($application));
 			}
 
 			// If we're not on base, will use the component's router to build the URI
-			$application['uri'] = $this->getRouter($component)->build($query);
+			$application['uri'] = $this->getRouter($component)->build(http_build_query($query));
 
 			// Build the complete URI along with the component's URI.
-			$result = KRequest::base().'/'.parent::build($application);
+			$result = KRequest::base().'/'.parent::build(http_build_query($application));
 
 			return $result;
 		}

@@ -24,12 +24,12 @@ class ComDefaultViewHtml extends KViewHtml
 		{
 			parse_str(substr($route, 10), $query);
 			$query['base'] = true;
-			$result = $this->getService('com://site/application.router')->build($query);
+			$result = $this->getService('com://site/application.router')->build(http_build_query($query));
 		}elseif (substr($route, 0, 1) == '&') 
 		{
 			parse_str($route, $query);
 			$query['base'] = true;
-			$result = $this->getService('com://site/application.router')->build($query);
+			$result = $this->getService('com://site/application.router')->build(http_build_query($query));
 		}
 		else 
 		{
@@ -57,7 +57,7 @@ class ComDefaultViewHtml extends KViewHtml
 				$parts['format'] = $this->getIdentifier()->name;
 			}
 
-			$result = $this->getService('com://site/application.router')->build($parts);
+			$result = $this->getService('com://site/application.router')->build(http_build_query($parts));
 		}
 
 		return $result;

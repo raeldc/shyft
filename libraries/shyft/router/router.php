@@ -82,10 +82,7 @@ class SRouter extends KObject
 	 */
 	public function build($httpquery, $defaults = null)
 	{
-		if (!is_array($httpquery)) {
-			parse_str($httpquery, $query);
-		}
-		else $query = $httpquery;
+		parse_str($httpquery, $query);
 
 		if (is_null($defaults)) {
 			$defaults = $this->_defaults;
@@ -187,6 +184,10 @@ class SRouter extends KObject
 	{
 		foreach ($this->_routes as $route) {
 			if (preg_match($route->uri, $uri, $matches)) break;
+		}
+
+		if (empty($matches)) {
+			throw new SRouterException('Cannot find a match for '.$uri);
 		}
 
 		$params = array();
