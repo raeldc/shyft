@@ -51,12 +51,12 @@ final class ComApplicationRouter extends SRouterDefault
 				'page'   => array('home', 'contents'),
 			),
 			'defaults' => array(
-				'mode'   => KRequest::get('get.mode', 'cmd', 'site'),
-				'lang'   => KRequest::get('get.lang', 'cmd', 'en'),
+				'mode'   => KRequest::get('get.mode', 	'cmd', 'site'),
+				'lang'   => KRequest::get('get.lang', 	'cmd', 'en'),
 				'format' => KRequest::get('get.format', 'cmd', 'html'),
-				'page'   => KRequest::get('get.page', 'cmd', ''),
-				'uri'    => KRequest::get('get.page', 'cmd', ''),
-				'com'    => KRequest::get('get.com', 'cmd', 'dashboard'),
+				'page'   => KRequest::get('get.page', 	'cmd', ''),
+				'uri'    => KRequest::get('get.page', 	'cmd', ''),
+				'com'    => KRequest::get('get.com', 	'cmd', 'dashboard'),
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
