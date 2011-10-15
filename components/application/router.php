@@ -156,7 +156,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 			// If we're not on base, will use the component's router to build the URI
 			$application['uri'] = $this->getRouter($component)->build(http_build_query($query));
-			debug($httpquery, $application);
+
 			$getvars = '';
 			if(strpos($application['uri'], '?') !== false) {
 				list($application['uri'], $getvars) = explode('?', $application['uri'], 2);
