@@ -72,7 +72,7 @@ final class ComApplicationRouter extends SRouterDefault
 			}else{ 
 				$application = new KConfig($this->parse($this->getUri()));
 			}
-			debug($application);
+
 			// If site mode, or if the component being accessed is pages(happens only in admin mode)
 			if($application->mode == 'site' || ($application->com == 'pages' && !empty($application->page)))
 			{

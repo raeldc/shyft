@@ -29,10 +29,11 @@ class SControllerBehaviorCommandable extends KControllerBehaviorCommandable
             if($this->canAdd()) 
             {
                 $identifier = $context->caller->getIdentifier();
-                $config     = array('attribs' => array(
-                    				'href' => 'index.php?com='.$identifier->package.'&view='.$identifier->name
-                              ));
-                
+                $config     = array(
+                                'attribs' => array(
+                    				'href'  =>  $context->caller->getView()->createRoute('layout=form&view='.$identifier->name)
+                                ));
+
                 $this->getToolbar()->addCommand('new', $config);
             }
             

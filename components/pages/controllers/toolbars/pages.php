@@ -7,7 +7,7 @@ class ComPagesControllerToolbarPages extends KControllerToolbarDefault
     	$command->append(array(
             'attribs' => array(
                 'data-controls-modal' => 'page-content-types',
-                'data-backdrop'	=> 'static'
+                'data-backdrop'	=> 'static',
             )
         ));
     }
