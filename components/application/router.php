@@ -30,7 +30,7 @@ final class ComApplicationRouter extends SRouterDefault
 				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=#admin&com=!&lang=en&format=html&com=pages',
 
 				// Get route for page management                   => Use it when page is set and mode is admin
-				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&lang=en&format=html',
+				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&lang=en&format=html&com=#pages',
 
 				// Get route for a URI with page                   => Use this route if page or uri is set
 				'[<lang>/][<page>[/<uri>][.<format>]]'             => 'mode=#site&lang=en&format=html&page=!&uri=!',
@@ -71,6 +71,7 @@ final class ComApplicationRouter extends SRouterDefault
 		if(!($this->_context instanceof KConfig)) 
 		{
 			$this->_context = new KConfig();
+			$this->_context->component = new KConfig();
 
 			if(!$this->_sefurl){
 				$this->_context->application = new KConfig($this->_defaults);
@@ -78,53 +79,37 @@ final class ComApplicationRouter extends SRouterDefault
 				$this->_context->application = new KConfig(parent::parse($this->getUri()));
 			}
 
-			$this->_context->component = new KConfig();
-			$component = '';
-
-			// Get the page, it will use the default page if page is not found
-			$this->_context->page = $this->getPage($this->_context->application->page);
-
-			// If the mode is site, get the component request from the current page
-			if($this->_context->application->mode == 'site') 
+			// If site mode, or if the component being accessed is pages(happens only in admin mode)
+			if($this->_context->application->mode == 'site' || ($this->_context->application->com == 'pages' && !empty($this->_context->application->page)))
 			{
-				// In the frontend, there is no way to access a component without going through a page.
-				$component = $this->_context->component->com = $this->_context->page->component;
-
-				// If the page has default parameters, merge them to the component's context
-				$this->_context->component->append($this->_context->page->parameters);
+				// Get the page, it will use the default page if page is not found
+				$this->_context->page             = $this->getPage($this->_context->application->page);
+				$this->_context->application->com = $this->_context->page->component;
+				$this->_context->component        = $this->_context->page->parameters;
 			}
-			// If we're not on 'site' and the page not set, but there is a component in the parameters, use that component.
-			elseif(empty($this->_context->application->page) && !empty($this->_context->application->com))
-			{
-				$component = $this->_context->component->com = $this->_context->application->com;
-			}
-			// Use the default component from the default page
-			else $component = $this->_context->application->com = $this->_context->page->component;
 
-			// If there is a sub-uri, it will be used as the component context
-			// 		This can only happen in the admin mode
-			if(!empty($this->_context->application->uri) && $this->_sefurl) 
+			if($this->_sefurl) 
 			{
+				// Save the application's uri in the context
 				$this->_context->uri = $this->_context->application->uri;
 
-				// Get the component's router and parse the rest of the URI
-				$this->_context->component->append(
-					$this->getRouter($component)
-						->parse($this->_context->application->uri)
-				);
+				// We don't need it anymore
+				unset($this->_context->application->uri);
+
+				// If there is a sub-uri, it will be used as the component context
+				if (!empty($this->_context->uri)) {
+					$this->_context->component = $this->getRouter($this->_context->application->com)
+						->parse($this->_context->uri);
+				}
 			}
 			// Else we just get the request values from $_GET
 			else $this->_context->component->append(KRequest::get('get', 'string'));
 
-			// The application context should stay untouched
+			// The application context should stay untouched, so clone it
 			$application = clone $this->_context->application;
 
 			// Merge the request to the request from the application URI
 			$this->_context->component = $application->append($this->_context->component);
-
-			// We don't want the URI to be accessible after this
-			unset($this->_context->component->uri);
-			unset($this->_context->application->uri);
 		}
 
 		return $this->_context;
