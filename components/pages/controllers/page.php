@@ -10,5 +10,4 @@ class ComPagesControllerPage extends ComDefaultControllerDefault
 		
 		parent::_initialize($config);
 	}
-	
 }
