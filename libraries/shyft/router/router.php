@@ -80,28 +80,30 @@ class SRouter extends KObject
 	 * Returns a string of pretty URL based on query that matches a route
 	 *
 	 */
-	public function build($httpquery, $defaults = null)
+	public function build($httpquery)
 	{
+		// httpquery is always expected to be a string (will be used for caching)
 		parse_str($httpquery, $query);
 
-		if (is_null($defaults)) {
-			$defaults = $this->_defaults;
-		}
-
+		// Find which rule to use in building the route based on the query
 		$route = $this->getMatch($query);
 
+		// Start with the the route's rule
 		$uri = $route->rule;
+
+		// Get the defaults from the route's query
 		parse_str($route->query, $query_defaults);
 
-		$defaults = array_merge($defaults, $query_defaults);
+		// Merge the defaults with this instance's defaults
+		$defaults = array_merge($this->_defaults, $query_defaults);
 
+		// Remove empty values from the query
 		foreach($query as $key => $value) {
 			if(empty($value)) unset($query[$key]);
 		}
 
-		if (strpos($uri, '<') === FALSE AND strpos($uri, '[') === FALSE)
-		{
-			// This is a static route, no need to replace anything
+		// If route is static (no placeholders), there's no need to replace anything
+		if (strpos($uri, '<') === FALSE AND strpos($uri, '[') === FALSE){
 			return $uri;
 		}
 
@@ -117,8 +119,10 @@ class SRouter extends KObject
 			{
 				list($key, $param) = $match;
 
-				// If the optional parameter is equal to defaults, don't replace it.
+				// Remove indicators from the default's values
 				$defaults[$param] = str_replace(array('!', '#'), '', $defaults[$param]);
+
+				// If the optional parameter is equal to defaults, don't replace it.
 				if (isset($query[$param]) && $query[$param] != $defaults[$param])
 				{
 					// Replace the key with the parameter value
