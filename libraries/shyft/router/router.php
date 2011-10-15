@@ -177,7 +177,7 @@ class SRouter extends KObject
 			$uri .= '?'. http_build_query($query);
 		}
 
-		return $uri;
+		return trim($uri, '/');
 	}
 
 	/**

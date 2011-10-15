@@ -33,13 +33,10 @@ final class ComApplicationRouter extends SRouterDefault
 				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&com=pages',
 
 				// Lang is optinally set and page is set           => Use this route if page or uri is set
-				'[<lang>/][<page>[/<uri>][.<format>]]'             => 'mode=#site&page=!&uri=!',
-
-				// Get route if lang is set                        => Use this if lang is set, page and uri is blank
-				'[<lang>[/<uri>[.<format>]]]'                      => 'mode=#site&lang=!en&page=#&uri=#',
+				'[<lang>][/][<page>[/<uri>][.<format>]]'             => 'mode=#site&page=!&uri=!',
 
 				// This is the catch all rule 					   => Use this if page and uri is blank
-				'[<lang>/][<uri>[.<format>]]'                      => 'mode=#site&page=#&uri=#',
+				'[<lang>][/][<uri>[.<format>]]'                      => 'mode=#site&page=#&uri=#',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -75,7 +72,7 @@ final class ComApplicationRouter extends SRouterDefault
 			}else{ 
 				$application = new KConfig($this->parse($this->getUri()));
 			}
-
+			debug($application);
 			// If site mode, or if the component being accessed is pages(happens only in admin mode)
 			if($application->mode == 'site' || ($application->com == 'pages' && !empty($application->page)))
 			{
@@ -159,7 +156,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 			// If we're not on base, will use the component's router to build the URI
 			$application['uri'] = $this->getRouter($component)->build(http_build_query($query));
-
+			debug($httpquery, $application);
 			$getvars = '';
 			if(strpos($application['uri'], '?') !== false) {
 				list($application['uri'], $getvars) = explode('?', $application['uri'], 2);
