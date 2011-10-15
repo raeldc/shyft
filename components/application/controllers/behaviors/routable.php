@@ -13,7 +13,7 @@ class ComApplicationControllerBehaviorRoutable extends KControllerBehaviorAbstra
 
 	protected function _beforeDispatch(KCommandContext $context)
     {
-    	$request = $this->getService('com://site/application.router')->getContext()->component;
+    	$request = $this->getService('com://site/application.router')->getRequest()->component;
     	$context->caller->setRequest($request);
 
     	$component = clone $context->caller->getIdentifier();

@@ -1,12 +1,12 @@
 <?php
 
 /*
- * The Application Router that knows the context of the page
+ * The Application Router that knows the request of the page
  *		This prepends application related uri to the page's uri.
  */
 final class ComApplicationRouter extends SRouterDefault
 {
-	protected $_context;
+	protected $_request;
 	protected $_sefurl;
 	protected $_pages;
 	protected $_routers = array();
@@ -66,9 +66,9 @@ final class ComApplicationRouter extends SRouterDefault
 		parent::_initialize($config);
 	}
 
-	public function getContext()
+	public function getRequest()
 	{
-		if(!($this->_context instanceof KConfig)) 
+		if(!($this->_request instanceof KConfig)) 
 		{
 			if(!$this->_sefurl){
 				$application = new KConfig($this->_defaults);
@@ -94,15 +94,15 @@ final class ComApplicationRouter extends SRouterDefault
 			// Else we just get the request values from $_GET
 			else $component = KRequest::get('get', 'string');
 
-			// Create the context
-			$this->_context = new KConfig(array(
-				// The application context should stay untouched, so clone it
+			// Create the request
+			$this->_request = new KConfig(array(
+				// The application request should stay untouched, so clone it
 				'application' => clone $application,
 				'component' => $application->append($component)
 			));
 		}
 
-		return $this->_context;
+		return $this->_request;
 	}
 
 	public function build($httpquery)
@@ -110,9 +110,9 @@ final class ComApplicationRouter extends SRouterDefault
 		// $httpquery is expected to come from the component.
 		parse_str($httpquery, $query);	
 
-		$application = $this->_context->application->toArray();
+		$application = $this->_request->application->toArray();
 
-		// Merge the query's values into application's context
+		// Merge the query's values into application's request
 		foreach($query as $key => $value) 
 		{
 			// Always merge if not using SEF
@@ -142,7 +142,7 @@ final class ComApplicationRouter extends SRouterDefault
 			}
 			else $component = $application['com'];
 
-			// For the frontend, the component can set the page. So if it does, set it in the application context
+			// For the frontend, the component can set the page. So if it does, set it in the application request
 			if(isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))){
 				$application['page'] = $query['page'];
 			}
@@ -151,7 +151,7 @@ final class ComApplicationRouter extends SRouterDefault
 				$component = $this->getPage($application['page'])->component;
 			}
 
-			// If base is true, use only the application context to build the route.
+			// If base is true, use only the application request to build the route.
 			if(isset($query['base'])) {
 				return KRequest::base().'/'.parent::build(http_build_query($application));
 			}
@@ -319,6 +319,6 @@ final class ComApplicationRouter extends SRouterDefault
 
 	public function __get($name)
 	{
-		return $this->_context->$name;
+		return $this->_request->$name;
 	}
 }
