@@ -136,7 +136,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 			// $query['page'] is usually expected in the pages management mode.
 			// If the page is set in the application or in the component's query
-			if(isset($query['page']) | isset($application['page'])) {
+			if((isset($query['page']) && !empty($query['page'])) | (isset($application['page']) && !empty($application['page']))) {
 				// Don't include the application's component in building route
 				unset($application['com']);
 			}
@@ -153,6 +153,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 			// If base is true, use only the application request to build the route.
 			if(isset($query['base'])) {
+				unset($application['uri']);
 				return KRequest::base().'/'.parent::build(http_build_query($application));
 			}
 
