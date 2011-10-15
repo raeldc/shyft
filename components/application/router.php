@@ -70,46 +70,36 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		if(!($this->_context instanceof KConfig)) 
 		{
-			$this->_context = new KConfig();
-			$this->_context->component = new KConfig();
-
 			if(!$this->_sefurl){
-				$this->_context->application = new KConfig($this->_defaults);
+				$application = new KConfig($this->_defaults);
 			}else{ 
-				$this->_context->application = new KConfig(parent::parse($this->getUri()));
+				$application = new KConfig(parent::parse($this->getUri()));
 			}
 
 			// If site mode, or if the component being accessed is pages(happens only in admin mode)
-			if($this->_context->application->mode == 'site' || ($this->_context->application->com == 'pages' && !empty($this->_context->application->page)))
+			if($application->mode == 'site' || ($application->com == 'pages' && !empty($application->page)))
 			{
 				// Get the page, it will use the default page if page is not found
-				$this->_context->page             = $this->getPage($this->_context->application->page);
-				$this->_context->application->com = $this->_context->page->component;
-				$this->_context->component        = $this->_context->page->parameters;
+				$page             = $this->getPage($application->page);
+				$application->com = $page->component;
+				$component        = $page->parameters;
 			}
 
-			if($this->_sefurl) 
+			// If sefurl is turned on
+			if($this->_sefurl && !empty($application->uri)) 
 			{
-				// Save the application's uri in the context
-				$this->_context->uri = $this->_context->application->uri;
-
-				// We don't need it anymore
-				unset($this->_context->application->uri);
-
-				// If there is a sub-uri, it will be used as the component context
-				if (!empty($this->_context->uri)) {
-					$this->_context->component = $this->getRouter($this->_context->application->com)
-						->parse($this->_context->uri);
-				}
+				$component = $this->getRouter($application->com)
+						->parse($application->uri);
 			}
 			// Else we just get the request values from $_GET
-			else $this->_context->component->append(KRequest::get('get', 'string'));
+			else $component = KRequest::get('get', 'string');
 
-			// The application context should stay untouched, so clone it
-			$application = clone $this->_context->application;
-
-			// Merge the request to the request from the application URI
-			$this->_context->component = $application->append($this->_context->component);
+			// Create the context
+			$this->_context = new KConfig(array(
+				// The application context should stay untouched, so clone it
+				'application' => clone $application,
+				'component' => $application->append($component)
+			));
 		}
 
 		return $this->_context;
