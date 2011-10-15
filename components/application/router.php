@@ -33,10 +33,10 @@ final class ComApplicationRouter extends SRouterDefault
 				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&com=pages',
 
 				// Lang is optinally set and page is set           => Use this route if page or uri is set
-				'[<lang>][/][<page>[/<uri>][.<format>]]'             => 'mode=#site&page=!&uri=!',
+				'[<lang>][/][<page>[/<uri>][.<format>]]'           => 'mode=#site&page=!&uri=!',
 
 				// This is the catch all rule 					   => Use this if page and uri is blank
-				'[<lang>][/][<uri>[.<format>]]'                      => 'mode=#site&page=#&uri=#',
+				'[<lang>][/][<uri>[.<format>]]'                    => 'mode=#site&page=#&uri=#',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -95,11 +95,12 @@ final class ComApplicationRouter extends SRouterDefault
 			$this->_request = new KConfig(array(
 				// The application request should stay untouched, so clone it
 				'application' => clone $application,
-				'component' => $application->append($component)
+				'component'   => $application->append($component)
 			));
 		}
 
-		return $this->_request;
+		// We return the component request only coz that's the only thing relevant outside
+		return $this->_request->component;
 	}
 
 	public function build($httpquery)
