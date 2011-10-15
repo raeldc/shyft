@@ -10,11 +10,17 @@ class ComPagesModelPages extends SModelDefault
 	{
 		parent::__construct($config);
 	
-		$this->_state->insert('enabled', 'boolean', false);
+		$this->_state
+			->insert('enabled', 'boolean', false)
+			->insert('page', 'cmd', '', true);
 	}
 
 	protected function _buildQueryWhere(SDatabaseQueryDocument $query)
 	{
+		if (!empty($this->_state->page)) {
+			$query->where('permalink', '=', $this->_state->page);
+		}
+
 		if ($this->_state->enabled) {
 			$query->where('enabled', '=', true);
 		}
