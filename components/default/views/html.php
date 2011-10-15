@@ -43,6 +43,10 @@ class ComDefaultViewHtml extends KViewHtml
 
 			unset($parts['base']);
 
+			if(!isset($parts['com'])) {
+				$parts['com'] = $this->getIdentifier()->package;
+			}
+
 			// Add the layout information to the route only if it's not 'default'
 			if(!isset($parts['view']))
 			{
