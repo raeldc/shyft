@@ -64,13 +64,12 @@ class SRouter extends KObject
          
         foreach($routes as $uri => $query)
         {
-        	$object = new KConfig();
-        	$object->rule = $uri;
-        	$object->uri = $this->compile($uri, $regex);
-        	$object->query = $query;
-
-            //Add the routes
-            $this->_routes[$uri] = $object;
+        	//Add the routes
+        	$this->_routes[$uri] = new KConfig(array(
+        		'rule'  => $uri,
+        		'uri'   => $this->compile($uri, $regex),
+        		'query' => $query,
+	        ));
         }
 
         return $this;
