@@ -30,7 +30,7 @@ final class ComApplicationRouter extends SRouterDefault
 				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=#admin&com=!dashboard',
 
 				// Get route for page management                   => Use it when page is set and mode is admin
-				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&com=pages',
+				'[<lang>/]admin/pages[/<page>][/<uri>][.<format>]' => 'mode=#admin&page=!&com=pages',
 
 				// Lang is optinally set and page is set           => Use this route if page or uri is set
 				'[<lang>][/][<page>[/<uri>][.<format>]]'           => 'mode=#site&page=!&uri=!',
@@ -90,6 +90,13 @@ final class ComApplicationRouter extends SRouterDefault
 			}
 			// Else we just get the request values from $_GET
 			else $component = KRequest::get('get', 'string');
+
+			// Clear all empty application parameters so that values from component can be appended to it
+			foreach ($application as $key => $value) {
+				if (empty($application[$key])) {
+					unset($application[$key]);
+				}
+			}
 
 			// Create the request
 			$this->_request = new KConfig(array(
