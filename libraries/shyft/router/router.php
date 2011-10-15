@@ -186,15 +186,20 @@ class SRouter extends KObject
 	 */
 	public function parse($uri)
 	{
+		// Go through all routes and look for the match from the compiled regex
 		foreach ($this->_routes as $route) {
 			if (preg_match($route->uri, $uri, $matches)) break;
 		}
 
+		// Throw exception if there are is no match
 		if (empty($matches)) {
 			throw new SRouterException('Cannot find a match for '.$uri);
 		}
 
+		// Start with empty array
 		$params = array();
+
+		// Go through each matches and put them into the params
 		foreach($matches as $key => $value)
 		{
 			if(is_int($key))
@@ -207,13 +212,17 @@ class SRouter extends KObject
 			$params[$key] = $value;
 		}
 
+		// Get the default queries from the route rule
 		parse_str($route->query, $query);
 
-		// Populate params with default values based on the query
+		// Merge the default query to the defaults of this instance
+		$query = array_merge($this->_defaults, $query);
+
+		// Populate params with default values
 		foreach($query as $key => $value)
 		{
 			// Set default values for any key that was not matched
-			if(!isset($params[$key]) or $params[$key] === '')
+			if(!isset($params[$key]) || $params[$key] === '')
 			{
 				// In finding the route rule to use, # indicates that a different value gets higher points
 				if (strpos($value, '#') !== false || strpos($value, '!') !== false) {

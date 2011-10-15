@@ -27,19 +27,19 @@ final class ComApplicationRouter extends SRouterDefault
 		$config->append(array(
 			'routes' => array(
 				// Get route for the component                     => Use it when com is set, and mode is admin.
-				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=#admin&com=!&lang=en&format=html&com=pages',
+				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=#admin&com=!dashboard',
 
 				// Get route for page management                   => Use it when page is set and mode is admin
-				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&lang=en&format=html&com=#pages',
+				'[<lang>/]admin/pages[/<page>[/<uri>][.<format>]]' => 'mode=#admin&page=!&com=pages',
 
-				// Get route for a URI with page                   => Use this route if page or uri is set
-				'[<lang>/][<page>[/<uri>][.<format>]]'             => 'mode=#site&lang=en&format=html&page=!&uri=!',
+				// Lang is optinally set and page is set           => Use this route if page or uri is set
+				'[<lang>/][<page>[/<uri>][.<format>]]'             => 'mode=#site&page=!&uri=!',
 
-				// Get route if lang is set                        => Use this if lang is set
-				'[<lang>[/<uri>[.<format>]]]'                      => 'mode=#site&lang=!en&format=html&page=#&uri=#',
+				// Get route if lang is set                        => Use this if lang is set, page and uri is blank
+				'[<lang>[/<uri>[.<format>]]]'                      => 'mode=#site&lang=!en&page=#&uri=#',
 
-				// Get route if no page is set but there's a URI   => Use this if no uri or page is set
-				'[<lang>/][<uri>[.<format>]]'                      => 'mode=#site&lang=en&format=html&page=#&uri=#',
+				// This is the catch all rule 					   => Use this if page and uri is blank
+				'[<lang>/][<uri>[.<format>]]'                      => 'mode=#site&page=#&uri=#',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -73,7 +73,7 @@ final class ComApplicationRouter extends SRouterDefault
 			if(!$this->_sefurl){
 				$application = new KConfig($this->_defaults);
 			}else{ 
-				$application = new KConfig(parent::parse($this->getUri()));
+				$application = new KConfig($this->parse($this->getUri()));
 			}
 
 			// If site mode, or if the component being accessed is pages(happens only in admin mode)
