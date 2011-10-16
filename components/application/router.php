@@ -166,15 +166,16 @@ final class ComApplicationRouter extends SRouterDefault
 			$application['uri'] = $this->getRouter($component)->build(http_build_query($query));
 
 			$getvars = '';
-			if(strpos($application['uri'], '?') !== false) {
+
+			// Get the extra get vars from the component's router which will be appended on the final URI.
+			if(strpos($application['uri'], '?') !== false) 
+			{
 				list($application['uri'], $getvars) = explode('?', $application['uri'], 2);
 				$getvars = '?'.$getvars;
 			}
 
-			// Build the complete URI along with the component's URI.
-			$result = KRequest::base().'/'.parent::build(http_build_query($application)).$getvars;
-
-			return $result;
+			// Build and return the complete URI along with the component's URI.
+			return KRequest::base().'/'.parent::build(http_build_query($application)).$getvars;
 		}
 
 		// We don't want base to be included in the URI
