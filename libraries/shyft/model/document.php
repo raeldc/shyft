@@ -183,11 +183,10 @@ abstract class SModelDocument extends KModelAbstract
         {
             if($this->isConnected())
             {
-                $query = null;
+                $query = $this->getDocument()->getQuery();
 
                 if($this->_state->isUnique())
                 {
-                    $query = $this->getDocument()->getQuery();
                     $this->_buildQueryWhere($query);
                 }
                 
@@ -210,12 +209,10 @@ abstract class SModelDocument extends KModelAbstract
         {
             if($this->isConnected())
             {
-                $query  = null;
+                $query  = $this->getDocument()->getQuery();
                 
                 if(!$this->_state->isEmpty())
                 {
-                    $query = $this->getDocument()->getQuery();
-
                     $this->_buildQueryWhere($query);
                     $this->_buildQueryLimit($query);
                     $this->_buildQueryOrder($query);
