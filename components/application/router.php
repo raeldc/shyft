@@ -240,7 +240,7 @@ final class ComApplicationRouter extends SRouterDefault
 				throw new SRouterException('Pages is not an instance of KModelAbstract');
 			}
 
-			$this->_pages = $model->enabled(true)->getList();
+			$this->_pages = clone $model->enabled(true)->getList();
 		}
 		
 		return $this->_pages;

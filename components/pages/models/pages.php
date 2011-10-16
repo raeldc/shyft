@@ -6,6 +6,10 @@
  */
 class ComPagesModelPages extends SModelDefault implements KServiceInstantiatable
 {
+	protected $_lists  = array();
+	protected $_items  = array();
+	protected $_totals = array();
+
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
@@ -34,6 +38,45 @@ class ComPagesModelPages extends SModelDefault implements KServiceInstantiatable
         }
         
         return $container->get($config->service_identifier);
+    }
+
+    public function getList()
+    {
+    	// Convert the state into a http query string for caching
+    	$state = http_build_query($this->_state->toArray());
+
+    	// Assign a new list if it's not yet in the cache
+    	if (!isset($this->_lists[$state])) {
+    		$this->_lists[$state] = parent::getList();
+    	}
+
+    	return $this->_lists[$state];
+    }
+
+    public function getItem()
+    {
+    	// Convert the state into a http query string for caching
+    	$state = http_build_query($this->_state->toArray());
+
+    	// Assign a new list if it's not yet in the cache
+    	if (!isset($this->_items[$state])) {
+    		$this->_items[$state] = parent::getItem();
+    	}
+
+    	return $this->_items[$state];
+    }
+
+    public function getTotal()
+    {
+    	// Convert the state into a http query string for caching
+    	$state = http_build_query($this->_state->toArray());
+
+    	// Assign a new list if it's not yet in the cache
+    	if (!isset($this->_totals[$state])) {
+    		$this->_totals[$state] = parent::getTotal();
+    	}
+
+    	return $this->_totals[$state];
     }
 
 	protected function _buildQueryWhere(SDatabaseQueryDocument $query)
