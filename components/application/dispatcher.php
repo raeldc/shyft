@@ -20,7 +20,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
 	{
 		$config->append(array(
     		// TODO: Behavior can be configurable in database
-    		'behaviors'				=> array('routable'),
+    		'behaviors'				=> array('routable', 'pageable'),
             // These values, component and request will just be defaults. But routable behavior can override them based on url.
             'component'             => KRequest::get('get.com', 'cmd', 'pages'), // component should be determined by the router
             'request'               => KRequest::get('get', 'string'),

@@ -7,7 +7,7 @@ class ComPagesControllerPage extends ComDefaultControllerDefault
 		$config->append(array(
 			'behaviors' => array('manageable'),
 		));
-		
+
 		parent::_initialize($config);
 	}
 }
