@@ -4,7 +4,7 @@
  * Routers build pretty urls from a URL Query, they can also parse pretty URLs into a query array 
  *		First, create rules on how a URL is parsed or built.
 */
-class SRouter extends KObject
+class SRouter extends KObject implements KServiceInstantiatable
 {
 	// Define the pattern of a <parameter>
 	const REGEX_KEY     = '<([a-zA-Z0-9_]++)>';
@@ -57,6 +57,25 @@ class SRouter extends KObject
 	
 		parent::_initialize($config);
 	}
+
+	/**
+     * Force creation of a singleton
+     *
+     * @return SRouter
+     */
+    public static function getInstance(KConfigInterface $config, KServiceInterface $container)
+    {
+        // Check if an instance with this identifier already exists or not
+        if (!$container->has($config->service_identifier))
+        {
+            //Create the singleton
+            $classname = $config->service_identifier->classname;
+            $instance  = new $classname($config);
+            $container->set($config->service_identifier, $instance);
+        }
+        
+        return $container->get($config->service_identifier);
+    }
 
 	public function addRoutes($routes, $regex = array())
 	{ 
