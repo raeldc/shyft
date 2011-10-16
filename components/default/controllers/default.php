@@ -35,7 +35,7 @@ class ComDefaultControllerDefault extends KControllerService
         
         $config->append(array(
     		'persistable'  => (KRequest::type() == 'HTTP'),
-            //'behaviors'  =>  array('cacheable')
+            'behaviors'  =>  array('manageable')
         ));
 
         parent::_initialize($config);
