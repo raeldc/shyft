@@ -1,7 +1,3 @@
-<section class="widget append left">
-    <?=@template('com://site/pages.view.pages.manage')?>
-</section>
-
 <form action="<?=@route('id='.$page->id)?>" method="post" class="-koowa-form">
 <input type="hidden" name="action" value="save">
 <fieldset>
