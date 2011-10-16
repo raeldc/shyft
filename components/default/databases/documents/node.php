@@ -17,7 +17,7 @@
  * @package     Shyft_Database
  * @subpackage  Document
  */
-class ComContentDatabaseDocumentContents extends SDatabaseDocumentAbstract
+class ComDefaultDatabaseDocumentNode extends SDatabaseDocumentAbstract
 {
 	protected function _initialize(KConfig $config)
 	{
