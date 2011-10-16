@@ -20,6 +20,8 @@ class ComDefaultDatabaseBehaviorPageable extends KDatabaseBehaviorAbstract
      */
     protected function _beforeDocumentFind(KCommandContext $context)
     {
-        $context->query->where('page', '=', $this->getService('com://site/application.router')->application->page);
+        if (!is_null($context->query)) {
+            $context->query->where('page', '=', $this->getService('com://site/application.router')->application->page);
+        }
     }
 }

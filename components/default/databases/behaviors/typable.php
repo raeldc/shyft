@@ -20,6 +20,8 @@ class ComDefaultDatabaseBehaviorTypable extends KDatabaseBehaviorAbstract
      */
     protected function _beforeDocumentFind(KCommandContext $context)
     {
-        $context->query->where('type', '=', $context->caller->getType());
+        if (!is_null($context->query)) {
+            $context->query->where('type', '=', $context->caller->getType());
+        }
     }
 }
