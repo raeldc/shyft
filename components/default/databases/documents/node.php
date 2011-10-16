@@ -17,12 +17,37 @@
  * @package     Shyft_Database
  * @subpackage  Document
  */
-class ComDefaultDatabaseDocumentNode extends SDatabaseDocumentAbstract
+class ComDefaultDatabaseDocumentNode extends SDatabaseDocumentDefault
 {
+	protected $_type;
+
+	public function __construct(KConfig $config)
+	{
+		parent::__construct($config);
+	
+		$this->_type = $config->type;
+	}
+
 	protected function _initialize(KConfig $config)
 	{
+		// Add these behaviors only if the behaviors are not manually set
+		if (!isset($config->behaviors)) {
+			$config->behaviors = array('pageable', 'typable');
+		}
+
+		// Get the type name from the package name and class name
+		$config->append(array(
+			'type' => $this->getIdentifier()->package.'_'.$this->getIdentifier()->name,
+		));
+
+		// Force the use of "contents" as the collection name
 		$config->name = 'contents';
 
 		parent::_initialize($config);
+	}
+
+	public function getType()
+	{
+		return $this->_type;
 	}
 }
