@@ -78,15 +78,16 @@ abstract class SDatabaseDocumentAbstract extends KObject
         if($this->getCommandChain()->run('before.find', $context) !== false) 
         {
             if ($context->query) 
+            {
                 $context->query->from($this->_name);
-            
+                $data = $this->_database->find($context->query, $context->mode);
+            }
+
             switch($context->mode)
             {
                 case KDatabase::FETCH_ROW    : 
                 {
-                	$data = ($context->query) ? $this->_database->find($context->query, KDatabase::FETCH_ROW) : array();
                     $context->data = $this->getRow();
-
                     if(isset($data) && !empty($data)) {
                        $context->data->setData($data, false)->setStatus(KDatabase::STATUS_LOADED);
                     }
@@ -96,8 +97,6 @@ abstract class SDatabaseDocumentAbstract extends KObject
                 
                 case KDatabase::FETCH_ROWSET : 
                 {
-                	$data = ($context->query) ? $this->_database->find($context->query, KDatabase::FETCH_ROWSET) : array();
-
                     $context->data = $this->getRowset();
 
                     if(isset($data) && !empty($data)) {
