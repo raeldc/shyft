@@ -1,6 +1,6 @@
 <?php
 
-class ComDefaultDatabaseDocumentDefault extends ComContentDatabaseDocumentContents
+class ComDefaultDatabaseDocumentDefault extends ComDefaultDatabaseDocumentNode
 {
 
 }
