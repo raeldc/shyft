@@ -4,7 +4,7 @@
  * Model to get a single page. 
  * This is used by the application dispatcher to get the current page.
  */
-class ComPagesModelPages extends SModelDefault implements KServiceInstantiatable
+class ComPagesModelPages extends SModelDocument implements KServiceInstantiatable
 {
 	protected $_lists  = array();
 	protected $_items  = array();
