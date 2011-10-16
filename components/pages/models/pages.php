@@ -18,7 +18,7 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 
 		$this->_state
 			->insert('enabled', 'boolean', false)
-			->insert('page', 'cmd', '', true);
+			->insert('slug', 'slug', '', true);
 	}
 
 	/**
@@ -81,8 +81,8 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 
 	protected function _buildQueryWhere(SDatabaseQueryDocument $query)
 	{
-		if (!empty($this->_state->page)) {
-			$query->where('permalink', '=', $this->_state->page);
+		if (!empty($this->_state->slug)) {
+			$query->where('slug', '=', $this->_state->slug);
 		}
 
 		if ($this->_state->enabled) {

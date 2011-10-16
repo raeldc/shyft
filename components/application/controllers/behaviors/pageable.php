@@ -22,7 +22,6 @@ class ComApplicationControllerBehaviorPageable extends KControllerBehaviorAbstra
 	        $this->getService('theme.container')->append('left',
 	            $this->getService('com://site/pages.controller.page')
 	                ->view('pages')
-			        ->page('')
 			        ->layout('manage_tree')
 			        ->display()
 	        );

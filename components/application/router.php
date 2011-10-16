@@ -199,16 +199,16 @@ final class ComApplicationRouter extends SRouterDefault
 		return $this->_routers[$component];
 	}
 
-	public function getPage($permalink = null)
+	public function getPage($slug = null)
 	{
 		$page = null;
 		$pages = $this->getPages();
 
-		if(!empty($permalink)) 
+		if(!empty($slug)) 
 		{
-			if(!in_array($permalink, array('default','admin','manage')))
+			if(!in_array($slug, array('default','admin','manage')))
 			{
-				$page = $pages->find(array('permalink' => $permalink))->current();
+				$page = $pages->find(array('slug' => $slug))->current();
 			}
 		}
 

@@ -1,4 +1,4 @@
-<form action="<?=@route('id='.$page->id)?>" method="post" class="-koowa-form">
+<form action="<?=@route('slug='.$page->slug)?>" method="post" class="-koowa-form">
 <input type="hidden" name="action" value="save">
 <fieldset>
     <legend>Create Page</legend>
@@ -11,10 +11,10 @@
     </div>
 
     <div class="clearfix">
-        <label for="form-slug">Permalink</label>
+        <label for="form-slug">Slug</label>
         <div class="input input-prepend">
             <span class="add-on"><?=KRequest::base()?>/</span>
-            <input id="form-slug" name="permalink" size="5" type="text" value="<?=$page->permalink?>">
+            <input id="form-slug" name="slug" size="5" type="text" value="<?=$page->slug?>">
         </div>
     </div>
 
