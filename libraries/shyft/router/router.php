@@ -311,6 +311,10 @@ class SRouter extends KObject implements KServiceInstantiatable
 			$best_match = ($similarities[$route->rule] > $similarities[$best_match]) ? $route->rule : $best_match;
 		}
 
+		if ($best_match == 'default') {
+			throw new SRouterException('Cant find a match for '. http_build_query($query));
+		}
+
 		return $this->_routes[$best_match];
 	}
 
