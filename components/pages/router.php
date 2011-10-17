@@ -8,6 +8,7 @@ class ComPagesRouter extends ComDefaultRouter
 			'routes' => array(
 				'new'       => 'view=page&layout=#form',
 				'edit/<id>' => 'view=page&layout=#form&id=!',
+				'<layout>'  => 'view=#pages&layout=default',
 			),
 		));
 
