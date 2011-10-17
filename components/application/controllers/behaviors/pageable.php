@@ -21,6 +21,7 @@ class ComApplicationControllerBehaviorPageable extends KControllerBehaviorAbstra
     		// Get the manage tree for pages, assign it to left theme position
 	        $this->getService('theme.container')->append('left',
 	            $this->getService('com://site/pages.controller.page')
+	            	->all(true)
 	                ->view('pages')
 			        ->layout('manage_tree')
 			        ->display()
