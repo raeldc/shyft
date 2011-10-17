@@ -103,7 +103,8 @@ class SDatabaseQueryDocument extends KObject
             if (is_array($value)) 
             {
                 $items = array();
-                foreach ($value as $key => $item) {
+                foreach ($value as $key => $item) 
+                {
                     if($where['property'] == '_id') 
                     {
                         $items[] = new MongoId($item);
@@ -111,6 +112,10 @@ class SDatabaseQueryDocument extends KObject
                     else $value = $item;
                 }
                 $value = $items;
+            }
+            elseif($where['property'] == '_id') 
+            {
+                $value = new MongoId($value);
             }
 
             switch($where['constraint']){
