@@ -1,4 +1,4 @@
-<form action="<?=@route('slug='.$page->slug)?>" method="post" class="-koowa-form">
+<form action="<?=@route('id='.$page->id)?>" method="post" class="-koowa-form">
 <fieldset>
     <legend>Create Page</legend>
 
