@@ -37,12 +37,46 @@ class ComDefaultControllerBehaviorEditable extends KControllerBehaviorEditable
 		    {  
 		        $component 	= $identifier->package;
 		        $view   	= KInflector::pluralize($identifier->name);
-		        $url    	= 'index.php?com='.$component.'&view='.$view;
+		        $url    	= $this->getView()->createRoute('view='.$view);
 		    
 		        $referrer = $this->getService('koowa:http.url',array('url' => $url));
 		    }
 	        
 			KRequest::set('cookie.referrer_'.md5(KRequest::url()), (string) $referrer);
 		}
+	}
+
+	protected function _actionApply(KCommandContext $context)
+	{
+		$action = $this->getModel()->getState()->isUnique() ? 'edit' : 'add';
+		$data   = $context->caller->execute($action, $context);
+	
+		//Create the redirect
+		$url = clone KRequest::url();
+		$query = array();
+
+		if($this->getModel()->getState()->isUnique())
+		{
+	        $states = $this->getModel()->getState()->getData(true);
+		
+		    foreach($states as $key => $value) {
+		        $query[$key] = (string)$data->get($key);
+		    }
+
+		    $url = $this->getView()->createRoute(http_build_query($query));
+		}
+		else
+		{ 
+		    if ($data instanceof KDatabaseRowAbstract) 
+		    { 
+                $query[$data->getIdentityColumn()] = (string)$data->get($data->getIdentityColumn());
+                $url = $this->getView()->createRoute(http_build_query($query));
+            } 
+            else $url = $this->getReferrer();
+		}
+
+		$this->setRedirect($url);
+		
+		return $data;
 	}
 }
