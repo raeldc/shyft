@@ -76,26 +76,11 @@ class ComDefaultTemplateHelperToolbar extends KTemplateHelperAbstract
         // Add classes
         $command->attribs->class = implode(" ", KConfig::unbox($command->attribs->class));
 
-        // If href is set, make the toolbar an anchor, else make it button
-        if (!is_null($command->attribs->href)) 
-        {
-            $html  = '  <a '.KHelperArray::toString($command->attribs).'>';
-            $html .= '      <span class="'.$command->icon.'" title="'.$command->title.'"></span>';
-            $html .= $command->label;
-            $html .= '   </a>';
-        }
-        else
-        {
-            if (!is_null($config->form)) {
-                $command->attribs->form = $config->form;
-            }
-
-            $html  = '  <button type="submit" '.KHelperArray::toString($command->attribs).'>';
-            $html .= '      <span class="'.$command->icon.'" title="'.$command->title.'"></span>';
-            $html .= $command->label;
-            $html .= '   </button>';
-        }
-       	
+        $html  = '  <a '.KHelperArray::toString($command->attribs).'>';
+        $html .= '      <span class="'.$command->icon.'" title="'.$command->title.'"></span>';
+        $html .= $command->label;
+        $html .= '   </a>';
+        
     	return $html;
     }
     
