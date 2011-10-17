@@ -94,13 +94,28 @@ class SDatabaseQueryDocument extends KObject
         // TODO: Try to account for OR not just AND
         foreach ($this->where as $where) 
         {
+            $value = $where['value'];
+
+            if ($where['property'] == 'id') {
+                $where['property'] = '_id';
+            }
+
+            if (is_array($value)) 
+            {
+                $items = array();
+                foreach ($value as $key => $item) {
+                    if($where['property'] == '_id') 
+                    {
+                        $items[] = new MongoId($item);
+                    }
+                    else $value = $item;
+                }
+                $value = $items;
+            }
 
             switch($where['constraint']){
                 case '=':
-                    if ($where['property'] == 'id') {
-                        $this->query['_id'] = new MongoId($where['value']);
-                    }
-                    else $this->query[$where['property']] = $where['value'];
+                    $this->query[$where['property']] = $value;
                 break;
 
                 default:
@@ -112,9 +127,11 @@ class SDatabaseQueryDocument extends KObject
                         '>=' => '$gte',
                         '<>' => '$ne',
                         '!=' => '$ne',
+                        '='  => '$eq',
                     );
 
-                    $value = (strtolower($where['constraint']) == 'in' && is_string($value)) ? array($value) : $where['value'];
+                    $where['constraint'] = strtolower($where['constraint']);
+                    $value = $where['constraint'] == 'in' && is_string($value) ? array($value) : $value;
 
                     $this->query[$where['property']] = array(strtolower($constraint[$where['constraint']]) => $value);
                 break;
