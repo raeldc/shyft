@@ -46,17 +46,6 @@ abstract class SModelDocument extends KModelAbstract
             ->insert('callback' , 'cmd')
             // TODO: Automatically populate the unique states from the row definition.
             ->insert('id', 'string', null, true);
-
-        //Try getting a document object
-        if($this->isConnected())
-        {
-        	/*
-            // Set the dynamic states based on the unique document keys
-            foreach($this->getDocument()->getUniqueColumns() as $key => $column) {
-                $this->_state->insert($key, $column->filter, null, true, $this->getDocument()->mapColumns($column->related, true));
-            }
-            */
-        }
     }
 
     /**
@@ -258,8 +247,18 @@ abstract class SModelDocument extends KModelAbstract
      */
     protected function _buildQueryWhere(SDatabaseQueryDocument $query)
     {
-        if (!is_null($this->_state->id)) {
-            $query->where('id', '=', $this->_state->id);
+        //Get only the unique states
+        $states = $this->_state->getData(true);
+        
+        if(!empty($states))
+        {
+            $states = $this->getDocument()->mapColumns($states);
+            foreach($states as $key => $value)
+            {
+                if(is_array($value)) {
+                    $query->where($key, 'IN', $value);
+                }
+            }
         }
     }
 
@@ -282,6 +281,4 @@ abstract class SModelDocument extends KModelAbstract
             $query->sort($this->_state->sort, $this->_state->direction);
         }
     }
-
-
 }
