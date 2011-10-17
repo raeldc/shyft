@@ -17,8 +17,9 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 		$this->_state = new KConfigState();
 
 		$this->_state
-			->insert('enabled', 'boolean', false)
-			->insert('slug', 'slug', '', true);
+            ->insert('id', 'slug', null, true)
+            ->insert('enabled', 'boolean')
+            ->insert('all', 'boolean', false);
 	}
 
 	/**
@@ -81,12 +82,19 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 
 	protected function _buildQueryWhere(SDatabaseQueryDocument $query)
 	{
-		if (!empty($this->_state->slug)) {
-			$query->where('slug', '=', $this->_state->slug);
-		}
+        // If id is set, don't build any other query but this
+        if ($this->_state->id) 
+        {
+            debug($this->_state->id);
+            $query->where('slug', '=', $this->_state->id);
+            return;
+        }
 
-		if ($this->_state->enabled) {
-			$query->where('enabled', '=', true);
+        // Check if all is true, then make a query that will return everything
+		if ($this->_state->all) {
+			$query->where('enabled', '<>', null);
 		}
+        // Get enabled or disabled items
+        else $query->where('enabled', '=', $this->_state->enabled);
 	}
 }
