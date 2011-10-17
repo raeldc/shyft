@@ -65,7 +65,7 @@ class SDatabaseAdapterDocument extends KObject
 		return $this->_connection;
 	}
 
-	public function find($query, $mode = KDatabase::FETCH_ROWSET)
+	public function find(SDatabaseQueryDocument $query, $mode = KDatabase::FETCH_ROWSET)
 	{
 		$result = array();
 

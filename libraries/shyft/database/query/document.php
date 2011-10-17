@@ -106,9 +106,9 @@ class SDatabaseQueryDocument extends KObject
                 default:
                     $constraint = array(
                         'in' => '$in',
-                        '<' => '$lt',
+                        '<'  => '$lt',
                         '<=' => '$lte',
-                        '>' => '$gt',
+                        '>'  => '$gt',
                         '>=' => '$gte',
                         '<>' => '$ne',
                         '!=' => '$ne',
