@@ -1,5 +1,4 @@
 <form action="<?=@route('slug='.$page->slug)?>" method="post" class="-koowa-form">
-<input type="hidden" name="action" value="save">
 <fieldset>
     <legend>Create Page</legend>
 

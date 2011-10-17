@@ -3,7 +3,6 @@
 </section>
 
 <form action="<?=@route('id='.$widget->id)?>" method="post" class="-koowa-form">
-<input type="hidden" name="action" value="save">
 <fieldset>
     <legend>Create Widget</legend>
 

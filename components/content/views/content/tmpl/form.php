@@ -1,5 +1,4 @@
 <form action="<?=@route('id='.$content->id)?>" method="post" class="-koowa-form">
-<input type="hidden" name="action" value="save">
 <fieldset>
     <legend>Create Content</legend>
 
