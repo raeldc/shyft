@@ -9,7 +9,6 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
      */
     protected $_document = false;
 
-
 	/**
      * Object constructor 
      *
@@ -41,7 +40,7 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
-			'document'	=> $this->getIdentifier()->name
+			'document'        => $this->getIdentifier()->name,
 		));
 
 		parent::_initialize($config);
@@ -242,78 +241,4 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
 
 		return $result;
 	}
-
-	/**
-     * Set the row data
-     *
-     * @param   mixed   Either and associative array, an object or a KDatabaseRow
-     * @param   boolean If TRUE, update the modified information for each column being set. 
-     *                  Default TRUE
-     * @return  KDatabaseRowAbstract
-     */
-     public function setData( $data, $modified = true )
-     {
-        if($data instanceof KDatabaseRowInterface) {
-            $data = $data->toArray();
-        } else {
-            $data = (array) $data;
-        }
-
-        if (isset($data['_id']))
-        {
-        	$data['id'] = $data['_id'];
-        	unset($data['_id']);
-        }
-
-        if($modified) 
-        {
-            foreach($data as $column => $value) 
-            {
-                $this->$column = $value;
-            }
-        }
-        else
-        {
-            $this->_data = array_merge($this->_data, $data);
-        }
-        
-        return $this;
-    }
-
-	/**
-     * Set row field value
-     * 
-     * If the value is the same as the current value and the row is loaded from the database
-     * the value will not be reset. If the row is new the value will be (re)set and marked
-     * as modified
-     *
-     * @param   string  The column name.
-     * @param   mixed   The value for the property.
-     * @return  void
-     */
-    public function __set($column, $value)
-    {
-    	if ($column == '_id') $column = 'id';
-
-        if(!isset($this->_data[$column]) || ($this->_data[$column] != $value) || $this->isNew()) 
-        {
-            parent::__set($column, $value);
-          
-            $this->_modified[$column] = true;
-            $this->_status            = null;
-        } 
-    }
-
-    /**
-     * Unset a row field
-     * 
-     * @param   string  The column name.
-     * @return  void
-     */
-    public function __unset($column)
-    {
-         parent::__unset($column);
-         
-         unset($this->_modified[$column]);
-    }
 }
