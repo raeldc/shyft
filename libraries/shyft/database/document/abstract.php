@@ -166,11 +166,14 @@ abstract class SDatabaseDocumentAbstract extends KObject
 
         if($this->getCommandChain()->run('before.insert', $context) !== false) 
         {
-            // TODO: Prepare data, running validation, filters, mappings, etc.
+            // @TODO: Prepare data, running validation, filters, mappings, etc.
             //$context->data->prepare();
-            
+            $data = $this->mapColumns($context->data->getData());
+
             //Execute the insert query
-            $context->data = $this->_database->insert($context->name, $context->data->toArray());
+            $data = $this->_database->insert($context->name, $context->data->toArray());
+
+            $context->data->setData($this->mapColumns($data, true), false)->setStatus(KDatabase::STATUS_CREATED);
 
             $this->getCommandChain()->run('after.insert', $context);
         }
