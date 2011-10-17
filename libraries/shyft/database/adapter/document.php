@@ -103,7 +103,7 @@ class SDatabaseAdapterDocument extends KObject
 
 	public function insert($collection, $data = array())
 	{
-		$this->_database->selectCollection($collection)->insert((array)$data, array('fsync' => $this->_synced));
+		$this->_database->selectCollection($collection)->insert($data, array('fsync' => $this->_synced));
 
 		return $data;
 	}
