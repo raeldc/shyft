@@ -64,6 +64,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
         // Get the navigation, assign it to the top-navigation container
         $this->getService('theme.container')->append('top-navigation',
             $this->getService('com://site/pages.controller.page')
+                ->enabled(true)
                 ->view('pages')
                 ->layout('navigation')
                 ->display()
