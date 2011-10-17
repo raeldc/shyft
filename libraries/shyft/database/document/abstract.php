@@ -22,13 +22,36 @@ abstract class SDatabaseDocumentAbstract extends KObject
 	protected $_database;
 	protected $_name;
 
+    /**
+     * Name of the identity column in the document
+     *
+     * @var string
+     */
+    protected $_identity_column;
+    
+    /**
+     * Array of column mappings by column name
+     *
+     * @var array
+     */
+    protected $_column_map = array();
+
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
 
 		$this->_database = $config->database;
 		$this->_name = $config->name;
-           
+        
+        // Set the identity column
+        $this->_identity_column = $config->identity_column;
+
+        //Set the default column mappings
+        $this->_column_map = $config->column_map ? $config->column_map->toArray() : array();
+        if(!isset( $this->_column_map['id']) && isset($this->_identity_column)) {
+            $this->_column_map['id'] = $this->_identity_column;
+        }
+
         // TODO: Set the column filters
         if(!empty($config->filters) && false) 
         {
@@ -81,6 +104,18 @@ abstract class SDatabaseDocumentAbstract extends KObject
             {
                 $context->query->from($this->_name);
                 $data = $this->_database->find($context->query, $context->mode);
+
+                //Map the columns
+                if (($context->mode != KDatabase::FETCH_FIELD) || ($context->mode != KDatabase::FETCH_FIELD_LIST))
+                { 
+                    if($context->mode % 2)
+                    {
+                        foreach($data as $key => $value) {
+                            $data[$key] = $this->mapColumns($value, true);
+                        }
+                    }
+                    else $data = $this->mapColumns(KConfig::unbox($data), true);   
+                }
             }
 
             switch($context->mode)
@@ -272,7 +307,8 @@ abstract class SDatabaseDocumentAbstract extends KObject
             
         //The row default options
         $options['document'] = $this; 
-             
+        $options['identity_column'] = $this->mapColumns($this->getIdentityColumn(), true);
+
         return $this->getService($identifier, $options); 
     }
 
@@ -289,8 +325,62 @@ abstract class SDatabaseDocumentAbstract extends KObject
             
         //The rowset default options
         $options['document'] = $this;
+        $options['identity_column'] = $this->mapColumns($this->getIdentityColumn(), true);
 
         return $this->getService($identifier, $options);
+    }
+
+    /**
+     * Gets the identitiy column of the document.
+     *
+     * @return string
+     */
+    public function getIdentityColumn()
+    {
+        $result = null;
+        if(isset($this->_identity_column)) {
+            $result = $this->_identity_column;
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Table map method
+     * 
+     * This functions maps the column names to those in the table schema 
+     *
+     * @param  array|string An associative array of data to be mapped, or a column name
+     * @param  boolean      If TRUE, perform a reverse mapping
+     * @return array|string The mapped data or column name
+     */
+    public function mapColumns($data, $reverse = false)
+    {
+        $map = $reverse ? array_flip($this->_column_map) : $this->_column_map;
+
+        $result = null;
+        if(is_array($data))
+        {
+            $result = array();
+            foreach($data as $column => $value)
+            {
+                if(isset($map[$column])) {
+                    $column = $map[$column];
+                }
+            
+                $result[$column] = $value;
+            }
+        } 
+        
+        if(is_string($data))
+        {
+            $result = $data;
+            if(isset($map[$data])) {
+                $result = $map[$data];
+            }
+        }
+            
+        return $result;
     }
 
 	public function getQuery()
