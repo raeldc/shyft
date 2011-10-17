@@ -258,6 +258,7 @@ abstract class SModelDocument extends KModelAbstract
                 if(is_array($value)) {
                     $query->where($key, 'IN', $value);
                 }
+                else $query->where($key, '=', $value);
             }
         }
     }
