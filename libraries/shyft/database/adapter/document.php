@@ -128,18 +128,18 @@ class SDatabaseAdapterDocument extends KObject
 
 	public function delete($collection, $query, $data = array())
 	{
-		$query = $query->build();
+		$condition = $query->build();
 
 		$collection = $this->_database->selectCollection($collection);
 
-		unset($data['_id']);unset($data['id']);
+		$affected = $collection->find($condition)->count();
 
-		$collection->remove($query, array('fsync' => $this->_synced));
+		$collection->remove($condition, array('fsync' => $this->_synced));
 
 		$query->reset();
 		
 		// return affected rows
-		return $collection->find($query)->count();
+		return $affected;
 	}
 
 	public function count($query)
