@@ -18,7 +18,16 @@
  * @subpackage  Table
  */
 class SDatabaseDocumentDefault extends SDatabaseDocumentAbstract implements KServiceInstantiatable
-{ 
+{
+    protected function _initialize(KConfig $config)
+    {
+        if (!isset($config->identity_column)) {
+            $config->identity_column = '_id';
+        }
+
+        parent::_initialize($config);
+    }
+    
 	/**
      * Force creation of a singleton
      *
