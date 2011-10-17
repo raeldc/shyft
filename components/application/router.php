@@ -199,16 +199,16 @@ final class ComApplicationRouter extends SRouterDefault
 		return $this->_routers[$component];
 	}
 
-	public function getPage($slug = null)
+	public function getPage($id = null)
 	{
 		$page = null;
 		$pages = $this->getPages();
 
-		if(!empty($slug)) 
+		if(!empty($id)) 
 		{
-			if(!in_array($slug, array('default','admin','manage')))
+			if(!in_array($id, array('default','admin','manage')))
 			{
-				$page = $pages->find(array('slug' => $slug))->current();
+				$page = $pages->find($id);
 			}
 		}
 
@@ -242,7 +242,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 			$this->_pages = clone $model->enabled(true)->getList();
 		}
-		
+
 		return $this->_pages;
 	}
 
