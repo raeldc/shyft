@@ -35,8 +35,15 @@ class ComDefaultControllerDefault extends KControllerService
         
         $config->append(array(
     		'persistable'  => (KRequest::type() == 'HTTP'),
-            'behaviors'  =>  array('manageable')
         ));
+
+        // Add the manageable behavior only in admin mode and if controller is dispatched
+        if ($config->dispatched && $config->request->mode == 'admin') 
+        {
+        	$config->append(array(
+        		'behaviors' => array('manageable')
+	        ));
+        }
 
         parent::_initialize($config);
     }
