@@ -24,9 +24,6 @@
             Block of help text to describe the field above if need be.
             </span>
         </div>
-    </div><!-- /clearfix -->
-    <div class="actions">
-        <input type="submit" class="btn primary" value="Save Changes">&nbsp;<button type="reset" class="btn">Cancel</button>
     </div>
 </fieldset>
 </form>

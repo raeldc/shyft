@@ -170,9 +170,5 @@
          </div><!--end: #widget-about-->
 
     </div><!--end: .pills-content-->
-
-    <div class="actions">
-        <input type="submit" class="btn primary" value="Save">&nbsp;<button type="reset" class="btn">Cancel</button>
-    </div>
 </fieldset>
 </form>
