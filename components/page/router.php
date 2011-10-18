@@ -1,12 +1,11 @@
 <?php
 
-class ComStaticpageRouter extends ComDefaultRouter
+class ComPageRouter extends ComDefaultRouter
 {
 	protected function _initialize(KConfig $config)
 	{
 		$config->routes = array(
-			'<id>'                          => 'view=staticpage&id=:id',
-			'pages[/page-<page>][/<limit>]' => 'view=staticpages&page=1&limit=10',
+			'[<layout>]' => 'view=#page&layout=!default',
 		);
 
 		parent::_initialize($config);
