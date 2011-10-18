@@ -1,10 +1,10 @@
 <?php
 
-class ComStaticpageControllerStaticpage extends ComDefaultControllerDefault
+class ComPageControllerPage extends ComDefaultControllerDefault
 {
 	protected function _initialize(KConfig $config)
 	{
-		$config->request->view = 'staticpage';
+		$config->request->view = 'page';
 		
 		parent::_initialize($config);
 	}

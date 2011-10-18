@@ -1,6 +1,6 @@
 <?php
 
-class ComStaticpageViewStaticpageHtml extends ComDefaultViewHtml
+class ComPageViewPageHtml extends ComDefaultViewHtml
 {
 	
 }
