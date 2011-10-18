@@ -1,7 +1,7 @@
 <?php if ($total): ?>
 <ul>
 	<?php foreach ($pages as $page): ?>
-	<li><a href="<?=@route('&mode=admin&page='.$page->id)?>"><?=$page->title;?></a></li>
+	<li><a href="<?=@route('&mode=admin&com=pages&page='.$page->id)?>"><?=$page->title;?></a></li>
 	<?php endforeach ?>
 </ul>
 

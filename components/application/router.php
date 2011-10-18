@@ -45,15 +45,15 @@ final class ComApplicationRouter extends SRouterDefault
 				// @TODO: must be populated by all installed components.
 				'com'	 => array('dashboard','widgets'),
 				// @TODO: must be populated by all enabled pages
-				'page'   => array('home', 'contents'),
+				'page'   => array('home', 'contents','blog'),
 			),
 			'defaults' => array(
-				'mode'   => KRequest::get('get.mode', 	'cmd', 'site'),
-				'lang'   => KRequest::get('get.lang', 	'cmd', 'en'),
-				'format' => KRequest::get('get.format', 'cmd', 'html'),
-				'page'   => KRequest::get('get.page', 	'cmd', ''),
-				'uri'    => KRequest::get('get.page', 	'cmd', ''),
-				'com'    => KRequest::get('get.com', 	'cmd', 'dashboard'),
+				'mode'   => 'site',
+				'lang'   => 'en',
+				'format' => 'html',
+				'page'   => '',
+				'uri'    => '',
+				'com'    => 'dashboard',
 			),
 			// Inject the pages that the router will use
 			'pages' => 'com://site/pages.model.pages',
@@ -68,7 +68,7 @@ final class ComApplicationRouter extends SRouterDefault
 		if(!($this->_request instanceof KConfig)) 
 		{
 			if(!$this->_sefurl){
-				$application = new KConfig($this->_defaults);
+				$application = new KConfig(array_merge($this->_defaults, KRequest::get('get', 'string')));
 			}else{ 
 				$application = new KConfig($this->parse($this->getUri()));
 			}
@@ -117,15 +117,35 @@ final class ComApplicationRouter extends SRouterDefault
 
 		$application = $this->_request->application->toArray();
 
+		if (!$this->_sefurl)
+		{
+			// Merge all values from query to application
+			$application = array_merge($application, $query);
+
+			// We don't want these to be included in the URI
+			unset($application['base']);
+			unset($application['uri']);
+
+			// If mode is site, remove the component value
+			if ($application['mode'] == 'site') {
+				unset($application['com']);
+			}
+			
+			// Remove values that are equal to defaults
+			foreach ($application as $key => $value) 
+			{
+				if (isset($this->_defaults[$key]) && $this->_defaults[$key] == $value) {
+					unset($application[$key]);
+				}
+			}
+
+			return KRequest::base().'/index.php?'.http_build_query($application);
+		}
+
 		// Merge the query's values into application's request
 		foreach($query as $key => $value) 
 		{
-			// Always merge if not using SEF
-			if(!$this->_sefurl)
-			{
-				$application[$key] = $value;	
-			}
-			elseif(isset($application[$key])) 
+			if(isset($application[$key])) 
 			{
 				// Merge only if the application has the same parameter
 				$application[$key] = $value;
@@ -135,53 +155,45 @@ final class ComApplicationRouter extends SRouterDefault
 			}
 		}
 
-		if($this->_sefurl) 
-		{
-			$component = null;
+		$component = null;
 
-			// $query['page'] is usually expected in the pages management mode.
-			// If the page is set in the application or in the component's query
-			if((isset($query['page']) && !empty($query['page'])) | (isset($application['page']) && !empty($application['page']))) {
-				// Don't include the application's component in building route
-				unset($application['com']);
-			}
-			else $component = $application['com'];
+		// $query['page'] is usually expected in the pages management mode.
+		// If the page is set in the application or in the component's query
+		if((isset($query['page']) && !empty($query['page'])) | (isset($application['page']) && !empty($application['page']))) {
+			// Don't include the application's component in building route
+			unset($application['com']);
+		}
+		else $component = $application['com'];
 
-			// For the frontend, the component can set the page. So if it does, set it in the application request
-			if(isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))){
-				$application['page'] = $query['page'];
-			}
-
-			if(is_null($component)){
-				$component = $this->getPage($application['page'])->component;
-			}
-
-			// If base is true, use only the application request to build the route.
-			if(isset($query['base'])) {
-				unset($application['uri']);
-				return KRequest::base().'/'.parent::build(http_build_query($application));
-			}
-
-			// If we're not on base, will use the component's router to build the URI
-			$application['uri'] = $this->getRouter($component)->build(http_build_query($query));
-
-			$getvars = '';
-
-			// Get the extra get vars from the component's router which will be appended on the final URI.
-			if(strpos($application['uri'], '?') !== false) 
-			{
-				list($application['uri'], $getvars) = explode('?', $application['uri'], 2);
-				$getvars = '?'.$getvars;
-			}
-
-			// Build and return the complete URI along with the component's URI.
-			return KRequest::base().'/'.parent::build(http_build_query($application)).$getvars;
+		// For the frontend, the component can set the page. So if it does, set it in the application request
+		if(isset($query['page']) && ($application['mode'] == 'site' || isset($query['base']))){
+			$application['page'] = $query['page'];
 		}
 
-		// We don't want base to be included in the URI
-		unset($application['base']);
+		if(is_null($component)){
+			$component = $this->getPage($application['page'])->component;
+		}
 
-		return KRequest::base().'/index.php?'.http_build_query($application);
+		// If base is true, use only the application request to build the route.
+		if(isset($query['base'])) {
+			unset($application['uri']);
+			return KRequest::base().'/'.parent::build(http_build_query($application));
+		}
+
+		// If we're not on base, will use the component's router to build the URI
+		$application['uri'] = $this->getRouter($component)->build(http_build_query($query));
+
+		$getvars = '';
+
+		// Get the extra get vars from the component's router which will be appended on the final URI.
+		if(strpos($application['uri'], '?') !== false) 
+		{
+			list($application['uri'], $getvars) = explode('?', $application['uri'], 2);
+			$getvars = '?'.$getvars;
+		}
+
+		// Build and return the complete URI along with the component's URI.
+		return KRequest::base().'/'.parent::build(http_build_query($application)).$getvars;
 	}
 
 	public function getRouter($component)
