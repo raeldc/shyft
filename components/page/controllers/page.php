@@ -18,6 +18,10 @@ class ComPageControllerPage extends ComDefaultControllerDefault
 		}
 
 		parent::_initialize($config);
+
+		// If mode is site, we don't want these are the only behaviors that we want
+		if ($config->mode == 'site') {
+			$config->behaviors = array('executable', 'discoverable');
+		}
 	}
-	
 }
