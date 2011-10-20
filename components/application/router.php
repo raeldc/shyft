@@ -180,9 +180,11 @@ final class ComApplicationRouter extends SRouterDefault
 		}
 
 		// If base is true, use only the application request to build the route.
-		if(isset($query['base'])) {
+		if(isset($query['base'])) 
+		{
 			unset($application['uri']);
-			return KRequest::base().'/'.parent::build(http_build_query($application));
+			$uri = parent::build(http_build_query($application));
+			return (!empty($uri)) ? KRequest::base().'/'.$uri : KRequest::base();
 		}
 
 		// If we're not on base, will use the component's router to build the URI
@@ -198,7 +200,8 @@ final class ComApplicationRouter extends SRouterDefault
 		}
 
 		// Build and return the complete URI along with the component's URI.
-		return KRequest::base().'/'.parent::build(http_build_query($application)).$getvars;
+		$uri = parent::build(http_build_query($application)).$getvars;
+		return (!empty($uri)) ? KRequest::base().'/'.$uri : KRequest::base();
 	}
 
 	public function getRouter($component)
