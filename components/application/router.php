@@ -73,6 +73,9 @@ final class ComApplicationRouter extends SRouterDefault
 				$application = new KConfig($this->parse($this->getUri()));
 			}
 
+			// Start with an empty request values for the component
+			$component = array();
+
 			// If site mode, or if the component being accessed is pages(happens only in admin mode)
 			if($application->mode == 'site' || ($application->com == 'pages' && !empty($application->page)))
 			{
@@ -89,7 +92,8 @@ final class ComApplicationRouter extends SRouterDefault
 						->parse($application->uri);
 			}
 			// Else we just get the request values from $_GET
-			else $component = KRequest::get('get', 'string');
+			elseif(!$this->_sefurl) 
+				$component = array_merge($component, KRequest::get('get', 'string'));
 
 			// Clear all empty application parameters so that values from component can be appended to it
 			foreach ($application as $key => $value) {
