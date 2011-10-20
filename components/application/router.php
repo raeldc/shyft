@@ -80,9 +80,10 @@ final class ComApplicationRouter extends SRouterDefault
 			if($application->mode == 'site' || ($application->com == 'pages' && !empty($application->page)))
 			{
 				// Get the page, it will use the default page if page is not found
-				$page             = $this->getPage($application->page);
-				$application->com = $page->component;
-				$component        = $page->parameters;
+				$page              = $this->getPage($application->page);
+				$application->com  = $page->component;
+				$application->page = $page->id;
+				$component         = $page->parameters;
 			}
 
 			// If sefurl is turned on
