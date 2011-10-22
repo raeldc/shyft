@@ -5,7 +5,7 @@ class ComPageControllerPage extends ComDefaultControllerDefault
 	protected function _initialize(KConfig $config)
 	{
 		// Set the default mode to site
-		$config->append(array(
+		$config->request->append(array(
 			'mode' => 'site'
 		));
 
@@ -20,7 +20,7 @@ class ComPageControllerPage extends ComDefaultControllerDefault
 		parent::_initialize($config);
 
 		// If mode is site, we don't want these are the only behaviors that we want
-		if ($config->mode == 'site') {
+		if ($config->request->mode == 'site') {
 			$config->behaviors = array('executable', 'discoverable');
 		}
 	}
