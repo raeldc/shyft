@@ -2,6 +2,19 @@
 
 class ComDefaultDispatcher extends KDispatcherAbstract 
 {
+	protected function _initialize(KConfig $config)
+	{
+		$config->append(array(
+			'request' => KRequest::get('get', 'string'),
+		));
+
+		if($config->request->view) {
+            $config->controller = $config->request->view;
+        }
+	
+		parent::_initialize($config);
+	}
+	
 	/**
 	 * Push the controller data into the document
 	 *
