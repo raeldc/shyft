@@ -173,3 +173,8 @@ function debug($value)
     
     call_user_func_array(array('ChromePhp', 'log'), $args);
 }
+
+function text($string)
+{
+    return $string;
+}
