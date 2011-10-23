@@ -17,9 +17,9 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 		$this->_state = new KConfigState();
 
 		$this->_state
-            ->insert('id', 'slug', null, true)
+            ->insert('id',      'slug',     null, true)
             ->insert('enabled', 'boolean')
-            ->insert('all', 'boolean', false);
+            ->insert('all',     'boolean',  false);
 	}
 
 	/**
