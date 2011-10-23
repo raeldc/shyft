@@ -38,12 +38,9 @@
 
         <!--layout-->
         <div class="content">
-            <div class="page-header">
-                <h1>Page name <small>Supporting text or tagline</small></h1>
-            </div>
             <div class="row">
                 <div class="span4">
-                    <?=@container('left')?>
+                    <?=@container('left', 'wrapper')?>
                 </div>
                 <div class="span12">
                     <?=@container('page')?>
