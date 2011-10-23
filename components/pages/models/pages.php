@@ -19,6 +19,7 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 		$this->_state
             ->insert('id',      'slug',     null, true)
             ->insert('enabled', 'boolean')
+            ->insert('group',   'slug')
             ->insert('all',     'boolean',  false);
 	}
 
@@ -85,7 +86,6 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
         // If id is set, don't build any other query but this
         if ($this->_state->id) 
         {
-            debug($this->_state->id);
             $query->where('slug', '=', $this->_state->id);
             return;
         }
