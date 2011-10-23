@@ -11,4 +11,22 @@ class ComPagesControllerToolbarPages extends KControllerToolbarDefault
             )
         ));
     }
+
+    public function _commandNewgroup(KControllerToolbarCommand $command)
+    {
+    	$command->append(array(
+            'attribs' => array(
+            	'href' => $this->_controller->getView()->createRoute('page=&view=group&layout=form'),
+            ),
+        ));
+    }
+
+    public function getCommands()
+    {
+    	$this->reset()
+    		->addNew()
+    		->addNewgroup();
+
+    	return parent::getCommands();
+    }
 }
