@@ -1,3 +1,4 @@
+<?=@helper('listbox.groups', array('selected' => $state->group))?>
 <?php if ($total): ?>
 <ul>
 	<?php foreach ($pages as $page): ?>
