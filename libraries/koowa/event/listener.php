@@ -39,11 +39,13 @@ class KEventListener extends KObject
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
-	
+		
+		$this->_priority = $config->priority;
+		
 		if($config->auto_connect) 
 		{
 		    if(!($config->dispatcher instanceof KEventDispatcher)) {
-		        $config->dispatcher = $this->getService($config->dispathcer);
+		        $config->dispatcher = $this->getService($config->dispatcher);
 		    }
 		    
 		    $this->connect($config->dispatcher);
