@@ -8,6 +8,7 @@ class ComPagesTemplateHelperListbox extends ComDefaultTemplateHelperListbox
         $config->append(array(
         	'model'		=> 'groups',
             'name'      => 'group',
+            'text'      => 'name',
             'deselect'  => true,
             'selected'  => $config->selected,
         ));
