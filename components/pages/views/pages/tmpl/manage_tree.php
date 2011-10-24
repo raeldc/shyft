@@ -1,4 +1,15 @@
 <?=@helper('listbox.groups', array('selected' => $state->group))?>
+
+<menu>
+	<a class="btn" data-remote href="<?=@route('page=&view=page&layout=form')?>">      
+		New
+	</a>
+
+	<a class="btn" data-remote href="<?=@route('page=&view=group&layout=form')?>">
+		New Group
+	</a>
+</menu>
+
 <?php if ($total): ?>
 <ul>
 	<?php foreach ($pages as $page): ?>
