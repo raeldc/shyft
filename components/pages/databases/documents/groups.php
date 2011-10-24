@@ -7,7 +7,11 @@ class ComPagesDatabaseDocumentGroups extends SDatabaseDocumentDefault
 		$config->identity_column = 'slug';
 		$config->name = 'pages_groups';
 
-		//$config->behaviors = array('sluggable');
+		$sluggable = $this->getBehavior('sluggable', array(
+			'columns' => array('name')
+		));
+
+		$config->behaviors = array($sluggable);
 
 		parent::_initialize($config);
 	}
