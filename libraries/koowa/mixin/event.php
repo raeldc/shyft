@@ -9,7 +9,7 @@
  */
 
 /**
- * Event Dispatcher Mixin
+ * Event Mixin
  * 
  * Class can be used as a mixin in classes that want to implement a an
  * event dispatcher and allow adding and removing listeners.
@@ -19,7 +19,7 @@
  * @package     Koowa_Mixin
  * @uses        KEventDispatcher
  */
-class KMixinEventdispatcher extends KMixinAbstract
+class KMixinEvent extends KMixinAbstract
 {   
     /**
      * Event dispatcher object
@@ -36,6 +36,10 @@ class KMixinEventdispatcher extends KMixinAbstract
     public function __construct(KConfig $config)
     {
         parent::__construct($config);
+        
+        if(is_null($config->event_dispatcher)) {
+			throw new KMixinException('event_dispatcher [KEventDispatcher] option is required');
+		}
             
         //Create a event dispatcher object
         $this->_event_dispatcher = $config->event_dispatcher;
@@ -52,7 +56,7 @@ class KMixinEventdispatcher extends KMixinAbstract
     protected function _initialize(KConfig $config)
     {
         $config->append(array(
-            'event_dispatcher' => new KEventDispatcher(),
+            'event_dispatcher' => null,
         ));
         
         parent::_initialize($config);

@@ -59,6 +59,10 @@ abstract class KControllerToolbarAbstract extends KEventListener implements KCon
         
         parent::__construct($config);
         
+        if(is_null($config->controller)) {
+			throw new KMixinException('controller [KController] option is required');
+		}
+        
         // Set the controller
         $this->_controller = $config->controller;
 
@@ -170,33 +174,53 @@ abstract class KControllerToolbarAbstract extends KEventListener implements KCon
      * @param	mixed	Parameters to be passed to the command
      * @return  KControllerToolbarAbstract
      */
-    public function addCommand($name, $config = array())
+    public function addCommand($command, $config = array()) 
     {
-        //Create the config object 
-        $command = new KControllerToolbarCommand($name, $config);
-        
-        //Find the command function to call
-        if(method_exists($this, '_command'.ucfirst($name))) 
-        {
-            $function =  '_command'.ucfirst($name);
-            $this->$function($command);
-        } 
-        else 
-        {
-            //Don't set an action for GET commands
-            if(!isset($command->attribs->href)) 
-            {
-                $command->append(array(
-         			'attribs'    => array(
-               			'data-action'  => $command->getName()
-                    )
-                ));
-            }
+        if (!($command instanceof  KControllerToolbarCommand)) { 
+            $command = $this->getCommand($command, $config);
         }
-        
-        $this->_commands[$name] = $command;
+		               
+        $this->_commands[$command->getName()] = $command;
         return $this;
     }
+    
+	/** 
+     * Get a command by name
+     * 
+     * @param string The command name
+     * @param array An optional associative array of configuration settings
+     * @return mixed KControllerToolbarCommand if found, false otherwise.  
+     */ 
+    public function getCommand($name, $config = array()) 
+    { 
+        if (!isset($this->_commands[$name])) 
+        { 
+            //Create the config object 
+            $command = new KControllerToolbarCommand($name, $config);
+        
+            //Find the command function to call
+            if(method_exists($this, '_command'.ucfirst($name))) 
+            {
+                $function =  '_command'.ucfirst($name);
+                $this->$function($command);
+            }     
+            else 
+            {
+                //Don't set an action for GET commands
+                if(!isset($command->attribs->href)) 
+                {
+                    $command->append(array(
+         				'attribs'    => array(
+               				'data-action'  => $command->getName()
+                        )
+                    ));
+                }
+            }
+        } 
+        else $command = $this->_commands[$name]; 
+
+        return $command;
+    } 
     
  	/**
      * Get the list of commands
@@ -218,7 +242,7 @@ abstract class KControllerToolbarAbstract extends KEventListener implements KCon
         $this->_commands = array();
         return $this;
     }
-    
+   
  	/**
      * Add a command by it's name
 	 *
