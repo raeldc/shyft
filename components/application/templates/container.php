@@ -9,12 +9,21 @@ class ComApplicationTemplateContainer extends KObject implements KServiceInstant
 	 */
 	protected static $_containers = null;
 
+    /**
+     * The view
+     *
+     * @var object
+     */
+    protected $_view;
+
 	/**
 	 * Constructor
 	 *
 	 */
 	public function __construct(KConfig $config) 
-	{ 
+	{
+        parent::__construct($config);
+
 		$this->_containers = new ArrayObject();
 
 		// Container is tightly dependent on ComApplicationViewTheme so we have to make sure
@@ -113,8 +122,7 @@ class ComApplicationTemplateContainer extends KObject implements KServiceInstant
 
             foreach ($container as $content) 
             {
-                if (is_string($content))
-                    $content = array('content' => $content);
+                $content = (is_string($content)) ? array('content' => $content) : $content;
 
    				// Render the content using the chrome provided
                 $result .= $this->_view
