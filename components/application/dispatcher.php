@@ -7,30 +7,16 @@
  */
 class ComApplicationDispatcher extends KControllerAbstract implements KServiceInstantiatable
 {
-    public $_component;
+    protected $_router;
+    protected $_component;
 
     public function __construct(KConfig $config)
     {
         parent::__construct($config);
 
-        $this->_component = $config->component;
+        // Empty the request because we are getting it from the router.
+        $this->_request = null;
     }
-    
-	protected function _initialize(KConfig $config)
-	{
-		$config->append(array(
-            'behaviors' => array('routable', 'pageable'),
-            'component' => KRequest::get('get.com', 'cmd', 'pages'),
-            'request'   => KRequest::get('get', 'string'),
-        ));
-
-        // Use these behaviors only when not on AJAX
-        if(KRequest::type() != 'AJAX'){
-            $config->behaviors->append(array('themable', 'widgetable'));
-        }
-
-		parent::_initialize($config);
-	}
 
 	/**
      * Force creation of a singleton
@@ -47,25 +33,35 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
             $instance  = new $classname($config);
             $container->set($config->service_identifier, $instance);
         }
-        
+
         return $container->get($config->service_identifier);
     }
 
 	protected function _actionDispatch(KCommandContext $context)
 	{
-        // Get the navigation, assign it to the top-navigation container
-        $this->getService('theme.container')->append('top-navigation',
-            $this->getService('com://site/pages.controller.page')
-                ->enabled(true)
-                ->view('pages')
-                ->layout('navigation')
-                ->display()
-        );
-
         $context->application = $this;
-
         return $this->getComponent()->execute('dispatch', $context);
 	}
+
+    public function getRouter()
+    {
+        if(!($this->_router instanceof SRouterAbstract))
+        {
+            if(is_string($this->_router) && strpos($this->_router, '.') === true)
+            {
+                $identifier = $this->getIdentifier($this->_router);   
+            }
+            else $identifier = $this->getIdentifier('com://site/application.router');
+
+            if($identifier->name != 'router') {
+                throw new KDispatcherException('Identifier: '.$identifier.' is not a routeridentifier');
+            }
+
+            $this->_router = $this->getService($identifier);
+        }
+
+        return $this->_router;
+    }
 
     /**
      * Method to get a Component Dispatcher object
@@ -76,13 +72,13 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
     {
         if(!($this->_component instanceof KDispatcherAbstract))
         {
-            //Make sure we have a dispatcher identifier
-            if(!($this->_component instanceof KIdentifier)) {
-                $this->setComponent($this->_component);
-            }
+            $request = $this->getRequest();
+
+            // Get the component identifier
+            $this->setComponent($request->com);
 
             $config = array(
-                'request' => $this->getRequest(),
+                'request' => $request,
             );
 
             $this->_component = $this->getService($this->_component, $config);
@@ -125,19 +121,17 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
     }
 
     /**
-     * Set the request information
+     * Get the request information from the Router
      *
      * @param array An associative array of request information
      * @return KControllerBread
      */
-    public function setRequest($request)
+    public function getRequest()
     {
         if(!($this->_request instanceof KConfig)) {
-            $this->_request = new KConfig($this->_request);
+            $this->_request = $this->getRouter()->getRequest();
         }
-        
-        $this->_request->append($request);
-        
-        return $this;
+
+        return $this->_request;
     }
 }
