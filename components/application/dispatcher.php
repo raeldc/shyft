@@ -8,6 +8,7 @@
 class ComApplicationDispatcher extends KControllerAbstract implements KServiceInstantiatable
 {
     protected $_router;
+    protected $_view;
     protected $_component;
 
     public function __construct(KConfig $config)
@@ -16,6 +17,16 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
 
         // Empty the request because we are getting it from the router.
         $this->_request = null;
+        $this->_view = $config->view;
+    }
+
+    protected function _initialize(KConfig $config)
+    {
+        $config->append(array(
+            'view' => 'theme',
+        ));
+    
+        parent::_initialize($config);
     }
 
 	/**
@@ -40,7 +51,33 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
 	protected function _actionDispatch(KCommandContext $context)
 	{
         $context->application = $this;
-        return $this->getComponent()->execute('dispatch', $context);
+        $context->result = $this->getComponent()->execute('dispatch', $context);
+
+        // Set Headers from the context
+        if($context->headers) 
+        {
+            foreach($context->headers as $name => $value) {
+                header($name.' : '.$value);
+            }
+        }
+
+        // Set Status from the context
+        if($context->status) {
+           header(KHttpResponse::getHeader($context->status));
+        }
+
+        if (is_string($context->result) && KRequest::type() != 'AJAX' && $this->getRequest()->format == 'html') 
+        {
+            $view = $this->getView();
+
+            // Assign the component result to the theme view
+            $view->assign('component', $context->result);
+
+            // Assign the view's result to the context
+            $context->result = $view->display();
+        }
+
+        return $context->result;
 	}
 
     public function getRouter()
@@ -61,6 +98,22 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
         }
 
         return $this->_router;
+    }
+
+    public function getView()
+    {
+        if(!($this->_view instanceof KViewTemplate))
+        {
+            if(is_string($this->_view) && strpos($this->_view, '.') === true)
+            {
+                $identifier = $this->getIdentifier($this->_view);   
+            }
+            else $identifier = $this->getIdentifier('com://site/application.view.theme');
+
+            $this->_view = $this->getService($identifier);
+        }
+
+        return $this->_view;
     }
 
     /**
