@@ -19,22 +19,14 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
-    		// TODO: Behavior can be configurable in database
-    		'behaviors'				=> array('routable', 'pageable'),
-            // These values, component and request will just be defaults. But routable behavior can override them based on url.
-            'component'             => KRequest::get('get.com', 'cmd', 'pages'), // component should be determined by the router
-            'request'               => KRequest::get('get', 'string'),
-        ))->append(array(
-            // Routable behavior can figure this out. This is just a default value.
-            'request' 				=> array('format' => KRequest::format() ? KRequest::format() : 'html')
+            'behaviors' => array('routable', 'pageable'),
+            'component' => KRequest::get('get.com', 'cmd', 'pages'),
+            'request'   => KRequest::get('get', 'string'),
         ));
 
-        if (KRequest::type() != 'AJAX' && $config->request->format == 'html')
-        {
-            // Use these behaviors only when not on AJAX
-            $config->append(array(
-                'behaviors' => array('themable', 'widgetable')
-            ));
+        // Use these behaviors only when not on AJAX
+        if(KRequest::type() != 'AJAX'){
+            $config->behaviors->append(array('themable', 'widgetable'));
         }
 
 		parent::_initialize($config);
@@ -95,7 +87,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
 
             $this->_component = $this->getService($this->_component, $config);
         }
-    
+
         return $this->_component;
     }
 

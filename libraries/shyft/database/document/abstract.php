@@ -106,7 +106,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
                 $data = $this->_database->find($context->query, $context->mode);
 
                 //Map the columns
-                if (($context->mode != KDatabase::FETCH_FIELD) || ($context->mode != KDatabase::FETCH_FIELD_LIST))
+                if (($context->mode != KDatabase::FETCH_FIELD) && ($context->mode != KDatabase::FETCH_FIELD_LIST))
                 { 
                     if($context->mode % 2)
                     {
@@ -206,7 +206,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
             if (!$row->isNew()) 
             {
                 // TODO: map $row->id to $row->_id. Query with all the unique keys of row.
-                $query->where('id', '=', $context->data->id);
+                $query->where($this->getIdentityColumn(), '=', $context->data->id);
 
                 // Convert object to array first
                 $data = $context->data->toArray();

@@ -100,8 +100,6 @@ class Shyft
         KServiceIdentifier::addLocator(KService::get('shyft:service.locator.theme'));
 
         KServiceIdentifier::setApplication('site' , self::$paths['site']);
-
-        define('FLOW', true);
     }
 
     /**

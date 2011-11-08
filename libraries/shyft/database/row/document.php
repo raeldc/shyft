@@ -137,6 +137,11 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
         return $this->_document;
     }
 
+    public function getTable()
+    {
+    	return $this->getDocument();
+    }
+
     /**
      * Method to set a document object attached to the model
      *
