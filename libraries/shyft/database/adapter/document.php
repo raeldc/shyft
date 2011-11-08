@@ -26,7 +26,7 @@ class SDatabaseAdapterDocument extends KObject
 		else $this->setConnection($config->connection);
 
 		// Mixin a command chain
-        $this->mixin(new KMixinCommandchain($config->append(array('mixer' => $this))));
+        $this->mixin(new KMixinCommand($config->append(array('mixer' => $this))));
 
         // More sure that data has been inserted/updated
         $this->_synced = $config->synced;
@@ -38,6 +38,8 @@ class SDatabaseAdapterDocument extends KObject
     		'connection'		=> null,
     		'database'			=> 'shyft',
     		'synced'			=> true,
+    		'command_chain'		=> $this->getService('koowa:command.chain'),
+    		'event_dispatcher'  => $this->getService('koowa:event.dispatcher'),
 			'options'	=> array(
     			'host'		=> 'localhost', 
     			'username'	=> '',

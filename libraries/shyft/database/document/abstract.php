@@ -61,7 +61,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
         }
     
         // Mixin a command chain
-        $this->mixin(new KMixinCommandchain($config->append(array('mixer' => $this))));
+        $this->mixin(new KMixinCommand($config->append(array('mixer' => $this))));
            
         // Set the table behaviors
         if(!empty($config->behaviors)) {
@@ -77,7 +77,8 @@ abstract class SDatabaseDocumentAbstract extends KObject
         $name    = $this->getIdentifier()->name;
 
 		$config->append(array(
-			'command_chain'     => new KCommandChain(),
+			'command_chain'     => $this->getService('koowa:command.chain'),
+            'event_dispatcher'  => $this->getService('koowa:event.dispatcher'),
             'dispatch_events'   => false,
             'enable_callbacks'  => false,
 
