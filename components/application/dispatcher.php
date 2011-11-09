@@ -17,7 +17,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
 
         // Empty the request because we are getting it from the router.
         $this->_request = null;
-        $this->_view = $config->view;
+        $this->_view    = $config->view;
     }
 
     protected function _initialize(KConfig $config)
@@ -51,12 +51,12 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
 	protected function _actionDispatch(KCommandContext $context)
 	{
         $context->application = $this;
-        $context->result = $this->getComponent()->execute('dispatch', $context);
+        $context->result      = $this->getComponent()->execute('dispatch', $context);
 
         // Set Headers from the context
         if($context->headers) 
         {
-            foreach($context->headers as $name => $value) {
+            foreach($context->headers as $name => $value){
                 header($name.' : '.$value);
             }
         }
@@ -154,10 +154,10 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
         {
             if(is_string($component) && strpos($component, '.') === false ) 
             {   
-                $identifier             = clone $this->getIdentifier();
-                $identifier->package    = $component;
-                $identifier->path       = array();
-                $identifier->name       = 'dispatcher';
+                $identifier          = clone $this->getIdentifier();
+                $identifier->package = $component;
+                $identifier->path    = array();
+                $identifier->name    = 'dispatcher';
             }
             else $identifier = $this->getIdentifier($component);
 
@@ -176,8 +176,8 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
     /**
      * Get the request information from the Router
      *
-     * @param array An associative array of request information
-     * @return KControllerBread
+     * @param array A KConfig of request information
+     * @return KConfig
      */
     public function getRequest()
     {

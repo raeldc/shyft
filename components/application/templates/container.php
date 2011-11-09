@@ -114,10 +114,10 @@ class ComApplicationTemplateContainer extends KObject implements KServiceInstant
 
             if (!($chrome instanceof KIdentifier)) 
             {
-                $identifier = clone $this->_view->getLayout();
+                $identifier       = clone $this->_view->getLayout();
                 $identifier->path = array('html','chrome');
                 $identifier->name = $chrome;
-                $chrome = $identifier;
+                $chrome           = $identifier;
             }
 
             foreach ($container as $content) 

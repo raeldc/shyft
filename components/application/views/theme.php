@@ -98,9 +98,9 @@ class ComApplicationViewTheme extends KViewTemplate implements KServiceInstantia
         if(!empty($config->theme)) 
         {
             $config->append(array(
-                'css_url'          => $config->themes_url.'/'.$config->theme.'/css',
-                'js_url'           => $config->themes_url.'/'.$config->theme.'/js',
-                'image_url'        => $config->themes_url.'/'.$config->theme.'/images',
+                'css_url'   => $config->themes_url.'/'.$config->theme.'/css',
+                'js_url'    => $config->themes_url.'/'.$config->theme.'/js',
+                'image_url' => $config->themes_url.'/'.$config->theme.'/images',
             ));
         }
 
@@ -140,11 +140,11 @@ class ComApplicationViewTheme extends KViewTemplate implements KServiceInstantia
 
         if((is_string($layout) && strpos($layout, '.') === false)) 
 		{
-            $identifier = clone $this->getIdentifier();
-            $identifier->type = 'theme';
+            $identifier          = clone $this->getIdentifier();
+            $identifier->type    = 'theme';
             $identifier->package = $this->_theme;
-            $identifier->path = array();
-            $identifier->name = $layout;
+            $identifier->path    = array();
+            $identifier->name    = $layout;
 	    }
 		else $identifier = $this->getIdentifier($layout);
         
