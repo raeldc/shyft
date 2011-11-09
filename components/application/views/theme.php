@@ -28,40 +28,44 @@ class ComApplicationViewTheme extends KViewTemplate implements KServiceInstantia
     {
         parent::__construct($config);
 
-        //Set the theme filters
+        // Set the theme filters instead of template filters.
         if(!empty($config->theme_filters)) {
             $this->getTemplate()->addFilter($config->theme_filters);
         }
 
-        //Add alias filter for @container()
         $this->getTemplate()->getFilter('alias')->append(
             array('@container(' => '$this->getView()->getContainer()->render('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
 
-        //Add alias filter for @contains()
         $this->getTemplate()->getFilter('alias')->append(
             array('@contains(' => '$this->getView()->getContainer()->count('), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
 
-        //Add alias filter for media:// namespace
         $this->getTemplate()->getFilter('alias')->append(
             array('css://' => $config->css_url.'/'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
 
-        //Add alias filter for media:// namespace
         $this->getTemplate()->getFilter('alias')->append(
             array('js://' => $config->js_url.'/'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
 
-        //Add alias filter for media:// namespace
         $this->getTemplate()->getFilter('alias')->append(
             array('image://' => $config->image_url.'/'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
         );
+
+        $this->assign('baseurl' , $config->base_url)
+             ->assign('mediaurl', $config->media_url);
+        
+        $this->getTemplate()->getFilter('alias')->append(
+            array('media://' => $config->media_url.'/'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
+        );
+        
+        $this->getTemplate()->getFilter('alias')->append(
+            array('base://' => $config->base_url.'/'), KTemplateFilter::MODE_READ | KTemplateFilter::MODE_WRITE
+        );
        
-        // set the theme
         $this->_theme = $config->theme;
 
-        // set the layout
         $this->setLayout($config->layout);
 
         $this->_container = $config->container;
@@ -77,7 +81,6 @@ class ComApplicationViewTheme extends KViewTemplate implements KServiceInstantia
      */
     protected function _initialize(KConfig $config)
     {
-        //Clone the identifier
         $identifier = clone $this->getIdentifier();
         
         $config->append(array(
@@ -89,7 +92,7 @@ class ComApplicationViewTheme extends KViewTemplate implements KServiceInstantia
             'theme_filters' => array('shorttag', 'alias', 'variable', 'template'),
         ));
 
-        // Empty the filters because we want to set our own
+        // Empty the filters because we don't want to use the default set of filters
         $config->template_filters = null;
 
         if(!empty($config->theme)) 
