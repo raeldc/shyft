@@ -11,7 +11,7 @@ class ComDefaultViewHtml extends KViewHtml
 		$this->_route = $config->route;
 	}
 	
-	public function createRoute($route = '')
+	public function getRoute($route = '')
 	{
 		$route = trim($route);
 

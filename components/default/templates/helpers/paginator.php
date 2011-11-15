@@ -97,7 +97,7 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
         $class = 'class="'.implode(' ', $class).'"';
 
         if($page->active && !$page->current) {
-            $html = '<li '.$class.'><a href="'.$this->getTemplate()->getView()->createRoute($url->getQuery()).'">'.$title.'</a></li>';
+            $html = '<li '.$class.'><a href="'.$this->getTemplate()->getView()->getRoute($url->getQuery()).'">'.$title.'</a></li>';
         } else {
             $html = '<li '.$class.'><a href="#">'.$title.'</a></li>';
         }

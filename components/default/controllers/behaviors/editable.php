@@ -37,7 +37,7 @@ class ComDefaultControllerBehaviorEditable extends KControllerBehaviorEditable
 		    {  
 		        $component 	= $identifier->package;
 		        $view   	= KInflector::pluralize($identifier->name);
-		        $url    	= $this->getView()->createRoute('view='.$view);
+		        $url    	= $this->getView()->getRoute('view='.$view);
 		    
 		        $referrer = $this->getService('koowa:http.url',array('url' => $url));
 		    }
@@ -63,14 +63,14 @@ class ComDefaultControllerBehaviorEditable extends KControllerBehaviorEditable
 		        $query[$key] = (string)$data->get($key);
 		    }
 
-		    $url = $this->getView()->createRoute(http_build_query($query));
+		    $url = $this->getView()->getRoute(http_build_query($query));
 		}
 		else
 		{ 
 		    if ($data instanceof KDatabaseRowAbstract) 
 		    { 
                 $query[$data->getIdentityColumn()] = (string)$data->get($data->getIdentityColumn());
-                $url = $this->getView()->createRoute(http_build_query($query));
+                $url = $this->getView()->getRoute(http_build_query($query));
             } 
             else $url = $this->getReferrer();
 		}

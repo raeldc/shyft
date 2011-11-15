@@ -31,7 +31,7 @@ class SControllerBehaviorCommandable extends KControllerBehaviorCommandable
                 $identifier = $context->caller->getIdentifier();
                 $config     = array(
                                 'attribs' => array(
-                    				'href'  =>  $context->caller->getView()->createRoute('layout=form&view='.$identifier->name)
+                    				'href'  =>  $context->caller->getView()->getRoute('layout=form&view='.$identifier->name)
                                 ));
 
                 $this->getToolbar()->addCommand('new', $config);

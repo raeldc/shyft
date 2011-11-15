@@ -20,7 +20,7 @@ class ComPagesControllerBehaviorEditable extends ComDefaultControllerBehaviorEdi
 	        if(!isset($referrer) || ((string) $referrer == (string) $request))
 		    {  
 		        $component 	= $identifier->package;
-		        $url    	= $this->getView()->createRoute('view=pages');
+		        $url    	= $this->getView()->getRoute('view=pages');
 		    
 		        $referrer = $this->getService('koowa:http.url',array('url' => $url));
 		    }
