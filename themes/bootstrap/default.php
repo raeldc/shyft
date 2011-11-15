@@ -23,7 +23,12 @@
             <div class="container">
                 <h3><a class="brand" href="index.php">Shyfted</a></h3>
 
-                <?=@container('top-navigation')?>
+                <?=@service('com://site/pages.controller.page')
+                        ->view('pages')
+                        ->layout('navigation')
+                        ->enabled(true)
+                        ->display();
+                ?>
 
                 <form action="" class="pull-right">
                     <input class="input-small" type="text" placeholder="Username">
