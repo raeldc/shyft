@@ -9,6 +9,5 @@ class ComPagesViewHtml extends ComDefaultViewHtml
 		));
 	
 		parent::_initialize($config);
-	}
-	
+	}	
 }

@@ -49,6 +49,7 @@
                     <?=@container('left',         'wrapper')?>
                 </div>
                 <div class="span12">
+                    <?=@container('toolbar-top', 'wrapper')?>
                     <?=@container('page')?>
                 </div>
             </div>

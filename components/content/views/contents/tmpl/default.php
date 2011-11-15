@@ -1,3 +1,7 @@
+<section class="widget replace toolbar-top">
+    <?= @helper('toolbar.render', array('toolbar' => $toolbar))?>
+</section>
+
 <form method="get" action="<?=@route()?>" class="-koowa-grid">
 <table class="zebra-striped" id="sortTableExample">
 	<thead>
