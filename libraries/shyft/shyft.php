@@ -46,10 +46,7 @@ class Shyft
 
         self::$paths['libraries']   = (isset($paths['libraries']))  ? $paths['libraries']   : SYSTEM_LIBRARIES;
         self::$paths['components']  = (isset($paths['components'])) ? $paths['components']  : SYSTEM_COMPONENTS;
-        self::$paths['widgets']     = (isset($paths['widgets']))    ? $paths['widgets']     : SYSTEM_WIDGETS;
-        self::$paths['actions']     = (isset($paths['actions']))    ? $paths['actions']     : SYSTEM_ACTIONS;
         self::$paths['themes']      = (isset($paths['themes']))     ? $paths['themes']      : SYSTEM_THEMES;
-        self::$paths['languages']   = (isset($paths['languages']))  ? $paths['languages']   : SYSTEM_LANGUAGES;
         self::$paths['site']        = (isset($paths['site']))       ? $paths['site']        : SYSTEM_ROOT;
 
         // Exception Classes
@@ -90,13 +87,9 @@ class Shyft
 
         // Register the application's Loader Adapters
         SLoader::addAdapter(new SLoaderAdapterComponent(array('basepath' => self::$paths['components'])));
-        SLoader::addAdapter(new SLoaderAdapterWidget(array('basepath'    => self::$paths['widgets'])));
-        SLoader::addAdapter(new SLoaderAdapterAction(array('basepath'    => self::$paths['actions'])));
 
         // Register the application's Identifier Adapaters
         KServiceIdentifier::addLocator(KService::get('shyft:service.locator.component'));
-        KServiceIdentifier::addLocator(KService::get('shyft:service.locator.widget'));
-        KServiceIdentifier::addLocator(KService::get('shyft:service.locator.action'));
         KServiceIdentifier::addLocator(KService::get('shyft:service.locator.theme'));
 
         KServiceIdentifier::setApplication('site' , self::$paths['site']);
