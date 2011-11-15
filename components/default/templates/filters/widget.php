@@ -47,7 +47,8 @@ class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements 
 
 		        if(count($properties) >= 2) 
 		        {
-		        	$position = (array_shift($properties) == 'prepend') ? 'prepend' : 'append';
+		        	// append, prepend, replace
+		        	$position = array_shift($properties);
 		        	$container = array_shift($properties);
 		        }
 		        else
@@ -56,7 +57,8 @@ class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements 
 		        	$container = array_shift($properties);
 		        }
 
-			    $this->getView()
+			    $this->getService('com://site/application.dispatcher')
+			    	->getView()
 			    	->getContainer()
 			    	->append($container, $matches[2][$key], $position);
 			}
