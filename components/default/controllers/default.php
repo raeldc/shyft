@@ -41,8 +41,16 @@ class ComDefaultControllerDefault extends KControllerService
         if ($config->dispatched && $config->request->mode == 'admin') 
         {
         	$config->append(array(
-        		'behaviors' => array('manageable')
+        		'behaviors' => array('manageable'),
+        		'toolbars'  => array('menubar', $this->getIdentifier()->name),
 	        ));
+
+	        if($config->request->com == 'pages' || $config->request->page) 
+	        {
+	        	$config->append(array(
+	        		'toolbars' => array('pages')
+		        ));
+	        }
         }
 
         parent::_initialize($config);
