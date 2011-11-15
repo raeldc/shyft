@@ -84,11 +84,12 @@ class ComApplicationTemplateContainer extends KObject implements KServiceInstant
 
     	if (empty($content)) return $this;
 
-    	if(!$this->_containers->offsetExists($name))
+    	if(!$this->_containers->offsetExists($name) || $position == 'replace')
 		{
 			$this->_containers->offsetSet($name, new ContainerArrayObject(array($content)));
 			return $this;
 		}
+
 		if ($position == 'prepend') {
 			$this->get($name)->prepend($content);
 		}
@@ -115,7 +116,7 @@ class ComApplicationTemplateContainer extends KObject implements KServiceInstant
             if (!($chrome instanceof KIdentifier)) 
             {
                 $identifier       = clone $this->_view->getLayout();
-                $identifier->path = array('html','chrome');
+                $identifier->path = array('html', 'chrome');
                 $identifier->name = $chrome;
                 $chrome           = $identifier;
             }
