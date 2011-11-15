@@ -34,9 +34,6 @@ class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements 
 	 */
     public function write(&$text)
     {
-    	if (!KService::has('theme.container'))
-    		return $this;
-
 		$matches = array();
 		
 		if(preg_match_all('#<section class="widget ([^>^"]*)">(.*)</section>#siU', $text, $matches)) 
@@ -59,7 +56,9 @@ class ComDefaultTemplateFilterWidget extends KTemplateFilterAbstract implements 
 		        	$container = array_shift($properties);
 		        }
 
-			    $this->getService('theme.container')->append($container, $matches[2][$key], $position);
+			    $this->getView()
+			    	->getContainer()
+			    	->append($container, $matches[2][$key], $position);
 			}
 		}
 
