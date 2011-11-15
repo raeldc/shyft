@@ -48,7 +48,7 @@ class ComDefaultControllerDefault extends KControllerService
 	        if($config->request->com == 'pages' || $config->request->page) 
 	        {
 	        	$config->append(array(
-	        		'toolbars' => array('pages')
+	        		'toolbars' => array('com://site/pages.controller.toolbar.pages')
 		        ));
 	        }
         }
