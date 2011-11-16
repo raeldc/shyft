@@ -42,7 +42,7 @@ class ComDefaultControllerDefault extends KControllerService
         {
         	$config->append(array(
         		'behaviors' => array('manageable'),
-        		'toolbars'  => array('menubar', $this->getIdentifier()->name),
+        		'toolbars'  => array($this->getIdentifier()->name),
 	        ));
 
 	        if($config->request->com == 'pages' || $config->request->page) 
