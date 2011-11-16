@@ -83,18 +83,20 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 
 	protected function _buildQueryWhere(SDatabaseQueryDocument $query)
 	{
-        // If id is set, don't build any other query but this
-        if ($this->_state->id) 
-        {
-            $query->where('slug', '=', $this->_state->id);
-            return;
-        }
-
         // Check if all is true, then make a query that will return everything
-		if ($this->_state->all) {
+		if ($this->_state->all) 
+        {
 			$query->where('enabled', '<>', null);
+            $this->_state->id = null;
 		}
         // Get enabled or disabled items
         else $query->where('enabled', '=', $this->_state->enabled);
+
+        // If id is set, don't build any other query but this
+        if ($this->_state->id) 
+        {
+            $query->reset();
+            $query->where('slug', '=', $this->_state->id);
+        }
 	}
 }
