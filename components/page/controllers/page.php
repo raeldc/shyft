@@ -24,4 +24,17 @@ class ComPageControllerPage extends ComDefaultControllerDefault
 			$config->behaviors = array('executable', 'discoverable');
 		}
 	}
+
+	public function getRedirect()
+	{
+		$result = array();
+
+		$result = array(
+			'url'     => $this->getView()->getRoute('view=page'),
+			'message' => $this->_redirect_message,
+			'type'    => $this->_redirect_type,
+		);
+
+		return $result;
+	}
 }
