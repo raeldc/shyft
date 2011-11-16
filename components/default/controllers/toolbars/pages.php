@@ -21,7 +21,7 @@ class ComDefaultControllerToolbarPages extends KControllerToolbarAbstract
 	/**
 	 * Insert the pages management toolbar into a container
 	 * 
-	 * This is temporary. Obsolete when widgets are loaded and configured dynamically.
+	 * @TODO: This is temporary. Obsolete when widgets are loaded and configured dynamically.
 	 * 
 	 * @param	KEvent	A event object
 	 */
