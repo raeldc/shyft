@@ -1,4 +1,4 @@
-<section class="widget append left">
+<section class="widget append toolbar-left">
 	<?=@template('manage')?>
 </section>
 
