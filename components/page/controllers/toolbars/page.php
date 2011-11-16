@@ -2,6 +2,16 @@
 
 class ComPageControllerToolbarPage extends KControllerToolbarDefault
 {
+    /**
+     * Push the toolbar into the view
+     *
+     * @param   KEvent  A event object
+     */
+    public function onBeforeControllerGet(KEvent $event)
+    {   
+        $event->caller->getView()->toolbar = $this;
+    }
+
     public function getCommands()
     {
     	// We don't want other toolbars to appear here

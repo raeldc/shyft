@@ -1,3 +1,7 @@
+<section class="widget replace toolbar-top">
+    <?= @helper('toolbar.render', array('toolbar' => $toolbar))?>
+</section>
+
 <form action="<?=@route('id='.$page->id)?>" method="post" class="-koowa-form">
 <fieldset>
     <legend>Page</legend>
