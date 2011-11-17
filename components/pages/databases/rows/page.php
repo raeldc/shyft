@@ -2,19 +2,25 @@
 
 class ComPagesDatabaseRowPage extends SDatabaseRowDefault
 {
-	public function save()
+	/**
+     * Get a value by key, returning a fetched data if it's a reference
+     *
+     * @param   string  The key name
+     */
+	public function __get($key)
 	{
-		$type          = clone $this->getIdentifier();
-		$type->package = 'content';
-		$type->name    = 'types';
+		if ($key == 'type') 
+		{
+			$type          = clone $this->getIdentifier();
+			$type->package = 'content';
+			$type->name    = 'types';
 
-		$type = $this->getService($type)
-			->setData(array('type' => $this->type))
-			->load();
+			$type = $this->getService($type)
+				->setData(array('id' => parent::__get($key)))
+				->load();
 
-		// @TODO: Remove dependency to MongoDBRef. Refactor handling of relationships
-		$this->type = MongoDBRef::create($type->getDocument()->getName(), $type->id);
-
-		return parent::save();
+			return $type;
+		}
+		else return parent::__get($key);
 	}
 }
