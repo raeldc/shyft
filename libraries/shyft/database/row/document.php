@@ -187,7 +187,7 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
 		{
             if($this->isConnected())
             {
-		        $row = $this->getDocument()->select($this->getData(true), KDatabase::FETCH_ROW);
+		        $row = $this->getDocument()->find($this->getDocument()->getQuery($this->getData(true)), KDatabase::FETCH_ROW);
 
 		        // Set the data if the row was loaded succesfully.
 		        if(!$row->isNew())
