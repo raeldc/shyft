@@ -295,6 +295,16 @@ abstract class SDatabaseDocumentAbstract extends KObject
         return $this->_database->count($query->from($this->_name));
     }
 
+    /**
+     * Gets the table schema name without the table prefix
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
+
 	/**
      * Get an instance of a row object for this table
      *
@@ -385,13 +395,25 @@ abstract class SDatabaseDocumentAbstract extends KObject
         return $result;
     }
 
-	public function getQuery()
+	public function getQuery($query = null)
 	{
 		static $instance;
 
-		if (is_null($instance)) {
+        if ($query instanceof SDatabaseQueryDocument) {
+            return $query;
+        }
+
+		if (is_null($instance)) 
+        {
 			$instance = new SDatabaseQueryDocument();
 		}
+
+        if (is_array($query)) 
+        {
+            foreach ($query as $key => $value) {
+                $instance->where($key, '=', $value);
+            }
+        }
 
 		return $instance;
 	}
