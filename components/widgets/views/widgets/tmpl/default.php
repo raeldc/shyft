@@ -1,5 +1,5 @@
-<section class="widget append toolbar-left">
-	<?=@template('manage')?>
+<section class="widget replace toolbar-top">
+    <?= @helper('toolbar.render', array('toolbar' => $toolbar))?>
 </section>
 
 <form method="get" action="<?=@route()?>" class="-koowa-grid">

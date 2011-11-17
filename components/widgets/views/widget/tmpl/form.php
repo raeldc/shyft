@@ -1,5 +1,5 @@
-<section class="widget append left">
-	<?=@template('com://site/widgets.view.widgets.manage')?>
+<section class="widget replace toolbar-top">
+    <?= @helper('toolbar.render', array('toolbar' => $toolbar))?>
 </section>
 
 <form action="<?=@route('id='.$widget->id)?>" method="post" class="-koowa-form">
