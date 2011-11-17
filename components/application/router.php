@@ -81,7 +81,7 @@ final class ComApplicationRouter extends SRouterDefault
 			{
 				// Get the page, it will use the default page if page is not found
 				$page              = $this->getPage($application->page);
-				$application->com  = $page->component;
+				$application->com  = $page->type->component;
 				$application->page = $page->id;
 				$component         = $page->parameters;
 			}
@@ -176,7 +176,7 @@ final class ComApplicationRouter extends SRouterDefault
 		}
 
 		if(is_null($component)){
-			$component = $this->getPage($application['page'])->component;
+			$component = $this->getPage($application['page'])->type->component;
 		}
 
 		// If base is true, use only the application request to build the route.
