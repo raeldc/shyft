@@ -11,13 +11,16 @@ class ComPagesDatabaseRowPage extends SDatabaseRowDefault
 	{
 		if ($key == 'type') 
 		{
+			$result = parent::__get($key);
+
 			$type          = clone $this->getIdentifier();
 			$type->package = 'content';
 			$type->name    = 'types';
+			$type          = $this->getService($type);
 
-			$type = $this->getService($type)
-				->setData(array('id' => parent::__get($key)))
-				->load();
+			if ($result) {
+				$type->setData(array('id' => $result))->load();
+			}
 
 			return $type;
 		}
