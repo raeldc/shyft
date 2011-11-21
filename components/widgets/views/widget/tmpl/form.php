@@ -28,14 +28,12 @@
             <div class="clearfix">
             	<label for="form-position">Widget Type</label>
                 <div class="input">
-                    <select class="medium" name="container">
-                    	<option value="html">HTML Container</option>
-                    	<option value="navigation">Navigation</option>
-                    	<option value="content">Content List</option>
-                    </select>
-                    <span class="help-block">
-                        In the /widgets directory, you'll find the list of Widget Types you can use.
-                    </span>
+                    <?=@service('com://site/content.template.helper.listbox')->types(array(
+                            'selected' => $widget->type->id,
+                            'filter' => array(
+                                'type' => 'widget'
+                            )
+                        ))?>
                 </div>
         	</div>
 

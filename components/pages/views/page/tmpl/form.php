@@ -51,7 +51,10 @@
                     <label for="form-position">Content Type</label>
                     <div class="input">
                         <?=@service('com://site/content.template.helper.listbox')->types(array(
-                            'selected' => $page->type->id
+                            'selected' => $page->type->id,
+                            'filter' => array(
+                                'type' => 'content'
+                            )
                         ))?>
                     </div>
                 </div>
