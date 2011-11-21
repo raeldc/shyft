@@ -4,7 +4,7 @@ class ComPagesDatabaseDocumentGroups extends SDatabaseDocumentDefault
 {
 	protected function _initialize(KConfig $config)
 	{
-		$config->name = 'pages_groups';
+		$config->name = 'page_groups';
 
 		parent::_initialize($config);
 	}
