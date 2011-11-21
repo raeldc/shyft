@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Shyfted - Cutting Edge CMS for Modern Websites</title>
+<title>Shyft - A CMS for the Cloud</title>
 
 <!-- HTML5 shim, for IE6-8 support of HTML elements -->
 <!--[if lt IE 9]>
@@ -23,18 +23,9 @@
             <div class="container">
                 <h3><a class="brand" href="index.php">Shyfted</a></h3>
 
-                <?=@service('com://site/pages.controller.page')
-                        ->view('pages')
-                        ->layout('navigation')
-                        ->enabled(true)
-                        ->display();
-                ?>
+                <?=@container('navigation')?>
 
-                <form action="" class="pull-right">
-                    <input class="input-small" type="text" placeholder="Username">
-                    <input class="input-small" type="password" placeholder="Password">
-                    <button class="btn" type="submit">Sign in</button>
-                </form>
+                <?=@container('user')?>
             </div>
         </div>
     </header>
@@ -57,10 +48,8 @@
         <!--/endlayout-->
 
         <footer>
-            <p>&copy; 2011 Israel D. Canasa</p>
+            <?=@container('footer')?>
         </footer>
-
     </div>
-
 </body>
 </html>
