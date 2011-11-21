@@ -1,5 +1,55 @@
 {
-	"name": 		"Bootstrap Theme",
+	"title": 		"Bootstrap Theme",
+	"name": 		"bootstrap"
 	"description":	"Shyft's default theme based on Twitter Bootstrap.",
-	"directory": 	"bootstrap"
+	"layouts": [
+		{
+			"name": "default",
+			"title": "Wrapper Layout",
+			"containers": [
+				{
+					"name": "toolbar-left",
+					"title": "Toolbar Left",
+					"description": "Toolbars will contain action links for the content"
+				},
+				{
+					"name": "toolbar-top",
+					"title": "Toolbar Top",
+					"description": "This will contain form buttons like Save, Apply, New."
+				},
+				{
+					"name": "navigation",
+					"title": "Main Navigation",
+					"description": "Can contain navigation items like the Main Menu. Located at the top of the layout"
+				},
+				{
+					"name": "left",
+					"title": "Left Sidebar",
+					"description": "Container located at the left side of the layout"
+				},
+				{
+					"name": "footer",
+					"title": "Footer",
+					"description": "The container at the layout's footer"
+				},
+
+			]
+		},
+		{
+			"name": "home",
+			"title": "Home Page Layout",
+			"containers": [
+				{
+					"name": "snippets",
+					"title": "Snippets List",
+					"description": "The container that can contain snippets for a content type"
+				},
+				{
+					"name": "feature",
+					"title": "Featured Slideshow",
+					"description": "The container for featured items in the home page"
+				},
+			]
+		}
+	]
 }
