@@ -7,16 +7,14 @@
 final class ComApplicationRouter extends SRouterDefault
 {
 	protected $_request;
-	protected $_sefurl;
 	protected $_pages;
+	protected $_page_list;
+	protected $_sefurl;
 	protected $_routers = array();
 
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
-	
-		// Get pages from the database using a model
-		$this->_pages = $config->pages;
 
 		// Get the confiugration if SEF URL is activated
 		$this->_sefurl = $config->sefurl;
@@ -45,7 +43,7 @@ final class ComApplicationRouter extends SRouterDefault
 				// @TODO: must be populated by all installed components.
 				'com'	 => array('dashboard','widgets'),
 				// @TODO: must be populated by all enabled pages
-				'page'   => array('home', 'contents','blog'),
+				'page'   => $this->getPageList(),
 			),
 			'defaults' => array(
 				'mode'   => 'site',
@@ -55,8 +53,6 @@ final class ComApplicationRouter extends SRouterDefault
 				'uri'    => '',
 				'com'    => 'dashboard',
 			),
-			// Inject the pages that the router will use
-			'pages' => 'com://site/pages.model.pages',
 			'sefurl' => true,
 		));
 
@@ -248,43 +244,34 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		// @TODO: Cache the pages. Which one is faster, db querying? or using Rowset::find()?
 		if(!$this->_pages instanceof KDatabaseRowsetAbstract)
-		{	   
-		    //Make sure we have an identifier
-		    if(!($this->_pages instanceof KServiceIdentifier)) {
-		        $this->setPages($this->_pages);
-			}
-
-			$model = $this->getService($this->_pages);
-
-			if(!($model instanceof KModelAbstract)) {
-				throw new SRouterException('Pages is not an instance of KModelAbstract');
-			}
-
-			$this->_pages = clone $model->enabled(true)->getList();
+		{
+			$this->_pages = clone $this->getService('com://site/pages.model.pages')
+				->all(true)
+				->getList();
 		}
 
 		return $this->_pages;
 	}
 
-	public function setPages($pages)
+	public function getPageList()
 	{
-		if(!($pages instanceof KDatabaseRowsetAbstract))
+		// @TODO: cache the result
+		if (is_null($this->_page_list)) 
 		{
-			if(is_string($pages) && strpos($pages, '.') === false ) 
-		    {
-			    $identifier          = clone $this->getIdentifier();
-			    $identifier->package = 'pages';
-			    $identifier->path    = array('model');
-			    $identifier->name    = 'pages';
-			}
-			else $identifier = $this->getIdentifier($pages);
+			$pages = $this->getPages();
+			$this->_page_list = '';
 
-			$pages = $identifier;
+			foreach ($pages as $page) 
+			{
+				if (!empty($this->_page_list)) {
+					$this->_page_list .= '|';
+				}
+
+				$this->_page_list .= $page->id;
+			}
 		}
 
-		$this->_pages = $pages;
-
-		return $this->_pages;
+		return $this->_page_list;
 	}
 	
 	/**
