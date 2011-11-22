@@ -170,7 +170,7 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
             {
                 $identifier         = clone $this->getIdentifier();
                 $identifier->path   = array('database', 'document');
-                $identifier->name   = KInflector::documentize($document);
+                $identifier->name   = KInflector::tableize($document);
             }
             else  $identifier = $this->getIdentifier($document);
             
