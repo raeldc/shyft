@@ -25,8 +25,8 @@ class ComThemesDatabaseDocumentThemes extends SDatabaseDocumentAbstract
 
 	public function find($query = null, $mode = KDatabase::FETCH_ROWSET)
     {
-        $directory = opendir($this->_directory);
         $result    = array();
+        $directory = opendir($this->_directory);
 
         while(($node = readdir($directory)) !== false)
         {
