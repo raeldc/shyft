@@ -40,7 +40,9 @@
             <div class="clearfix">
                 <label for="form-position">Theme Container</label>
                 <div class="input">
-                    <?=@service('com://site/themes.template.helper.listbox')->containers()?>
+                    <?=@service('com://site/themes.template.helper.listbox')->containers(array(
+                        'selected' => $widget->container
+                    ))?>
                     <span class="help-block">
                         Select the theme container where you want this widget to show up
                     </span>

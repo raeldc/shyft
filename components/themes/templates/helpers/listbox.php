@@ -6,13 +6,13 @@ class ComThemesTemplateHelperListbox extends KTemplateHelperListbox
 	{
 		$config = new KConfig($config);
 		$config->append(array(
-			'name'		  => 'name',
+			'name'		  => 'container',
 			'attribs'	  => array(),
 			'model'		  => 'themes',
 		    'prompt'      => '- Select -', 
 		    'unique'	  => true
 		))->append(array(
-			'value'		 => $config->name,
+			'value'		 => 'name',
 			'selected'   => $config->{$config->name},
 		    'identifier' => 'com://'.$this->getIdentifier()->application.'/'.$this->getIdentifier()->package.'.model.'.KInflector::pluralize($config->model)
 		))->append(array(
