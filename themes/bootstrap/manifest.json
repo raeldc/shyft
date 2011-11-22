@@ -1,12 +1,12 @@
 {
 	"title": 		"Bootstrap Theme",
-	"name": 		"bootstrap"
+	"name": 		"bootstrap",
 	"description":	"Shyft's default theme based on Twitter Bootstrap.",
 	"layouts": [
 		{
 			"name":    "default",
 			"title":   "Default Wrapper Layout",
-            "default": true
+            "default": true,
 			"containers": [
 				{
 					"name":        "toolbar-left",
@@ -32,8 +32,7 @@
 					"name":        "footer",
 					"title":       "Footer",
 					"description": "The container at the layout's footer"
-				},
-
+				}
 			]
 		},
 		{
@@ -49,7 +48,7 @@
 					"name":        "feature",
 					"title":       "Featured Slideshow",
 					"description": "The container for featured items in the home page"
-				},
+				}
 			]
 		}
 	]
