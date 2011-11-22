@@ -40,11 +40,7 @@
             <div class="clearfix">
                 <label for="form-position">Theme Container</label>
                 <div class="input">
-                    <select class="medium" name="container">
-                        <option value="left">Left</option>
-                        <option value="featured">Featured</option>
-                        <option value="navigation">Navigation</option>
-                    </select>
+                    <?=@service('com://site/themes.template.helper.listbox')->containers()?>
                     <span class="help-block">
                         Select the theme container where you want this widget to show up
                     </span>
