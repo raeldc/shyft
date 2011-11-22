@@ -25,7 +25,7 @@ class SDatabaseRowDocument extends KDatabaseRowAbstract
             
         // Reset the row data
         if(isset($config->data))  {
-            $this->setData($config->data->toArray(), $this->_new);
+            $this->setData(KConfig::unbox($config->data), $this->_new);
         }
 	}
 
