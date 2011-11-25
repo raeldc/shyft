@@ -10,7 +10,7 @@
 /**
  * Database Select Class for database select statement generation
  *
- * @author		Israel Canasa <raeldc@gmail.com>
+ * @author		Israel Canasa <shyft@me.com>
  * @category	Shyft
  * @package     Shyft_Database
  * @subpackage  Query

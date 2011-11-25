@@ -11,7 +11,7 @@
  *
  * Provides metadata for Shyft such as version info
  *
- * @author      Israel Canasa <raeldc@gmail.com>
+ * @author      Israel Canasa <shyft@me.com>
  * @package     Shyft
  */
 class Shyft

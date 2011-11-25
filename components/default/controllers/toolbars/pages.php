@@ -11,7 +11,7 @@
 /**
  * Pages Toolbar 
  *
- * @author      Israel Canasa <raeldc@gmail.com>
+ * @author      Israel Canasa <shyft@me.com>
  * @category    Shyft
  * @package     Shyft_Components
  * @subpackage  Default
