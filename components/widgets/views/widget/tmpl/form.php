@@ -28,7 +28,7 @@
             <div class="clearfix">
             	<label for="form-position">Widget Type</label>
                 <div class="input">
-                    <?=@service('com://site/content.template.helper.listbox')->types(array(
+                    <?=@helper('com://site/content.template.helper.listbox.types', array(
                             'selected' => $widget->type->id,
                             'filter' => array(
                                 'type' => 'widget'
@@ -40,7 +40,7 @@
             <div class="clearfix">
                 <label for="form-position">Theme Container</label>
                 <div class="input">
-                    <?=@service('com://site/themes.template.helper.listbox')->containers(array(
+                    <?=@helper('com://site/themes.template.helper.listbox.containers', array(
                         'selected' => $widget->container
                     ))?>
                     <span class="help-block">
