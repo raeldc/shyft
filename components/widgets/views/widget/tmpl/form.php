@@ -9,7 +9,7 @@
     <ul class="tabs" data-tabs="tabs">
         <li class="active"><a href="#widget-required">Information</a></li>
         <li><a href="#widget-params">Parameters</a></li>
-        <li><a href="#widget-condition">Display Conditions</a></li>
+        <li><a href="#widget-condition">Pages</a></li>
         <li><a href="#widget-about">About</a></li>
     </ul>
 
@@ -113,7 +113,7 @@
         <!--start: #widget-condition-->
         <div id="widget-condition">
             <p class="alert-message block-message success">
-                Show/Hide this widget if certain conditions are met. Conditions are based on the URL used to access a page.
+                Select the Pages where this widget will be displayed
             </p>
 
             <div class="clearfix">
