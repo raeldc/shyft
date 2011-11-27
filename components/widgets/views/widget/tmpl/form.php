@@ -117,37 +117,7 @@
             </p>
 
             <div class="clearfix">
-                <div class="input">
-                    <ul class="inputs-list">
-                        <li>
-                            <label>
-                                <input type="radio" checked="checked" name="visibility" value="all">
-                                <span>Display everywhere</span>
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="radio" name="visibility" value="display">
-                                <span>Display if one of these conditions are met</span>
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="radio" name="visibility" value="hide">
-                                <span>Don't display if one of these conditions are met</span>
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-            </div>
 
-            <div class="clearfix">
-                <h5>Conditions in URL Query Format</h5>
-                <div>
-                    <textarea class="xxlarge" id="form-textarea" name="conditions" rows="5" disabled><?=$widget->conditions?></textarea>
-                    <span class="help-block">Put Conditions in URL Query format. Each line is a condition. You can use wildcard asterisk *<br>
-                     Example: <strong>com=pages&view=page&id=my-first-page</strong></span>
-                </div>
             </div>
          </div><!--end: #widget-condition-->
 
