@@ -7,8 +7,7 @@
     <legend>Create Widget</legend>
 
     <ul class="tabs" data-tabs="tabs">
-        <li class="active"><a href="#widget-required">Essentials</a></li>
-        <li><a href="#widget-configuration">Configuration</a></li>
+        <li class="active"><a href="#widget-required">Information</a></li>
         <li><a href="#widget-params">Parameters</a></li>
         <li><a href="#widget-condition">Display Conditions</a></li>
         <li><a href="#widget-about">About</a></li>
