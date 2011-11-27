@@ -71,17 +71,6 @@
             
         </div><!--end: #widget-required-->
 
-        <!--start: #widget-configuration-->
-        <div id="widget-configuration">
-            <p class="alert-message block-message success">Here you'll find the different options that the Widget Type: <strong>HTML Container</strong> needs.</p>
-            <div class="clearfix">
-                <label for="form-textarea">Body</label>
-                <div class="input">
-                    <textarea class="xlarge" id="form-textarea" name="body" rows="5"><?=$widget->body?></textarea>
-                </div>
-            </div>
-         </div><!--end: #widget-configuration-->
-
         <!--start: #widget-params-->
         <div id="widget-params">
             <div class="clearfix">
