@@ -113,7 +113,13 @@
                     </span>
                 </div>
             </div>
-        </div><!--end: #widget-params-->
+            <p class="alert-message block-message success">Here you'll find the different options that the Widget Type: <strong><?=$widget->type->title?></strong> needs.</p>
+            <?php
+            // @TODO: Might be a Nooku bug, but we can't do @template('com://site/'.$variable);
+            $config = 'com://site/'.$widget->type->component.'.view.config.'.$widget->type->config;
+            echo @template($config);
+            ?>
+         </div><!--end: #widget-params-->
 
         <!--start: #widget-condition-->
         <div id="widget-condition">
