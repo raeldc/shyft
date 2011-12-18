@@ -41,12 +41,12 @@
 
     <fieldset>
         <ul class="tabs" data-tabs="tabs">
-            <li class="active"><a href="#page-content">Type</a></li>
+            <li class="active"><a href="#page-type">Type</a></li>
         </ul>
 
         <div class="tab-content">
             <!--start: #page-content-->
-            <div class="active" id="page-content">
+            <div class="active" id="page-type">
                 <div class="clearfix">
                     <label for="form-position">Content Type</label>
                     <div class="input">
@@ -59,12 +59,6 @@
                     </div>
                 </div>
              </div><!--end: #page-content-->
-
-             <!--start: #page-display-->
-            <div id="page-display">
-                Access    
-            </div><!--end: #page-display-->
-
         </div>
     </fieldset>
 </fieldset>
