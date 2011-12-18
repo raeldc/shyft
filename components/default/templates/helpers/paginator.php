@@ -22,7 +22,7 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
 {
     /**
      * Render item pagination
-     * 
+     *
      * @param   array   An optional array with configuration options
      * @return  string  Html
      * @see     http://developer.yahoo.com/ypatterns/navigation/pagination/
@@ -36,19 +36,19 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
             'offset'  => 0,
             'limit'   => 0,
         ));
-        
+
         $this->_initialize($config);
 
         $html  = '<div class="container pagination">';
         $html .=  $this->_pages($this->_items($config));
         $html .= '</div>';
-        
+
         return $html;
     }
-    
+
     /**
      * Render a list of pages links
-     * 
+     *
      * This function is overriddes the default behavior to render the links in the khepri template
      * backend style.
      *
@@ -61,17 +61,17 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
 
         $class = $pages['first']->active ? '' : 'off disabled';
         $html  .= $this->_link($pages['first'], 'First', array('start', 'prev', $class));
-        
+
         $class = $pages['previous']->active ? '' : 'off disabled';
         $html  .= $this->_link($pages['previous'], 'Prev', array('prev', $class));
-        
+
         foreach($pages['pages'] as $page) {
             $html .= $this->_link($page, $page->page);
         }
-        
+
         $class = $pages['next']->active ? '' : 'off disabled';
         $html  .= $this->_link($pages['next'], 'Next', array('next', $class));
-        
+
         $class = $pages['last']->active ? '' : 'off disabled';
         $html  .= $this->_link($pages['last'], 'Last', array('next', 'end', $class));
 
@@ -79,14 +79,14 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
         return $html;
     }
 
-    
+
     protected function _link($page, $title, $classes = array())
     {
         $url   = clone KRequest::url();
         $query = $url->getQuery(true);
 
         $query['limit']      = $page->limit;
-        $query['offset'] 	 = $page->offset;   
+        $query['offset'] 	 = $page->offset;
 
         $url->setQuery($query);
 
