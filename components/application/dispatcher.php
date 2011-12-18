@@ -110,7 +110,12 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
             }
             else $identifier = $this->getIdentifier('com://site/application.view.theme');
 
-            $this->_view = $this->getService($identifier);
+            $config = array(
+                'media_url' => KRequest::root().'/media',
+                'base_url'  => KRequest::url()->get(KHttpUrl::BASE),
+            );
+
+            $this->_view = $this->getService($identifier, $config);
         }
 
         return $this->_view;
