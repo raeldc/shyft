@@ -10,8 +10,8 @@
 
 <link href="css://bootstrap.css" rel="stylesheet">
 <link href="css://theme.css" rel="stylesheet">
-<script src="base://media/lib_koowa/js/mootools.js"></script>
-<script src="base://media/lib_koowa/js/koowa.js"></script>
+<script src="media://lib_koowa/js/mootools.js"></script>
+<script src="media://lib_koowa/js/koowa.js"></script>
 <script src="js://jquery.js"></script>
 <script src="js://tabs.js"></script>
 <script src="js://dropdown.js"></script>
