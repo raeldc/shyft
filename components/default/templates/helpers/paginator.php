@@ -18,7 +18,7 @@
  * @uses        KRequest
  * @uses        KConfig
  */
-class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
+class ComDefaultTemplateHelperPaginator extends KTemplateHelperSelect
 {
     /**
      * Render item pagination
@@ -29,20 +29,58 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
      */
     public function pagination($config = array())
     {
-        $config = new KConfig($config);
+        $config = new KConfigPaginator($config);
         $config->append(array(
-            'total'   => 0,
-            'display' => 4,
-            'offset'  => 0,
-            'limit'   => 0,
+            'total'      => 0,
+            'display'    => 4,
+            'offset'     => 0,
+            'limit'      => 0,
+            'attribs'    => array(),
+            'show_limit' => false,
+            'show_count' => false
         ));
 
-        $this->_initialize($config);
-
-        $html  = '<div class="container pagination">';
-        $html .=  $this->_pages($this->_items($config));
+        $html = '';
+        $html .= '<div class="container pagination">';
+        if($config->show_limit) {
+            $html .= '<div class="limit">'.text('Display NUM').' '.$this->limit($config).'</div>';
+        }
+        $html .=  $this->pages($config);
+        if($config->show_count) {
+            $html .= '<div class="count"> '.text('Page').' '.$config->current.' '.text('of').' '.$config->count.'</div>';
+        }
         $html .= '</div>';
 
+        return $html;
+    }
+
+    /**
+     * Render a select box with limit values
+     *
+     * @param   array   An optional array with configuration options
+     * @return  string  Html select box
+     */
+    public function limit($config = array())
+    {
+        $config = new KConfig($config);
+        $config->append(array(
+            'limit'     => 0,
+            'attribs'   => array(),
+        ));
+
+        $html = '';
+
+        $selected = '';
+        foreach(array(10 => 10, 20 => 20, 50 => 50, 100 => 100) as $value => $text)
+        {
+            if($value == $config->limit) {
+                $selected = $value;
+            }
+
+            $options[] = $this->option(array('text' => $text, 'value' => $value));
+        }
+
+        $html .= $this->optionlist(array('options' => $options, 'name' => 'limit', 'attribs' => $config->attribs, 'selected' => $selected));
         return $html;
     }
 
@@ -55,51 +93,71 @@ class ComDefaultTemplateHelperPaginator extends KTemplateHelperPaginator
      * @param   araay   An array of page data
      * @return  string  Html
      */
-    protected function _pages($pages)
+    public function pages($config)
     {
+        $config = new KConfigPaginator($config);
+        $config->append(array(
+            'total'      => 0,
+            'display'    => 4,
+            'offset'     => 0,
+            'limit'      => 0,
+            'attribs'   => array(),
+        ));
+
         $html = '<ul>';
 
-        $class = $pages['first']->active ? '' : 'off disabled';
-        $html  .= $this->_link($pages['first'], 'First', array('start', 'prev', $class));
+        $config->pages->first->attribs = $config->pages->first->active ? array() : array('class' => 'off disabled');
+        $html  .= $this->link($config->pages->first);
 
-        $class = $pages['previous']->active ? '' : 'off disabled';
-        $html  .= $this->_link($pages['previous'], 'Prev', array('prev', $class));
+        $config->pages->prev->attribs = $config->pages->prev->active ? array() : array('class' => 'off disabled');
+        $html  .= $this->link($config->pages->prev);
 
-        foreach($pages['pages'] as $page) {
-            $html .= $this->_link($page, $page->page);
+        foreach($config->pages->offsets as $offset) {
+            $html .= $this->link($offset);
         }
 
-        $class = $pages['next']->active ? '' : 'off disabled';
-        $html  .= $this->_link($pages['next'], 'Next', array('next', $class));
+        $config->pages->next->attribs = $config->pages->next->active ? array() : array('class' => 'off disabled');
+        $html  .= $this->link($config->pages->next);
 
-        $class = $pages['last']->active ? '' : 'off disabled';
-        $html  .= $this->_link($pages['last'], 'Last', array('next', 'end', $class));
+        $config->pages->last->attribs = $config->pages->last->active ? array() : array('class' => 'off disabled');
+        $html  .= $this->link($config->pages->last);
 
         $html  .= '</ul>';
         return $html;
     }
 
-
-    protected function _link($page, $title, $classes = array())
+    /**
+     * Render a page link
+     *
+     * @param   object The page data
+     * @param   string The link title
+     * @return  string  Html
+     */
+    public function link($config)
     {
-        $url   = clone KRequest::url();
-        $query = $url->getQuery(true);
+        $config = new KConfig($config);
+        $config->append(array(
+            'title'   => '',
+            'current' => false,
+            'active'  => false,
+            'offset'  => 0,
+            'limit'   => 0,
+            'rel'     => '',
+            'attribs'  => array(),
+        ))->attribs->append(array(
+            'class' => ''
+        ));
 
-        $query['limit']      = $page->limit;
-        $query['offset'] 	 = $page->offset;
+        $route = $this->getTemplate()->getView()->getRoute('limit='.$config->limit.'&offset='.$config->offset);
 
-        $url->setQuery($query);
+        $class = $config->current ? ' active' : '';
+        $class = 'class="'.$config->attribs->class.$class.'"';
+        $rel   = !empty($config->rel) ? 'rel="'.$config->rel.'"' : '';
 
-        $class = $page->current ? array('active') : array();
-
-        $class = array_merge($class, $classes);
-
-        $class = 'class="'.implode(' ', $class).'"';
-
-        if($page->active && !$page->current) {
-            $html = '<li '.$class.'><a href="'.$this->getTemplate()->getView()->getRoute($url->getQuery()).'">'.$title.'</a></li>';
+        if($config->active && !$config->current) {
+            $html = '<li '.$class.'><a href="'.$route.'" '.$rel.'>'.text($config->title).'</a></li>';
         } else {
-            $html = '<li '.$class.'><a href="#">'.$title.'</a></li>';
+            $html = '<li '.$class.'><a href="#">'.text($config->title).'</li></li>';
         }
 
         return $html;
