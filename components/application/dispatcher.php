@@ -25,7 +25,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
         $config->append(array(
             'view' => 'theme',
         ));
-    
+
         parent::_initialize($config);
     }
 
@@ -54,7 +54,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
         $context->result      = $this->getComponent()->execute('dispatch', $context);
 
         // Set Headers from the context
-        if($context->headers) 
+        if($context->headers)
         {
             foreach($context->headers as $name => $value){
                 header($name.' : '.$value);
@@ -66,7 +66,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
            header(KHttpResponse::getHeader($context->status));
         }
 
-        if (is_string($context->result) && KRequest::type() != 'AJAX' && $this->getRequest()->format == 'html') 
+        if (is_string($context->result) && KRequest::type() != 'AJAX' && $this->getRequest()->format == 'html')
         {
             $view = $this->getView();
 
@@ -86,7 +86,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
         {
             if(is_string($this->_router) && strpos($this->_router, '.') === true)
             {
-                $identifier = $this->getIdentifier($this->_router);   
+                $identifier = $this->getIdentifier($this->_router);
             }
             else $identifier = $this->getIdentifier('com://site/application.router');
 
@@ -106,7 +106,7 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
         {
             if(is_string($this->_view) && strpos($this->_view, '.') === true)
             {
-                $identifier = $this->getIdentifier($this->_view);   
+                $identifier = $this->getIdentifier($this->_view);
             }
             else $identifier = $this->getIdentifier('com://site/application.view.theme');
 
@@ -157,8 +157,8 @@ class ComApplicationDispatcher extends KControllerAbstract implements KServiceIn
     {
         if(!($component instanceof KDispatcherAbstract))
         {
-            if(is_string($component) && strpos($component, '.') === false ) 
-            {   
+            if(is_string($component) && strpos($component, '.') === false )
+            {
                 $identifier          = clone $this->getIdentifier();
                 $identifier->package = $component;
                 $identifier->path    = array();
