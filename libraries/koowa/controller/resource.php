@@ -77,8 +77,8 @@ abstract class KControllerResource extends KControllerAbstract
 		}
 		
 		//Made the executable behavior read-only
-		if($config->readonly) {
-		    $this->getBehavior('executable')->setReadOnly(true);
+		if($this->isExecutable()) {
+		    $this->getBehavior('executable')->setReadOnly($config->readonly);
 		}
 	}
 	
@@ -92,20 +92,16 @@ abstract class KControllerResource extends KControllerAbstract
      */
     protected function _initialize(KConfig $config)
     {
-    	$config->append(array(
+        $config->append(array(
     	    'model'	     => $this->getIdentifier()->name,
-        	'view'	     => $this->getIdentifier()->name,
     	    'behaviors'  => array('executable'),
     	    'readonly'   => true, 
     		'request' 	 => array('format' => 'html'),
+        ))->append(array(
+            'view' 		=> $config->request->view ? $config->request->view : $this->getIdentifier()->name
         ));
         
         parent::_initialize($config);
-        
-        //Force the view to the information found in the request
-        if(isset($config->request->view)) {
-            $config->view = $config->request->view;
-        }
     }
     
 	/**
@@ -130,8 +126,14 @@ abstract class KControllerResource extends KControllerAbstract
 			
 			//Create the view
 			$config = array(
-			    'model'  => $this->getModel(),
-        	);
+				'model'     => $this->getModel(),
+			    'media_url' => KRequest::root().'/media',
+			    'base_url'	=> KRequest::url()->get(KHttpUrl::BASE),
+			);
+			
+			if($this->isExecutable()) {
+			    $config['auto_assign'] = !$this->getBehavior('executable')->isReadOnly();
+			}
         	
 			$this->_view = $this->getService($this->_view, $config);
 			
@@ -232,6 +234,7 @@ abstract class KControllerResource extends KControllerAbstract
 			else $identifier = $this->getIdentifier($model);
 		    
 			if($identifier->path[0] != 'model') {
+				
 				throw new KControllerException('Identifier: '.$identifier.' is not a model identifier');
 			}
 
