@@ -13,7 +13,7 @@
         <li><a href="#widget-about">About</a></li>
     </ul>
 
-    
+
     <div class="tab-content">
         <!--start: #widget-required-->
         <div class="active" id="widget-required">
@@ -68,7 +68,7 @@
                     </ul>
                 </div>
             </div>
-            
+
         </div><!--end: #widget-required-->
 
         <!--start: #widget-params-->
@@ -102,12 +102,8 @@
                     </span>
                 </div>
             </div>
-            <p class="alert-message block-message success">Here you'll find the different options that the Widget Type: <strong><?=$widget->type->title?></strong> needs.</p>
-            <?php
-            // @TODO: Might be a Nooku bug, but we can't do @template('com://site/'.$variable);
-            $config = 'com://site/'.$widget->type->component.'.view.config.'.$widget->type->config;
-            echo @template($config);
-            ?>
+            <p class="alert-message block-message success">Here you'll find the different options that the Widget Type needs</p>
+            <?php // @TODO: Widget type options should be loaded through AJAX; ?>
          </div><!--end: #widget-params-->
 
         <!--start: #widget-condition-->
