@@ -1,0 +1,44 @@
+{
+	"types":[
+		{
+			"type": "content",
+			"name": "blog",
+			"title": "Blog",
+			"schema": "blog",
+			"request":{
+				"single": false,
+			}
+		},
+		{
+			"type": "content",
+			"name": "event",
+			"title": "Event",
+			"schema": "event",
+			"request":{
+				"single": false,
+			}
+		}
+		{
+			"type": "widget",
+			"name": "list",
+			"title": "Content List",
+			"request":{
+				"single": false,
+			}
+		}
+	]
+	"forms":[
+		{
+			"name": "blog",
+			"title": "Blog Form",
+		},
+		{
+			"name": "page",
+			"title": "Page Form",
+		},
+		{
+			"name": "event",
+			"title": "Event Form",
+		}
+	]	
+}
