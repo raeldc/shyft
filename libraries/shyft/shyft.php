@@ -18,11 +18,11 @@ class Shyft
 {
     /**
      * Shyft version
-     * 
+     *
      * @var string
      */
     const VERSION = '0.1-prototype';
-    
+
     /**
      * Path to Shyft libraries
      */
@@ -65,7 +65,7 @@ class Shyft
 
         // Get Shyft Loader
         require_once self::findFile('shyft/loader/loader.php',            self::$paths['libraries']);
-        
+
         // Inject the Koowa and Shyft loader adapters into the SLoader.
         $loader = SLoader::getInstance(array(
             'koowa_adapter' => new SLoaderAdapterKoowa(array('basepath' => self::$paths['libraries'])),
@@ -120,7 +120,7 @@ class Shyft
         if (self::$instance === null) {
             self::$instance = new self($directories);
         }
-        
+
         return self::$instance;
     }
 
@@ -133,12 +133,12 @@ class Shyft
     public function findFile($path, $directories)
     {
         // TODO: Implement caching here
-        if (is_string($directories)) 
+        if (is_string($directories))
         {
             return rtrim($directories, '/').'/'.trim($path, '/');
         }
 
-        foreach ($directories as $value) 
+        foreach ($directories as $value)
         {
             $file = array_shift($directories).'/'.trim($path, '/');
             if (is_file($file)) return $file;
@@ -146,23 +146,6 @@ class Shyft
 
         return false;
     }
-}
-
-function debug($value)
-{
-    require_once 'ChromePhp.php';
-    ChromePhp::useFile(SYSTEM_ROOT.'/logs', KRequest::base().'/logs');
-    $args = array();
-
-    foreach (func_get_args() as $arg) 
-    {
-        if ($arg instanceof KConfig || $arg instanceof KObjectArray) {
-            $args[] = $arg->toArray();
-        }
-        else $args[] = $arg;
-    }
-    
-    call_user_func_array(array('ChromePhp', 'log'), $args);
 }
 
 function text($string)

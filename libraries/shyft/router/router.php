@@ -1,7 +1,7 @@
 <?php
 
-/* 
- * Routers build pretty urls from a URL Query, they can also parse pretty URLs into a query array 
+/*
+ * Routers build pretty urls from a URL Query, they can also parse pretty URLs into a query array
  *		First, create rules on how a URL is parsed or built.
 */
 class SRouter extends KObject implements KServiceInstantiatable
@@ -35,7 +35,7 @@ class SRouter extends KObject implements KServiceInstantiatable
      * @var array
      */
 	protected $_defaults;
-	
+
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
@@ -54,7 +54,7 @@ class SRouter extends KObject implements KServiceInstantiatable
 			'regex'    => array(),
 			'defaults' => array()
 		));
-	
+
 		parent::_initialize($config);
 	}
 
@@ -73,14 +73,14 @@ class SRouter extends KObject implements KServiceInstantiatable
             $instance  = new $classname($config);
             $container->set($config->service_identifier, $instance);
         }
-        
+
         return $container->get($config->service_identifier);
     }
 
 	public function addRoutes($routes, $regex = array())
-	{ 
+	{
         $routes = (array) KConfig::unbox($routes);
-         
+
         foreach($routes as $uri => $query)
         {
         	//Add the routes
@@ -183,7 +183,7 @@ class SRouter extends KObject implements KServiceInstantiatable
 		$uri = preg_replace('#//+#', '/', rtrim($uri, '/'));
 
 		// Remove params from query if it's already in the defaults
-		foreach ($query as $key => $value) 
+		foreach ($query as $key => $value)
 		{
 			if (array_key_exists($key, $defaults)) {
 				unset($query[$key]);
@@ -305,7 +305,7 @@ class SRouter extends KObject implements KServiceInstantiatable
 		$best_match = 'default';
 		$similarities = array('default' => 0);
 
-		foreach ($this->_routes as $route) 
+		foreach ($this->_routes as $route)
 		{
 			$similarities[$route->rule] = $this->getSimilarity($route->query, $query);
 			$best_match = ($similarities[$route->rule] > $similarities[$best_match]) ? $route->rule : $best_match;
@@ -334,11 +334,11 @@ class SRouter extends KObject implements KServiceInstantiatable
 
 		$points = 0;
 
-		foreach ($model as $key => $value) 
+		foreach ($model as $key => $value)
 		{
 			if(array_key_exists($key, $subject))
 			{
-				if(substr($value, 0, 1) === '!') 
+				if(substr($value, 0, 1) === '!')
 				{
 					// Higher points if the parameters are different
 					$parameter = substr($value, 1);
@@ -346,14 +346,14 @@ class SRouter extends KObject implements KServiceInstantiatable
 						$points++;
 					}
 				}
-				elseif(substr($value, 0, 1) === '#') 
+				elseif(substr($value, 0, 1) === '#')
 				{
 					// Higher points if the parameters are the same
 					$parameter = substr($value, 1);
 					if($parameter == $subject[$key]){
 						$points++;
 					}
-						 
+
 				}
 			}
 		}

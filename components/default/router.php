@@ -4,7 +4,7 @@ class ComDefaultRouter extends SRouterDefault
 {
 	protected function _initialize(KConfig $config)
 	{
-		if (!isset($config->routes)) 
+		if (!isset($config->routes))
 		{
 			$config->routes = array(
 				'[<view>[/<layout>]]' => 'view=!&layout=default',
@@ -12,5 +12,5 @@ class ComDefaultRouter extends SRouterDefault
 		}
 
 		parent::_initialize($config);
-	}	
+	}
 }
