@@ -1,9 +1,8 @@
 <?php
 /**
  * @version    	$Id$
- * @category	Koowa
  * @package    	Koowa_Request
- * @copyright  	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright  	Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license    	GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link 		http://www.nooku.org
  */
@@ -15,7 +14,6 @@ KRequest::getInstance();
  * Request class
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
  * @package     Koowa_Request
  * @uses        KFilter
  * @uses        KInflector
@@ -209,7 +207,7 @@ class KRequest
         }
         
         // Store cookies persistently
-        if($hash == 'COOKIE' && strpos(KRequest::protocol(), 'http') !== false)
+        if($hash == 'COOKIE' && strpos(KRequest::scheme(), 'http') !== false)
         {
             // rewrite the $keys as foo[bar][bar]
             $ckeys = $keys; // get a copy
@@ -233,7 +231,7 @@ class KRequest
            $GLOBALS['_'.$hash] = array(); 
         } 
         
-        $GLOBALS['_'.$hash] = KHelperArray::merge($GLOBALS['_'.$hash], $value);
+        $GLOBALS['_'.$hash] = self::_mergeArrays($GLOBALS['_'.$hash], $value);
     }
 
     /**
@@ -329,7 +327,7 @@ class KRequest
                 self::$_accept['language'] = self::_parseAccept($accept);
             }
         }
-
+        
         return $type ? self::$_accept[$type] : self::$_accept;
     }
 
@@ -356,16 +354,15 @@ class KRequest
     {
         if(!isset(self::$_referrer))
         {
-            if($referrer = KRequest::get('server.HTTP_REFERER', 'url'))
-            {
+            if($referrer = KRequest::get('server.HTTP_REFERER', 'url')) {
                 self::$_referrer = KService::get('koowa:http.url', array('url' => $referrer));
+            }
+        }
 
-                if($isInternal)
-                {
-                    if(!KService::get('koowa:filter.internalurl')->validate((string)self::$_referrer)) {
-                        return null;
-                    }
-                }
+        if($isInternal)
+        {
+            if(!KService::get('koowa:filter.internalurl')->validate((string) self::$_referrer)) {
+                return null;
             }
         }
 
@@ -381,7 +378,7 @@ class KRequest
     {
         if(!isset(self::$_url))
         {
-            $url = self::protocol().'://';
+            $url = self::scheme().'://';
             
             if (PHP_SAPI !== 'cli') 
         	{
@@ -484,25 +481,35 @@ class KRequest
     }
 
     /**
-     * Returns the current request protocol, based on $_SERVER['https']. In CLI
+     * Returns the current request scheme, based on $_SERVER['https']. In CLI
      * mode, 'cli' will be returned.
      *
      * @return  string
      */
-    public static function protocol()
+    public static function scheme()
     {
-        $protocol = 'cli';
+        $scheme = 'cli';
         
         if (PHP_SAPI !== 'cli') 
         {
-            $protocol = 'http';
+            $scheme = 'http';
             
             if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) != 'off')) {
-                $protocol = 'https';
+                $scheme = 'https';
             }
         } 
      
-        return $protocol;
+        return $scheme;
+    }
+    
+    /**
+     * Return the protocal based on $_SERVER['SERVER_PROTOCOL']
+     * 
+     * @return  string
+     */
+    public static function protocol()
+    {
+        return $_SERVER['SERVER_PROTOCOL'];
     }
 
     /**
@@ -570,8 +577,9 @@ class KRequest
             $token = self::get('server.HTTP_X_TOKEN', 'md5');
         }
 
-        if(self::has('request._token')) {
-            $token = self::get('request._token', 'md5');
+        $key = strtolower($_SERVER['REQUEST_METHOD']).'._token';
+        if(self::has($key)) {
+            $token = self::get($key, 'md5');
         }
 
         return $token;
@@ -657,12 +665,12 @@ class KRequest
             {
                 // Split the type into parts
                 $parts = explode(';', $type);
-
+                
                 // Make the type only the MIME
                 $type = trim(array_shift($parts));
 
                 // Default quality is 1.0
-                $quality = 1.0;
+                $options = array('quality' => 1.0); 
 
                 foreach ($parts as $part)
                 {
@@ -673,16 +681,16 @@ class KRequest
 
                     // Separate the key and value
                     list ($key, $value) = explode('=', trim($part));
-
-                    if ($key === 'q')
+                    
+                    switch ($key)
                     {
-                        // There is a quality for this type
-                        $quality = (float) trim($value);
+                        case 'q'       : $options['quality'] = (float) trim($value); break;
+                        case 'version' : $options['version'] = (float) trim($value); break;
                     }
                 }
 
                 // Add the accept type and quality
-                $defaults[$type] = $quality;
+                $defaults[$type] = $options;
             }
         }
 
@@ -691,7 +699,7 @@ class KRequest
 
         // Order by quality
         arsort($accepts);
-
+       
         return $accepts;
     }
 
@@ -708,5 +716,38 @@ class KRequest
         }
 
         return $value;
+    }
+
+    /**
+     * Merge two arrays recursively
+     *
+     * Matching keys' values in the second array overwrite those in the first array, as is the
+     * case with array_merge.
+     *
+     * Parameters are passed by reference, though only for performance reasons. They're not
+     * altered by this function and the datatypes of the values in the arrays are unchanged.
+     *
+     * @param array
+     * @param array
+     * @return array    An array of values resulted from merging the arguments together.
+     */
+    protected static function _mergeArrays( array &$array1, array &$array2 )
+    {
+        $args   = func_get_args();
+        $merged = array_shift($args);
+
+        foreach($args as $array)
+        {
+            foreach ( $array as $key => &$value )
+            {
+                if ( is_array ( $value ) && isset ( $merged [$key] ) && is_array ( $merged [$key] ) ){
+                    $merged [$key] = self::_mergeArrays ( $merged [$key], $value );
+                } else {
+                    $merged [$key] = $value;
+                }
+            }
+        }
+
+        return $merged;
     }
 }

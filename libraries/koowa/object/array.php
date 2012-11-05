@@ -1,70 +1,67 @@
 <?php
 /**
- * @version		$Id$
- * @category	Koowa
- * @package		Koowa_Object
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.nooku.org
+ * @version        $Id$
+ * @package        Koowa_Object
+ * @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
+ * @license        GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link         http://www.nooku.org
  */
 
 /**
  * An Object Array Class
- * 
- * The KObjectArray class provides provides the main functionalities of array and at 
+ *
+ * The KObjectArray class provides provides the main functionalities of array and at
  * the same time implement the features of KObject
  *
  * @author      Johan Janssens <johan@nooku.org>
  * @category    Koowa
  * @package     Koowa_Object
  */
-class KObjectArray extends KObject implements IteratorAggregate, ArrayAccess, Serializable
+class KObjectArray extends KObject implements IteratorAggregate, ArrayAccess, Serializable, Countable
 {
-   /** 
+    /**
      * The data for each key in the array (key => value).
      *
      * @var array
      */
     protected $_data = array();
-    
- 	/**
-     * Constructor.
+
+    /**
+     * Constructor
      *
-     * @param   object  An optional KConfig object with configuration options
+     * @param KConfig|null $config  An optional KConfig object with configuration options
+     * @return \KObjectArray
      */
-    public function __construct(KConfig $config = null)
+    public function __construct(KConfig $config)
     {
-        //If no config is passed create it
-        if(!isset($config)) $config = new KConfig();
-        
         parent::__construct($config);
-            
+
         $this->_data = KConfig::unbox($config->data);
     }
-    
- 	/**
+
+    /**
      * Initializes the options for the object
      *
      * Called from {@link __construct()} as a first step of object instantiation.
      *
-     * @param   object  An optional KConfig object with configuration options
+     * @param   KConfig $object An optional KConfig object with configuration options
      * @return  void
      */
     protected function _initialize(KConfig $config)
     {
         $config->append(array(
-            'data'  => array(),
+            'data' => array(),
         ));
 
         parent::_initialize($config);
     }
-    
- 	/**
+
+    /**
      * Check if the offset exists
      *
      * Required by interface ArrayAccess
      *
-     * @param   int     The offset
+     * @param   int   $offset
      * @return  bool
      */
     public function offsetExists($offset)
@@ -77,11 +74,11 @@ class KObjectArray extends KObject implements IteratorAggregate, ArrayAccess, Se
      *
      * Required by interface ArrayAccess
      *
-     * @param   int     The offset
-     * @return  mixed   The item from the array
+     * @param   int     $offset
+     * @return  mixed The item from the array
      */
     public function offsetGet($offset)
-    {   
+    {
         return $this->__get($offset);
     }
 
@@ -90,19 +87,19 @@ class KObjectArray extends KObject implements IteratorAggregate, ArrayAccess, Se
      *
      * Required by interface ArrayAccess
      *
-     * @param   int     The offset of the item
-     * @param   mixed   The item's value
-     * @return  object  KObjectArray
+     * @param   int     $offset
+     * @param   mixed   $value
+     * @return  KObjectArray
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) { 
-            $this->_data[] = $value; 
-        } else {                      
-            $this->__set($offset, $value); 
-        } 
-         
-        return $this; 
+        if (is_null($offset)) {
+            $this->_data[] = $value;
+        } else {
+            $this->__set($offset, $value);
+        }
+
+        return $this;
     }
 
     /**
@@ -113,81 +110,93 @@ class KObjectArray extends KObject implements IteratorAggregate, ArrayAccess, Se
      *
      * Required by interface ArrayAccess
      *
-     * @param   int     The offset of the item
-     * @return  object 	KObjectArray
+     * @param   int     $offset
+     * @return  KObjectArray
      */
     public function offsetUnset($offset)
     {
         $this->__unset($offset);
         return $this;
     }
-        
+
     /**
      * Get a new iterator
-     * 
+     *
      * @return  ArrayIterator
      */
-    public function getIterator() 
+    public function getIterator()
     {
         return new ArrayIterator($this->_data);
     }
-    
- 	/**
+
+    /**
      * Serialize
-     * 
+     *
      * Required by interface Serializable
      *
-     * @return  string  A serialized object
+     * @return  string
      */
     public function serialize()
     {
         return serialize($this->_data);
     }
-    
+
     /**
      * Unserialize
-     * 
+     *
      * Required by interface Serializable
-     * 
-     * @param   string  An serialized data
+     *
+     * @param   string  $data
      */
     public function unserialize($data)
     {
-        $this->data = unserialize($data);
+        $this->_data = unserialize($data);
     }
-    
+
+    /**
+     * Returns the number of items
+     *
+     * Required by interface Countable
+     *
+     * @return int The number of items
+     */
+    public function count()
+    {
+        return count($this->_data);
+    }
+
     /**
      * Get a value by key
      *
-     * @param   string  The key name.
+     * @param   string  $key The key name.
      * @return  string  The corresponding value.
      */
     public function __get($key)
     {
         $result = null;
-        if(isset($this->_data[$key])) {
+        if (isset($this->_data[$key])) {
             $result = $this->_data[$key];
-        } 
-        
+        }
+
         return $result;
     }
 
     /**
      * Set a value by key
      *
-     * @param   string  The key name.
-     * @param   mixed   The value for the key
+     * @param   string  $key   The key name
+     * @param   mixed   $value The value for the key
      * @return  void
      */
     public function __set($key, $value)
     {
-       $this->_data[$key] = $value;
-     }
-   
-	/**
+        $this->_data[$key] = $value;
+    }
+
+    /**
      * Test existence of a key
      *
-     * @param  string  The key name.
+     * @param  string  $key The key name
      * @return boolean
      */
     public function __isset($key)
@@ -197,17 +206,17 @@ class KObjectArray extends KObject implements IteratorAggregate, ArrayAccess, Se
 
     /**
      * Unset a key
-     * 
-     * @param   string  The key name.
+     *
+     * @param   string  $key The key name
      * @return  void
      */
     public function __unset($key)
     {
-         unset($this->_data[$key]);
+        unset($this->_data[$key]);
     }
-    
- 	/**
-     * Return an associative array of the data.
+
+    /**
+     * Return an associative array of the data
      *
      * @return array
      */

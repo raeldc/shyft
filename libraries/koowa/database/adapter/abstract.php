@@ -1,557 +1,499 @@
 <?php
 /**
- * @version		$Id$
- * @category	Koowa
+ * @version        $Id$
  * @package     Koowa_Database
  * @subpackage  Adapter
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.nooku.org
+ * @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
+ * @license        GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link         http://www.nooku.org
  */
 
 /**
  * Abstract Database Adapter
  *
- * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
+ * @author        Johan Janssens <johan@nooku.org>
  * @package     Koowa_Database
  * @subpackage  Adapter
- * @uses 		KPatternCommandChain
+ * @uses         KPatternCommandChain
  */
 abstract class KDatabaseAdapterAbstract extends KObject implements KDatabaseAdapterInterface
 {
-	/**
-	 * Active state of the connection
-	 *
-	 * @var boolean
-	 */
-	protected $_connected = null;
+    /**
+     * Active state of the connection
+     *
+     * @var boolean
+     */
+    protected $_connected = null;
 
-	/**
-	 * The database connection resource
-	 *
-	 * @var mixed
-	 */
-	protected $_connection = null;
+    /**
+     * The database connection resource
+     *
+     * @var mixed
+     */
+    protected $_connection = null;
 
-	/**
-	 * Last auto-generated insert_id
-	 *
-	 * @var integer
-	 */
-	protected $_insert_id;
+    /**
+     * Last auto-generated insert_id
+     *
+     * @var integer
+     */
+    protected $_insert_id;
 
-	/**
-	 * The affected row count
-	 *
-	 * @var int
-	 */
-	protected $_affected_rows;
+    /**
+     * The affected row count
+     *
+     * @var int
+     */
+    protected $_affected_rows;
 
-	/**
-	 * Schema cache
-	 *
-	 * @var array
-	 */
-	protected $_table_schema = null;
+    /**
+     * Schema cache
+     *
+     * @var array
+     */
+    protected $_table_schema = null;
 
-	/**
-	 * The table prefix
-	 *
-	 * @var string
-	 */
-	protected $_table_prefix = '';
+    /**
+     * The table prefix
+     *
+     * @var string
+     */
+    protected $_table_prefix = '';
 
-	/**
-	 * Quote for named objects
-	 *
-	 * @var string
-	 */
-	protected $_name_quote = '`';
-	
-	/**
-	 * The connection options
-	 *
-	 * @var KConfig
-	 */
-	protected $_options = null;
+    /**
+     * The table needle
+     *
+     * @var string
+     */
+    protected $_table_needle = '';
 
-	/**
-	 * Constructor.
-	 *
-	 * @param 	object 	An optional KConfig object with configuration options.
-	 * Recognized key values include 'command_chain', 'charset', 'table_prefix',
-	 * (this list is not meant to be comprehensive).
-	 */
-	public function __construct( KConfig $config = null )
-	{
-		//If no config is passed create it
-		if(!isset($config)) $config = new KConfig();
-		
-		// Initialize the options
+    /**
+     * Quote for query identifiers
+     *
+     * @var string
+     */
+    protected $_identifier_quote = '`';
+
+    /**
+     * The connection options
+     *
+     * @var KConfig
+     */
+    protected $_options = null;
+    
+    /**
+     * Character set used for connection
+     * 
+     * @var string
+     */
+    protected $_charset;
+
+    /**
+     * Constructor.
+     *
+     * @param     object     An optional KConfig object with configuration options.
+     * Recognized key values include 'command_chain', 'charset', 'table_prefix',
+     * (this list is not meant to be comprehensive).
+     */
+    public function __construct(KConfig $config)
+    {
         parent::__construct($config);
-         
+
         // Set the connection
-        $this->setConnection($config->connection);
-       
-		// Set the default charset. http://dev.mysql.com/doc/refman/5.1/en/charset-connection.html
-		if (!empty($config->charset)) {
-			//$this->setCharset($config->charset);
-		}
+        if (isset($config->connection)) {
+            $this->setConnection($config->connection);
+        }
 
-		// Set the table prefix
-		$this->_table_prefix = $config->table_prefix;
-		
-		// Set the connection options
-		$this->_options = $config->options;
-		
-		 //Set the mixer in the config
+        // Set the default charset. http://dev.mysql.com/doc/refman/5.1/en/charset-connection.html
+        if (!empty($config->charset)) {
+            $this->setCharset($config->charset);
+        }
+
+        // Set the table prefix
+        $this->_table_prefix = $config->table_prefix;
+
+        // Set the table prefix
+        $this->_table_needle = $config->table_needle;
+
+        // Set the connection options
+        $this->_options = $config->options;
+
+        //Set the mixer in the config
         $config->mixer = $this;
-		
-		// Mixin the command interface
+
+        // Mixin the command interface
         $this->mixin(new KMixinCommand($config));
-	}
+    }
 
-	/**
-	 * Destructor
-	 *
-	 * Free any resources that are open.
-	 */
-	public function __destruct()
-	{
-		$this->disconnect();
-	}
+    /**
+     * Destructor
+     *
+     * Free any resources that are open.
+     */
+    public function __destruct()
+    {
+        $this->disconnect();
+    }
 
-  	/**
+    /**
      * Initializes the options for the object
      *
      * Called from {@link __construct()} as a first step of object instantiation.
      *
-     * @param 	object 	An optional KConfig object with configuration options.
+     * @param     object     An optional KConfig object with configuration options.
      * @return  void
      */
     protected function _initialize(KConfig $config)
     {
-    	$config->append(array(
-    		'options'			=> array(),
-    		'charset'			=> 'UTF-8',
-       	 	'table_prefix'  	=> 'jos_',
-    		'command_chain'     => $this->getService('koowa:command.chain'),
-    		'dispatch_events'   => true,
-    		'event_dispatcher'  => $this->getService('koowa:event.dispatcher'),
-    		'enable_callbacks' 	=> false,
-    		'connection'		=> null,
+        $config->append(array(
+            'options'          => array(),
+            'charset'          => 'UTF8',
+            'table_prefix'     => 'jos_',
+            'table_needle'     => '#__',
+            'command_chain'    => $this->getService('koowa:command.chain'),
+            'dispatch_events'  => true,
+            'event_dispatcher' => $this->getService('koowa:event.dispatcher.default'),
+            'enable_callbacks' => false,
+            'connection'       => null,
         ));
-         
+
         parent::_initialize($config);
     }
-    
-	/**
-	 * Get a database query object
-	 *
-	 * @return KDatabaseQuery
-	 */
-	public function getQuery(KConfig $config = null)
-	{
-		if(!isset($config)) {
-			$config = new KConfig(array('adapter' => $this));
-		}
-		
-		return new KDatabaseQuery($config);
-	}
 
-	/**
-	 * Reconnect to the db
-	 * 
-	 * @return  KDatabaseAdapterAbstract
-	 */
-	public function reconnect()
-	{
-		$this->disconnect();
-		$this->connect();
-		
-		return $this;
-	}
-
-	/**
-	 * Disconnect from db
-	 * 
-	 * @return  KDatabaseAdapterAbstract
-	 */
-	public function disconnect()
-	{
-		$this->_connection = null;
-		$this->_connected  = false;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get the database name
-	 *
-	 * @return string	The database name
-	 */
-	abstract function getDatabase();
-	
-	/**
-	 * Set the database name
-	 *
-	 * @param 	string 	The database name
-	 * @return  KDatabaseAdapterAbstract
-	 */
-	abstract function setDatabase($database);
-
-	/**
-	 * Get the connection
-	 *
-	 * Provides access to the underlying database connection. Useful for when
-	 * you need to call a proprietary method such as postgresql's lo_* methods
-	 *
-	 * @return resource
-	 */
-	public function getConnection()
-	{
-		return $this->_connection;
-	}
-	
-	/**
-	 * Set the connection
-	 *
-	 * @param 	resource 	The connection resource
-	 * @return  KDatabaseAdapterAbstract
-	 */
-	public function setConnection($resource)
-	{
-	    $this->_connection = $resource;
-		return $this;
-	}
-	
-	/**
-	 * Get the insert id of the last insert operation
-	 *
-	 * @return mixed The id of the last inserted row(s)
-	 */
- 	public function getInsertId()
+    /**
+     * Reconnect to the db
+     *
+     * @return  KDatabaseAdapterAbstract
+     */
+    public function reconnect()
     {
-    	return $this->_insert_id;
+        $this->disconnect();
+        $this->connect();
+
+        return $this;
     }
 
-	/**
-     * Preforms a select query
+    /**
+     * Disconnect from db
+     *
+     * @return  KDatabaseAdapterAbstract
+     */
+    public function disconnect()
+    {
+        $this->_connection = null;
+        $this->_connected = false;
+
+        return $this;
+    }
+
+    /**
+     * Get the database name
+     *
+     * @return string    The database name
+     */
+    abstract function getDatabase();
+
+    /**
+     * Set the database name
+     *
+     * @param     string     The database name
+     * @return  KDatabaseAdapterAbstract
+     */
+    abstract function setDatabase($database);
+
+    /**
+     * Get the connection
+     *
+     * Provides access to the underlying database connection. Useful for when
+     * you need to call a proprietary method such as postgresql's lo_* methods
+     *
+     * @return resource
+     */
+    public function getConnection()
+    {
+        return $this->_connection;
+    }
+
+    /**
+     * Set the connection
+     *
+     * @param     resource     The connection resource
+     * @return  KDatabaseAdapterAbstract
+     */
+    public function setConnection($resource)
+    {
+        $this->_connection = $resource;
+        return $this;
+    }
+    
+    /**
+     * Get character set
+     * 
+     * @return string
+     */
+    public function getCharset()
+    {
+        return $this->_charset;
+    }
+    
+    /**
+     * Set character set
+     * 
+     * @param string $charset The character set.
+     * @return KDatabaseAdapterAbstract
+     */
+    public function setCharset($charset)
+    {
+        $this->_charset = $charset;
+        
+        return $this;
+    }
+
+    /**
+     * Get the insert id of the last insert operation
+     *
+     * @return mixed The id of the last inserted row(s)
+     */
+    public function getInsertId()
+    {
+        return $this->_insert_id;
+    }
+
+    /**
+     * Preform a select query.
      *
      * Use for SELECT and anything that returns rows.
-     * 
-     * If <var>key</var> is not empty then the returned array is indexed by the value
-	 * of the database key.  Returns <var>null</var> if the query fails.
      *
-     * @param	string|object  	A full SQL query to run. Data inside the query should be properly escaped. 
-     * @param   integer			The fetch mode. Controls how the result will be returned to the caller. This 
-     * 							value must be one of the KDatabase::FETCH_* constants.
-     * @param 	string 			The column name of the index to use
-     * @return  mixed 			The return value of this function on success depends on the fetch type. 
-     * 					    	In all cases, FALSE is returned on failure.
+     * @param    KDatabaseQuerySelect The query object.
+     * @param   integer    The fetch mode. Controls how the result will be returned to the subject. This
+     *                     value must be one of the KDatabase::FETCH_* constants.
+     * @param   string     The column name of the index to use.
+     * @throws  InvalidArgumentException If the query is not an instance of KDatabaseQuerySelect or KDatabaseQueryShow
+     * @return  mixed     The return value of this function on success depends on the fetch type.
+     *                    In all cases, FALSE is returned on failure.
      */
-	public function select($query, $mode = KDatabase::FETCH_ARRAY_LIST, $key = '')
-	{
-		$context = $this->getCommandContext();
-		$context->query	 	= $query;
-		$context->operation = KDatabase::OPERATION_SELECT;
-		$context->mode		= $mode;
+    public function select(KDatabaseQueryInterface $query, $mode = KDatabase::FETCH_ARRAY_LIST, $key = '')
+    {
+        if (!$query instanceof KDatabaseQuerySelect && !$query instanceof KDatabaseQueryShow) {
+            throw new InvalidArgumentException('Query must be an instance of KDatabaseQuerySelect or KDatabaseQueryShow');
+        }
 
-		// Excute the insert operation
-		if($this->getCommandChain()->run('before.select', $context) !== false) 
-		{
-			if($result = $this->execute( $context->query, KDatabase::RESULT_USE))
-			{
-				switch($context->mode)
-				{
-					case KDatabase::FETCH_ARRAY       : 
-						$context->result = $this->_fetchArray($result);	
-						break;
-						
-					case KDatabase::FETCH_ARRAY_LIST  : 
-						$context->result = $this->_fetchArrayList($result, $key); 
-						break;
-						
-					case KDatabase::FETCH_FIELD       : 
-						$context->result = $this->_fetchField($result, $key); 
-						break;
-						
-					case KDatabase::FETCH_FIELD_LIST  : 
-						$context->result = $this->_fetchFieldList($result, $key); 
-						break;
-						
-					case KDatabase::FETCH_OBJECT      : 
-						$context->result = $this->_fetchObject($result); 
-						break;
-						
-					case KDatabase::FETCH_OBJECT_LIST : 
-						$context->result = $this->_fetchObjectList($result, $key); 
-						break;
-						
-					default : $result->free();
-				}
-			}
-				
-			$this->getCommandChain()->run('after.select', $context);
-		}
+        $context        = $this->getCommandContext();
+        $context->query = $query;
+        $context->operation = KDatabase::OPERATION_SELECT;
+        $context->mode = $mode;
 
-		return KConfig::unbox($context->result);
-	}
-	
-	/**
-     * Preforms a show query
+        // Excute the insert operation
+        if ($this->getCommandChain()->run('before.select', $context) !== false)
+        {
+            if ($result = $this->execute($context->query, KDatabase::RESULT_USE))
+            {
+                switch ($context->mode)
+                {
+                    case KDatabase::FETCH_ARRAY       :
+                        $context->result = $this->_fetchArray($result);
+                        break;
+
+                    case KDatabase::FETCH_ARRAY_LIST  :
+                        $context->result = $this->_fetchArrayList($result, $key);
+                        break;
+
+                    case KDatabase::FETCH_FIELD       :
+                        $context->result = $this->_fetchField($result, $key);
+                        break;
+
+                    case KDatabase::FETCH_FIELD_LIST  :
+                        $context->result = $this->_fetchFieldList($result, $key);
+                        break;
+
+                    case KDatabase::FETCH_OBJECT      :
+                        $context->result = $this->_fetchObject($result);
+                        break;
+
+                    case KDatabase::FETCH_OBJECT_LIST :
+                        $context->result = $this->_fetchObjectList($result, $key);
+                        break;
+
+                    default :
+                        $result->free();
+                }
+            }
+
+            $this->getCommandChain()->run('after.select', $context);
+        }
+
+        return KConfig::unbox($context->result);
+    }
+
+    /**
+     * Insert a row of data into a table.
      *
-     * @param	string|object  	A full SQL query to run. Data inside the query should be properly escaped. 
-     * @param   integer			The fetch mode. Controls how the result will be returned to the caller. This 
-     * 							value must be one of the KDatabase::FETCH_* constants.
-     * @return  mixed 			The return value of this function on success depends on the fetch type. 
-     * 					    	In all cases, FALSE is returned on failure.
+     * @param KDatabaseQueryInsert The query object.
+     * @return bool|integer  If the insert query was executed returns the number of rows updated, or 0 if
+     *                          no rows where updated, or -1 if an error occurred. Otherwise FALSE.
      */
-	public function show($query, $mode = KDatabase::FETCH_ARRAY_LIST)
-	{
-		$context = $this->getCommandContext();
-		$context->query	 	= $query;
-		$context->operation = KDatabase::OPERATION_SHOW;
-		$context->mode		= $mode;
+    public function insert(KDatabaseQueryInsert $query)
+    {
+        $context = $this->getCommandContext();
+        $context->operation = KDatabase::OPERATION_INSERT;
+        $context->query = $query;
 
-		// Excute the insert operation
-		if($this->getCommandChain()->run('before.show', $context) !== false) 
-		{
-			if($result = $this->execute( $context->query, KDatabase::RESULT_USE))
-			{
-				switch($context->mode)
-				{
-					case KDatabase::FETCH_ARRAY       : 
-						$context->result = $this->_fetchArray($result);	
-						break;
-						
-					case KDatabase::FETCH_ARRAY_LIST  : 
-						$context->result = $this->_fetchArrayList($result); 
-						break;
-						
-					case KDatabase::FETCH_FIELD       : 
-						$context->result = $this->_fetchField($result); 
-						break;
-						
-					case KDatabase::FETCH_FIELD_LIST  : 
-						$context->result = $this->_fetchFieldList($result); 
-						break;
-						
-					case KDatabase::FETCH_OBJECT      : 
-						$context->result = $this->_fetchObject($result); 
-						break;
-						
-					case KDatabase::FETCH_OBJECT_LIST : 
-						$context->result = $this->_fetchObjectList($result); 
-						break;
-						
-					default : $result->free();
-				}
-			}
-				
-			$this->getCommandChain()->run('after.show', $context);
-		}
+        //Excute the insert operation
+        if ($this->getCommandChain()->run('before.insert', $context) !== false)
+        {
+            //Check if we have valid data to insert, if not return false
+            if ($context->query->values)
+            {
+                //Execute the query
+                $context->result = $this->execute($context->query);
+                $context->affected = $this->_affected_rows;
 
-		return KConfig::unbox($context->result);
-	}
-
-	/**
-     * Inserts a row of data into a table.
-     *
-     * Automatically quotes the data values
-     *
-     * @param string  	The table to insert data into.
-     * @param array 	An associative array where the key is the colum name and
-     * 					the value is the value to insert for that column.
-     * @return bool|integer  If the insert query was executed returns the number of rows updated, or 0 if 
-     * 					     no rows where updated, or -1 if an error occurred. Otherwise FALSE.
-     */
-	public function insert($table, array $data)
-	{
-		$context = $this->getCommandContext();
-		$context->table 	= $table;
-		$context->data 		= $data;
-		$context->operation	= KDatabase::OPERATION_INSERT;
-
-		//Excute the insert operation
-		if($this->getCommandChain()->run('before.insert', $context) !== false)
-		{
-			//Check if we have valid data to insert, if not return false
-			if(count($context->data)) 
-			{
-				foreach($context->data as $key => $val)
-				{
-					$vals[] = $this->quoteValue($val);
-					$keys[] = '`'.$key.'`';
-				}
-
-				$context->query = 'INSERT INTO '.$this->quoteName('#__'.$context->table )
-					 . '('.implode(', ', $keys).') VALUES ('.implode(', ', $vals).')';
-				 
-				//Execute the query
-				$context->result = $this->execute($context->query);
-				
-				$context->affected = $this->_affected_rows;	
-			
-				$this->getCommandChain()->run('after.insert', $context);
-			}
-			else $context->affected = false;
-		}
-
-		return $context->affected;
-	}
-
-	/**
-     * Updates a table with specified data based on a WHERE clause
-     *
-     * Automatically quotes the data values
-     *
-     * @param string 	The table to update
-     * @param array  	An associative array where the key is the column name and
-     * 				 	the value is the value to use ofr that column.
-     * @param mixed 	A sql string or KDatabaseQuery object to limit which rows are updated.
-     * @return integer  If the update query was executed returns the number of rows updated, or 0 if 
-     * 					no rows where updated, or -1 if an error occurred. Otherwise FALSE. 
-     */
-	public function update($table, array $data, $where = null)
-	{
-		$context = $this->getCommandContext();
-		$context->table 	= $table;
-		$context->data  	= $data;
-		$context->where   	= $where;
-		$context->operation	= KDatabase::OPERATION_UPDATE;
-
-		//Excute the update operation
-		if($this->getCommandChain()->run('before.update', $context) !==  false)
-		{
-			if(count($context->data)) 
-			{				
-				foreach($context->data as $key => $val) {
-					$vals[] = '`'.$key.'` = '.$this->quoteValue($val);
-				}
-				
-				//Create query statement
-				$context->query = 'UPDATE '.$this->quoteName('#__'.$context->table)
-			  		.' SET '.implode(', ', $vals)
-			  		.' '.$context->where
-				;
-						
-				//Execute the query
-				$context->result = $this->execute($context->query);
-
-				$context->affected = $this->_affected_rows;
-				$this->getCommandChain()->run('after.update', $context);
-			}
-			else $context->affected = false;
-		}
+                $this->getCommandChain()->run('after.insert', $context);
+            }
+            else $context->affected = false;
+        }
 
         return $context->affected;
-	}
+    }
 
-	/**
-     * Deletes rows from the table based on a WHERE clause.
+    /**
+     * Update a table with specified data.
      *
-     * @param string 	The table to update
-     * @param mixed  	A query string or a KDatabaseQuery object to limit which rows are updated.
-     * @return integer 	Number of rows affected, or -1 if an error occured.
+     * @param  KDatabaseQueryUpdate The query object.
+     * @return integer  If the update query was executed returns the number of rows updated, or 0 if
+     *                     no rows where updated, or -1 if an error occurred. Otherwise FALSE.
      */
-	public function delete($table, $where)
-	{
-		$context = $this->getCommandContext();
-		$context->table 	= $table;
-		$context->data  	= null;
-		$context->where   	= $where;
-		$context->operation	= KDatabase::OPERATION_DELETE;
+    public function update(KDatabaseQueryUpdate $query)
+    {
+        $context = $this->getCommandContext();
+        $context->operation = KDatabase::OPERATION_UPDATE;
+        $context->query     = $query;
 
-		//Excute the delete operation
-		if($this->getCommandChain()->run('before.delete', $context) !== false)
-		{
-			//Create query statement
-			$context->query = 'DELETE FROM '.$this->quoteName('#__'.$context->table)
-				  .' '.$context->where
-			;
+        //Excute the update operation
+        if ($this->getCommandChain()->run('before.update', $context) !== false)
+        {
+            if (!empty($context->query->values))
+            {
+                //Execute the query
+                $context->result = $this->execute($context->query);
+                $context->affected = $this->_affected_rows;
 
-			//Execute the query
-			$context->result = $this->execute($context->query);
+                $this->getCommandChain()->run('after.update', $context);
+            }
+            else $context->affected = false;
+        }
 
-			$context->affected = $this->_affected_rows;
-			$this->getCommandChain()->run('after.delete', $context);
-		}
+        return $context->affected;
+    }
 
-		return $context->affected;
-	}
+    /**
+     * Delete rows from the table.
+     *
+     * @param  KDatabaseQueryDelete The query object.
+     * @return integer     Number of rows affected, or -1 if an error occured.
+     */
+    public function delete(KDatabaseQueryDelete $query)
+    {
+        $context = $this->getCommandContext();
+        $context->operation = KDatabase::OPERATION_DELETE;
+        $context->query     = $query;
 
-	/**
-	 * Use and other queries that don't return rows
-	 *
-	 * @param  string 	The query to run. Data inside the query should be properly escaped. 
-	 * @param  integer 	The result maode, either the constant KDatabase::RESULT_USE or KDatabase::RESULT_STORE 
-     * 					depending on the desired behavior. By default, KDatabase::RESULT_STORE is used. If you 
-     * 					use KDatabase::RESULT_USE all subsequent calls will return error Commands out of sync 
-     * 					unless you free the result first.
-	 * @throws KDatabaseException
-	 * @return boolean 	For SELECT, SHOW, DESCRIBE or EXPLAIN will return a result object. 
-	 * 					For other successful queries  return TRUE. 
-	 */
-	public function execute($sql, $mode = KDatabase::RESULT_STORE )
-	{	
-		//Replace the database table prefix
-		$sql = $this->replaceTablePrefix( $sql );
-		
-		$result = $this->_connection->query($sql, $mode);
-		
-		if($result === false) {
-			throw new KDatabaseException($this->_connection->error.' of the following query : '.$sql, $this->_connection->errno);
-		}
+        //Excute the delete operation
+        if ($this->getCommandChain()->run('before.delete', $context) !== false)
+        {
+            //Execute the query
+            $context->result = $this->execute($context->query);
+            $context->affected = $this->_affected_rows;
 
-		$this->_affected_rows = $this->_connection->affected_rows;
-		$this->_insert_id     = $this->_connection->insert_id;
+            $this->getCommandChain()->run('after.delete', $context);
+        }
 
-		return $result;
-	}
+        return $context->affected;
+    }
 
-	/**
-	 * Set the table prefix
-	 *
-	 * @param string The table prefix
-	 * @return KDatabaseAdapterAbstract
-	 */
-	public function setTablePrefix($prefix)
-	{
-		$this->_table_prefix = $prefix;
-		return $this;
-	}
+    /**
+     * Use and other queries that don't return rows
+     *
+     * @param  string     The query to run. Data inside the query should be properly escaped.
+     * @param  integer     The result maode, either the constant KDatabase::RESULT_USE or KDatabase::RESULT_STORE
+     *                     depending on the desired behavior. By default, KDatabase::RESULT_STORE is used. If you
+     *                     use KDatabase::RESULT_USE all subsequent calls will return error Commands out of sync
+     *                     unless you free the result first.
+     * @throws KDatabaseAdapterException
+     * @return boolean     For SELECT, SHOW, DESCRIBE or EXPLAIN will return a result object.
+     *                     For other successful queries  return TRUE.
+     */
+    public function execute($query, $mode = KDatabase::RESULT_STORE)
+    {
+        // Add or replace the database table prefix.
+        if (!($query instanceof KDatabaseQueryAbstract)) {
+            $query = $this->replaceTableNeedle($query);
+        }
 
- 	/**
-	 * Get the table prefix
-	 *
-	 * @return string The table prefix
-	 */
-	public function getTablePrefix()
-	{
-		return $this->_table_prefix;
-	}
+        $result = $this->getConnection()->query((string)$query, $mode);
 
-	/**
-	 * This function replaces a string identifier <var>$prefix</var> with the
-	 * string held is the <var>_table_prefix</var> class variable.
-	 *
-	 * @param 	string 	The SQL query string
-	 * @param 	string 	The table prefix to use as a replacement
-	 * @param 	string 	The needle to search for in the query string
-	 * @return string	The SQL query string
-	 */
-	public function replaceTablePrefix( $sql, $replace = null, $needle = '#__' )
-	{
-		$replace = isset($replace) ? $replace : $this->getTablePrefix();
-		$sql = trim( $sql );
-		
-		$pattern = "($needle(?=[a-z0-9]))";
-    	$sql = preg_replace($pattern, $replace, $sql);
-    	
-		return $sql;
-	}
+        if ($result === false) {
+            throw new KDatabaseAdapterException($this->getConnection()->error . ' of the following query : ' . $query, $this->getConnection()->errno);
+        }
+
+        $this->_affected_rows = $this->getConnection()->affected_rows;
+        $this->_insert_id = $this->getConnection()->insert_id;
+
+        return $result;
+    }
+
+    /**
+     * Set the table prefix
+     *
+     * @param string The table prefix
+     * @return KDatabaseAdapterAbstract
+     * @see KDatabaseAdapterAbstract::replaceTableNeedle
+     */
+    public function setTablePrefix($prefix)
+    {
+        $this->_table_prefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * Get the table prefix
+     *
+     * @return string The table prefix
+     * @see KDatabaseAdapterAbstract::replaceTableNeedle
+     */
+    public function getTablePrefix()
+    {
+        return $this->_table_prefix;
+    }
+
+    /**
+     * Get the table needle
+     *
+     * @return string The table needle
+     * @see KDatabaseAdapterAbstract::replaceTableNeedle
+     */
+    public function getTableNeedle()
+    {
+        return $this->_table_needle;
+    }
+
+    /**
+     * This function replaces the table needles in a query string with the actual table prefix.
+     *
+     * @param  string     The SQL query string
+     * @return string    The SQL query string
+     */
+    public function replaceTableNeedle($sql, $replace = null)
+    {
+        $needle = $this->getTableNeedle();
+        $replace = isset($replace) ? $replace : $this->getTablePrefix();
+        $sql = trim($sql);
+
+        $pattern = "($needle(?=[a-z0-9]))";
+        $sql = preg_replace($pattern, $replace, $sql);
+
+        return $sql;
+    }
 
     /**
      * Safely quotes a value for an SQL statement.
@@ -569,56 +511,63 @@ abstract class KDatabaseAdapterAbstract extends KObject implements KDatabaseAdap
         if (is_array($value))
         {
             //Quote array values, not keys, then combine with commas.
-            foreach ($value as $k => $v) {
-                $value[$k] = $this->quoteValue($v);
+            foreach ($value as &$v)
+            {
+                if (is_null($v)) {
+                    $v = 'NULL';
+                } elseif (is_string($v)) {
+                    $v = $this->_quoteValue($v);
+                }
             }
 
             $value = implode(', ', $value);
         }
         else
         {
-            if(is_string($value) && !is_null($value)) {
+            if (is_null($value)) {
+                $value = 'NULL';
+            } elseif (is_string($value)) {
                 $value = $this->_quoteValue($value);
             }
         }
 
         return $value;
     }
-    
+
     /**
      * Quotes a single identifier name (table, table alias, table column,
      * index, sequence).  Ignores empty values.
-     * 
-     * This function requires all SQL statements, operators and functions to be 
+     *
+     * This function requires all SQL statements, operators and functions to be
      * uppercased.
      *
-     * @param string|array The identifier name to quote.  If an array, quotes 
+     * @param string|array The identifier name to quote.  If an array, quotes
      *                      each element in the array as an identifier name.
      * @return string|array The quoted identifier name (or array of names).
      *
-     * @see _quoteName()
+     * @see _quoteIdentifier()
      */
-    public function quoteName($spec)
+    public function quoteIdentifier($spec)
     {
         if (is_array($spec))
         {
             foreach ($spec as $key => $val) {
-                $spec[$key] = $this->quoteName($val);
+                $spec[$key] = $this->quoteIdentifier($val);
             }
-            
+
             return $spec;
         }
-         
+
         // String spaces around the identifier
         $spec = trim($spec);
-        
+
         // Quote all the lower case parts
-        $spec = preg_replace_callback('#(?:\b|\#)+(?<!`)([a-z0-9\.\#\-_]+)(?!`)\b#', array($this, '_quoteName') , $spec);
-        
+        $spec = preg_replace_callback('/(?:\b|#)+(?<![`:@])([-a-zA-Z0-9.#_]*[a-z][-a-zA-Z0-9.#_]*)(?!`)\b/', array($this, '_quoteIdentifier'), $spec);
+
         return $spec;
     }
-    
-   /**
+
+    /**
      * Fetch the first field of the first row
      *
      * @param   mysqli_result   The result object. A result set identifier returned by the select() function
@@ -638,7 +587,7 @@ abstract class KDatabaseAdapterAbstract extends KObject implements KDatabaseAdap
 
     /**
      * Fetch the first row of a result set as an associative array
-     * 
+     *
      * @param   mysqli_result   The result object. A result set identifier returned by the select() function
      * @return array
      */
@@ -646,7 +595,7 @@ abstract class KDatabaseAdapterAbstract extends KObject implements KDatabaseAdap
 
     /**
      * Fetch all result rows of a result set as an array of associative arrays
-     * 
+     *
      * If <var>key</var> is not empty then the returned array is indexed by the value
      * of the database key.  Returns <var>null</var> if the query fails.
      *
@@ -666,7 +615,7 @@ abstract class KDatabaseAdapterAbstract extends KObject implements KDatabaseAdap
 
     /**
      * Fetch all rows of a result set as an array of objects
-     * 
+     *
      * If <var>key</var> is not empty then the returned array is indexed by the value
      * of the database key.  Returns <var>null</var> if the query fails.
      *
@@ -674,8 +623,8 @@ abstract class KDatabaseAdapterAbstract extends KObject implements KDatabaseAdap
      * @param   string         The column name of the index to use
      * @return  array   If <var>key</var> is empty as sequential array of returned rows.
      */
-    abstract protected function _fetchObjectList($result, $key='' );
-    
+    abstract protected function _fetchObjectList($result, $key = '');
+
     /**
      * Parse the raw table schema information
      *
@@ -712,38 +661,38 @@ abstract class KDatabaseAdapterAbstract extends KObject implements KDatabaseAdap
 
     /**
      * Quotes an identifier name (table, index, etc). Ignores empty values.
-     * 
+     *
      * If the name contains a dot, this method will separately quote the
      * parts before and after the dot.
      *
      * @param string    The identifier name to quote.
      * @return string   The quoted identifier name.
-     * @see quoteName()
+     * @see quoteIdentifier()
      */
-    protected function _quoteName($name)
+    protected function _quoteIdentifier($name)
     {
-        $result =  '';
-        
-        if(is_array($name)) {
+        $result = '';
+
+        if (is_array($name)) {
             $name = $name[0];
         }
-        
-        $name   = trim($name);
-        
+
+        $name = trim($name);
+
         //Special cases
         if ($name == '*' || is_numeric($name)) {
             return $name;
         }
-         
+
         if ($pos = strrpos($name, '.'))
         {
-            $table  = $this->_quoteName(substr($name, 0, $pos));
-            $column = $this->_quoteName(substr($name, $pos + 1));
-                    
-            $result =  "$table.$column";
+            $table = $this->_quoteIdentifier(substr($name, 0, $pos));
+            $column = $this->_quoteIdentifier(substr($name, $pos + 1));
+
+            $result = "$table.$column";
         }
-        else $result = $this->_name_quote. $name.$this->_name_quote;
-        
+        else $result = $this->_identifier_quote . $name . $this->_identifier_quote;
+
         return $result;
     }
 }

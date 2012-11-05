@@ -1,9 +1,8 @@
 <?php
 /**
  * @version		$Id$
- * @category	Koowa
  * @package		Koowa_Filter
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright	Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://www.nooku.org
  */
@@ -15,14 +14,13 @@
  * validate and santize method
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
  * @package     Koowa_Filter
  */
 class KFilterChain extends KCommandChain
 {
     /**
      * Run the commands in the chain
-     * 
+     *
      * @param string  The filter name
      * @param array   The data to be filtered
      * @return  mixed
@@ -48,10 +46,10 @@ class KFilterChain extends KCommandChain
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Sanitize the data
      *
@@ -61,9 +59,9 @@ class KFilterChain extends KCommandChain
     final protected function _sanitize( KCommandContext $context )
     {
         foreach($this as $filter) {
-            $context->data = $filter->execute( 'sanitize', $context ); 
+            $context->data = $filter->execute( 'sanitize', $context );
         }
-        
+
         return $context->data;
     }
 }

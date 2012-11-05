@@ -1,9 +1,8 @@
 <?php
 /**
  * @version     $Id: interface.php 1366 2009-11-28 01:34:00Z johan $
- * @category    Koowa
  * @package     Koowa_Command
- * @copyright   Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright   Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link        http://www.nooku.org
  */
@@ -12,36 +11,36 @@
  * Command Context
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
  * @package     Koowa_Command
  */
 class KCommandContext extends KConfig
 {
     /**
-     * Error
+     * The command subject
      *
-     * @var string
+     * @var  object
      */
-    protected $_error;
-    
+    protected $_subject;
+
     /**
-     * Set the error
-     *
-     * @return  KCommandContext
-     */
-    function setError($error) 
+    * Get the command subject 
+    *     
+    * @return object	The command subject
+    */
+    public function getSubject()
     {
-        $this->_error = $error;
-        return $this;
+        return $this->_subject;
     }
     
     /**
-     * Get the error
+     * Set the command subject
      *
-     * @return  string  The error
+     * @param object	The command subject
+     * @return KEvent
      */
-    function getError() 
+    public function setSubject(KObjectServiceable $subject)
     {
-        return $this->_error;
+        $this->_subject = $subject;
+        return $this;
     }
 }

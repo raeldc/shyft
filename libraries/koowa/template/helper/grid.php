@@ -1,10 +1,9 @@
 <?php
 /**
  * @version		$Id$
- * @category	Koowa
  * @package		Koowa_Template
  * @subpackage	Helper
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright	Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://www.nooku.org
  */
@@ -13,7 +12,6 @@
  * Template Grid Helper
  *
  * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
  * @package		Koowa_Template
  * @subpackage	Helper
  * @see 		http://ajaxpatterns.org/Data_Grid
@@ -30,9 +28,11 @@ class KTemplateHelperGrid extends KTemplateHelperAbstract
 	{
 		$config = new KConfig($config);
 		$config->append(array(
-			'row'  		=> null,
-		));
-
+			'row'    => null,
+	    ))->append(array( 
+        	'column' => $config->row->getIdentityColumn() 
+        )); 
+		
 		if($config->row->isLockable() && $config->row->locked())
 		{
 		    $html = '<span class="editlinktip hasTip" title="'.$config->row->lockMessage() .'">
@@ -41,7 +41,7 @@ class KTemplateHelperGrid extends KTemplateHelperAbstract
 		}
 		else
 		{
-		    $column = $config->row->getIdentityColumn();
+		    $column = $config->column;
 		    $value  = $config->row->{$column};
 
 		    $html = '<input type="checkbox" class="-koowa-grid-checkbox" name="'.$column.'[]" value="'.$value.'" />';
@@ -49,7 +49,7 @@ class KTemplateHelperGrid extends KTemplateHelperAbstract
 
 		return $html;
 	}
-	
+
 	/**
 	 * Render an search header
 	 *
@@ -60,13 +60,15 @@ class KTemplateHelperGrid extends KTemplateHelperAbstract
 	{
 	    $config = new KConfig($config);
 		$config->append(array(
-			'search' => null
+			'search'      => null,
+			'results'     => 5,
+			'placeholder' => 'Title'
 		));
-	    
-	    $html = '<input name="search" id="search" value="'.$this->getTemplate()->getView()->escape($config->search).'" />';
+
+	    $html = '<input type="search" results="'.$config->results.'" name="search" id="search" placeholder="'.$config->placeholder.'" value="'.$this->getTemplate()->getView()->escape($config->search).'" />';
         $html .= '<button>'.JText::_('Go').'</button>';
 		$html .= '<button onclick="document.getElementById(\'search\').value=\'\';this.form.submit();">'.JText::_('Reset').'</button>';
-	
+
 	    return $html;
 	}
 
@@ -146,7 +148,7 @@ class KTemplateHelperGrid extends KTemplateHelperAbstract
 		$img    = $config->row->{$config->field} ? 'enabled.png' : 'disabled.png';
 		$alt 	= $config->row->{$config->field} ? JText::_( 'Enabled' ) : JText::_( 'Disabled' );
 		$text 	= $config->row->{$config->field} ? JText::_( 'Disable Item' ) : JText::_( 'Enable Item' );
-		
+
 	    $config->data->{$config->field} = $config->row->{$config->field} ? 0 : 1;
 	    $data = str_replace('"', '&quot;', $config->data);
 
@@ -173,15 +175,15 @@ class KTemplateHelperGrid extends KTemplateHelperAbstract
 
 		$up   = 'media://lib_koowa/images/arrow_up.png';
 		$down = 'media://lib_koowa/images/arrow_down.png';
-		
+
 		$config->data->order = -1;
 		$updata   = str_replace('"', '&quot;', $config->data);
-		
+
 		$config->data->order = +1;
 		$downdata = str_replace('"', '&quot;', $config->data);
-		
+
 		$html = '';
-		
+
 		if ($config->row->{$config->field} > 1) {
             $html .= '<img src="'.$up.'" border="0" alt="'.JText::_('Move up').'" data-action="edit" data-data="'.$updata.'" />';
         }
@@ -235,7 +237,7 @@ class KTemplateHelperGrid extends KTemplateHelperAbstract
 			} break;
 
 		}
-		
+
 		$config->data->{$config->field} = $access;
 	    $data = str_replace('"', '&quot;', $config->data);
 

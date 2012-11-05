@@ -1,7 +1,6 @@
 <?php
 /**
  * @version     $Id$
- * @category	Koowa
  * @package     Koowa_Mixin
  * @copyright   Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
@@ -15,7 +14,6 @@
  * of responsability or chain of command pattern.
  *  
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
  * @package     Koowa_Mixin
  * @uses        KCommandChain
  * @uses        KCommandInterface
@@ -46,23 +44,18 @@ class KMixinCommand extends KMixinAbstract
         //Create a command chain object 
         $this->_command_chain = $config->command_chain;
         
+        //Set the mixer in the config
+        $config->mixer = $this->_mixer;
+        
         //Mixin the callback mixer if callbacks have been enabled
-        if($config->enable_callbacks) 
-        {
-            $this->_mixer->mixin(new KMixinCallback(new KConfig(array(
-                'mixer'             => $this->_mixer, 
-                'command_chain'     => $this->_command_chain,
-                'command_priority'  => $config->callback_priority
-            ))));
+        if($config->enable_callbacks) {
+            $this->_mixer->mixin(new KMixinCallback($config));
         }
         
         //Enqueue the event command with a lowest priority to make sure it runs last
         if($config->dispatch_events) 
         { 
-             $this->_mixer->mixin(new KMixinEvent(new KConfig(array(
-                'mixer'             => $this->_mixer, 
-                'event_dispatcher'  => $config->event_dispatcher
-            ))));
+            $this->_mixer->mixin(new KMixinEvent($config));
             
             //@TODO : Add KCommandChain::getCommand()     
             $event = $this->_command_chain->getService('koowa:command.event', array(
@@ -98,15 +91,14 @@ class KMixinCommand extends KMixinAbstract
     /**
      * Get the command chain context
      * 
-     * This functions inserts a 'caller' variable in the context which contains
-     * the mixer object.
+     * This functions sets the command subject as the mixer in the context
      *
      * @return  KCommandContext
      */
     public function getCommandContext()
     {
         $context = $this->_command_chain->getContext();
-        $context->caller = $this->_mixer;
+        $context->setSubject($this->_mixer);
         
         return $context;
     }

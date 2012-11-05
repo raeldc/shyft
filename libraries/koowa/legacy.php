@@ -1,34 +1,15 @@
 <?php
 /**
 * @version		$Id$
-* @category		Koowa
-* @copyright    Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+* @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
 * @license      GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
 * @link         http://www.nooku.org
 */
 
 /**
- * PHP5.3 compatibility
- */
-if(false === function_exists('lcfirst'))
-{
-    /**
-     * Make a string's first character lowercase
-     *
-     * @param string $str
-     * @return string the resulting string.
-     */
-    function lcfirst( $str ) 
-    {
-        $str[0] = strtolower($str[0]);
-        return (string)$str;
-    }
-}
-
-/**
  * APC 3.1.4 compatibility
  */
-if(extension_loaded('apc') && !function_exists('apc_exists')) 
+if(extension_loaded('apc') && !function_exists('apc_exists'))
 {
     /**
      * Check if an APC key exists
@@ -41,5 +22,5 @@ if(extension_loaded('apc') && !function_exists('apc_exists'))
 		$r;
 		apc_fetch($keys,$r);
 		return $r;
-    }   
+    }
 }

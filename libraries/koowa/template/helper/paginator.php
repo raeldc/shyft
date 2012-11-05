@@ -1,10 +1,9 @@
 <?php
 /**
  * @version		$Id$
- * @category	Koowa
  * @package		Koowa_Template
  * @subpackage	Helper
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright	Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://www.nooku.org
  */
@@ -13,7 +12,6 @@
  * Template Paginator Helper
  *
  * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
  * @package		Koowa_Template
  * @subpackage	Helper
  */
@@ -42,7 +40,7 @@ class KTemplateHelperPaginator extends KTemplateHelperSelect
 		$html = '';
 		$html .= '<style src="media://lib_koowa/css/koowa.css" />';
 
-		$html .= '<div class="-koowa-pagination">';
+		$html .= '<div class="-koowa-pagination pagination">';
 		if($config->show_limit) {
 		    $html .= '<div class="limit">'.JText::_('Display NUM').' '.$this->limit($config).'</div>';
 		}
@@ -101,28 +99,28 @@ class KTemplateHelperPaginator extends KTemplateHelperSelect
 			'limit'	     => 0,
 			'attribs'	=> array(),
 		));
-	    
-	    $html = '<ul class="pages">';
 
-		$html .= '<li class="first">&laquo; '.$this->link($config->pages->first).'</li>';
-		$html .= '<li class="previous">&lt; '.$this->link($config->pages->prev).'</li>';
+        $html = '<ul>';
+
+		$html .= $this->link($config->pages->first);
+		$html .= $this->link($config->pages->prev);
 
 		foreach($config->pages->offsets as $offset) {
-			$html .= '<li>'.$this->link($offset).'</li>';
+			$html .= $this->link($offset);
 		}
 
-		$html .= '<li class="next">'.$this->link($config->pages->next).' &gt;</li>';
-		$html .= '<li class="previous">'.$this->link($config->pages->last).' &raquo;</li>';
+		$html .= $this->link($config->pages->next);
+		$html .= $this->link($config->pages->last);
 
-		$html .= '</ul>';
+        $html .= '</ul>';
+
 		return $html;
 	}
 
 	/**
 	 * Render a page link
 	 *
-	 * @param	object The page data
-	 * @param	string The link title
+	 * @param   array   An optional array with configuration options
 	 * @return	string	Html
 	 */
     public function link($config)
@@ -139,13 +137,14 @@ class KTemplateHelperPaginator extends KTemplateHelperSelect
 		));
 		
         $route = $this->getTemplate()->getView()->getRoute('limit='.$config->limit.'&offset='.$config->offset);
-        $class = $config->current ? 'class="active"' : '';
         $rel   = !empty($config->rel) ? 'rel="'.$config->rel.'"' : ''; 
-
-        if($config->active && !$config->current) {
-            $html = '<a href="'.$route.'" '.$class.' '.$rel.'>'.JText::_($config->title).'</a>';
+        
+        if(!$config->active && $config->current) {
+            $html = '<li class="active"><a href="#">'.JText::_($config->title).'</a></li>';
+        } elseif (!$config->active && !$config->current) {
+            $html = '<li class="disabled"><a class="disabled" href="#">'.JText::_($config->title).'</a></li>';
         } else {
-            $html = '<span '.$class.'>'.JText::_($config->title).'</span>';
+            $html = '<li><a href="'.$route.'" '.$rel.'>'.JText::_($config->title).'</a></li>';
         }
 
         return $html;

@@ -1,9 +1,8 @@
 <?php
 /**
  * @version     $Id$
- * @category	Koowa
  * @package     Koowa_Event
- * @copyright   Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright   Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link        http://www.nooku.org
  */
@@ -11,11 +10,9 @@
 /**
  * Event Class
  *
- * You can call the method stopPropagation() to abort the execution of
- * further listeners in your event listener.
+ * You can call the method stopPropagation() to abort the execution of further listeners in your event listener.
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
  * @package     Koowa_Event
  */
 class KEvent extends KConfig
@@ -44,19 +41,19 @@ class KEvent extends KConfig
     protected $_name;
     
     /**
-     * Constructor.
+     * Target of the event
      *
-     * @param	string 			The event name
-     * @param   array|KConfig 	An associative array of configuration settings or a KConfig instance.
+     * @var KObjectServiceable
      */
-    public function __construct( $name, $config = array() )
-    { 
-        parent::__construct($config);
-         
-        //Set the command name
-        $this->_name = $name;
-    } 
+    protected $_target;
     
+    /**
+     * Dispatcher of the event
+     * 
+     * @var KEventDispatcher 
+     */
+    protected $_dispatcher;
+         
     /**
      * Get the event name
      * 
@@ -65,6 +62,62 @@ class KEvent extends KConfig
     public function getName()
     {
         return $this->_name;
+    }
+    
+    /**
+     * Set the event name
+     *
+     * @param string	The event name
+     * @return KEvent
+     */
+    public function setName($name)
+    {
+        $this->_name = $name;
+        return $this;
+    }
+    
+    /**
+     * Get the event target
+     *
+     * @return object	The event target
+     */
+    public function getTarget()
+    {
+        return $this->_target;
+    }
+    
+    /**
+     * Set the event target
+     *
+     * @param object	The event target
+     * @return KEvent
+     */
+    public function setTarget(KObjectServiceable $target)
+    {
+        $this->_target = $target;
+        return $this;
+    }
+    
+    /**
+     * Stores the EventDispatcher that dispatches this Event
+     *
+     * @param EventDispatcher $dispatcher
+     * @return KEvent
+     */
+    public function setDispatcher(KEventDispatcherInterface $dispatcher)
+    {
+        $this->_dispatcher = $dispatcher;
+        return $this;
+    }
+    
+    /**
+     * Returns the EventDispatcher that dispatches this Event
+     *
+     * @return KEventDispatcher
+     */
+    public function getDispatcher()
+    {
+        return $this->_dispatcher;
     }
     
     /**

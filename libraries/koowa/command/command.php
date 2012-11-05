@@ -1,25 +1,23 @@
 <?php
 /**
- * @version		$Id$
- * @category	Koowa
- * @package		Koowa_Command
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.nooku.org
+ * @version        $Id$
+ * @package        Koowa_Command
+ * @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
+ * @license        GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link         http://www.nooku.org
  */
 
 /**
  * Command handler
- * 
- * The command handler will translate the command name into a function format and 
+ *
+ * The command handler will translate the command name into a function format and
  * call it for the object class to handle it if the method exists.
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
  * @package     Koowa_Command
  * @uses        KInflector
  */
-class KCommand extends KObject implements KCommandInterface 
+class KCommand extends KObject implements KCommandInterface
 {
     /**
      * Priority levels
@@ -29,29 +27,26 @@ class KCommand extends KObject implements KCommandInterface
     const PRIORITY_NORMAL  = 3;
     const PRIORITY_LOW     = 4;
     const PRIORITY_LOWEST  = 5;
-    
+
     /**
      * The command priority
      *
      * @var integer
      */
     protected $_priority;
-    
+
     /**
      * Constructor.
      *
      * @param   object  An optional KConfig object with configuration options
      */
-    public function __construct( KConfig $config = null) 
-    { 
-        //If no config is passed create it
-        if(!isset($config)) $config = new KConfig();
-        
+    public function __construct(KConfig $config)
+    {
         parent::__construct($config);
-        
+
         $this->_priority = $config->priority;
     }
-    
+
     /**
      * Initializes the options for the object
      *
@@ -63,44 +58,44 @@ class KCommand extends KObject implements KCommandInterface
     protected function _initialize(KConfig $config)
     {
         $config->append(array(
-            'priority'   => KCommand::PRIORITY_NORMAL,
+            'priority' => KCommand::PRIORITY_NORMAL,
         ));
 
         parent::_initialize($config);
     }
-    
+
     /**
      * Command handler
-     * 
+     *
      * @param   string      The command name
      * @param   object      The command context
-     * @return  boolean     Can return both true or false.  
+     * @return  boolean     Can return both true or false.
      */
-    public function execute( $name, KCommandContext $context) 
+    public function execute($name, KCommandContext $context)
     {
         $type = '';
-                
-        if($context->caller)
+
+        if ($context->getSubject())
         {
-            $identifier = clone $context->caller->getIdentifier();
-            
-            if($identifier->path) {
+            $identifier = clone $context->getSubject()->getIdentifier();
+
+            if ($identifier->path) {
                 $type = array_shift($identifier->path);
             } else {
                 $type = $identifier->name;
             }
         }
-        
-        $parts  = explode('.', $name);  
-        $method = !empty($type) ? '_'.$type.ucfirst(KInflector::implode($parts)) : '_'.lcfirst(KInflector::implode($parts));
-        
-        if(in_array($method, $this->getMethods())) {
+
+        $parts = explode('.', $name);
+        $method = !empty($type) ? '_' . $type . ucfirst(KInflector::implode($parts)) : '_' . lcfirst(KInflector::implode($parts));
+
+        if (in_array($method, $this->getMethods())) {
             return $this->$method($context);
         }
-        
+
         return true;
     }
-    
+
     /**
      * Get the priority of the command
      *

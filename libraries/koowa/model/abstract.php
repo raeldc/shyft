@@ -1,144 +1,131 @@
 <?php
 /**
- * @version		$Id$
- * @category	Koowa
- * @package		Koowa_Model
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.nooku.org
+ * @version        $Id$
+ * @package        Koowa_Model
+ * @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
+ * @license        GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link         http://www.nooku.org
  */
 
 /**
  * Abstract Model Class
  *
- * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
+ * @author        Johan Janssens <johan@nooku.org>
  * @package     Koowa_Model
- * @uses		KObject
+ * @uses        KObject
  */
-abstract class KModelAbstract extends KObject
+abstract class KModelAbstract extends KObject implements KModelInterface
 {
-	/**
-	 * A state object
-	 *
-	 * @var object
-	 */
-	protected $_state;
+    /**
+     * A state object
+     *
+     * @var object
+     */
+    protected $_state;
 
-	/**
-	 * List total
-	 *
-	 * @var integer
-	 */
-	protected $_total;
+    /**
+     * List total
+     *
+     * @var integer
+     */
+    protected $_total;
 
-	/**
-	 * Model list data
-	 *
-	 * @var array
-	 */
-	protected $_list;
+    /**
+     * Model list data
+     *
+     * @var array
+     */
+    protected $_list;
 
-	/**
-	 * Model item data
-	 *
-	 * @var mixed
-	 */
-	protected $_item;
-	
-	/**
-	 * Model column data
-	 *
-	 * @var mixed
-	 */
-	protected $_column;
+    /**
+     * Model item data
+     *
+     * @var mixed
+     */
+    protected $_item;
 
-	/**
-	 * Constructor
-	 *
-	 * @param 	object 	An optional KConfig object with configuration options
-	 */
-	public function __construct(KConfig $config = null)
-	{
-        //If no config is passed create it
-		if(!isset($config)) $config = new KConfig();
+    /**
+     * Constructor
+     *
+     * @param     object     An optional KConfig object with configuration options
+     */
+    public function __construct(KConfig $config)
+    {
+        parent::__construct($config);
 
-		parent::__construct($config);
-
-		$this->_state = $config->state;
-	}
-
-	/**
-	 * Initializes the options for the object
-	 *
-	 * Called from {@link __construct()} as a first step of object instantiation.
-	 *
-	 * @param 	object 	An optional KConfig object with configuration options
-	 * @return  void
-	 */
-	protected function _initialize(KConfig $config)
-	{
-		$config->append(array(
-            'state' => new KConfigState(),
-       	));
-
-       	parent::_initialize($config);
+        $this->_state = $config->state;
     }
 
-	/**
-	 * Test the connected status of the model.
-	 *
-	 * @return	boolean	Returns TRUE by default.
-	 */
-    public function isConnected()
-	{
-	    return true;
-	}
+    /**
+     * Initializes the options for the object
+     *
+     * Called from {@link __construct()} as a first step of object instantiation.
+     *
+     * @param     object     An optional KConfig object with configuration options
+     * @return  void
+     */
+    protected function _initialize(KConfig $config)
+    {
+        $config->append(array(
+            'state' => new KConfigState(),
+        ));
 
-	/**
+        parent::_initialize($config);
+    }
+
+    /**
+     * Test the connected status of the model.
+     *
+     * @return    boolean    Returns TRUE by default.
+     */
+    public function isConnected()
+    {
+        return true;
+    }
+
+    /**
      * Set the model state properties
      *
      * This function overloads the KObject::set() function and only acts on state properties it
      * will reset (unsets) the $_list, $_item and $_total model properties when a state changes.
      *
-     * @param   string|array|object	The name of the property, an associative array or an object
-     * @param   mixed  				The value of the property
-     * @return	KModelAbstract
+     * @param   string|array|object    The name of the property, an associative array or an object
+     * @param   mixed                  The value of the property
+     * @return    KModelAbstract
      */
-    public function set( $property, $value = null )
+    public function set($property, $value = null)
     {
-    	$changed = false;
-        
-        if(is_object($property)) {
-    		$property = (array) KConfig::unbox($property);
-    	}
+        $changed = false;
 
-        if(is_array($property))
+        if (is_object($property)) {
+            $property = (array)KConfig::unbox($property);
+        }
+
+        if (is_array($property))
         {
-            foreach($property as $key => $value)
+            foreach ($property as $key => $value)
             {
-                if(isset($this->_state->$key) && $this->_state->$key != $value)
-                {
+                if (isset($this->_state->$key) && $this->_state->$key != $value) {
                     $changed = true;
                     break;
                 }
             }
-            
-        	$this->_state->setData($property);
-        } 
+
+            $this->_state->setData($property);
+        }
         else
         {
-            if(isset($this->_state->$property) && $this->_state->$property != $value) {
+            if (isset($this->_state->$property) && $this->_state->$property != $value) {
                 $changed = true;
             }
-            
+
             $this->_state->$property = $value;
         }
-        
-        if($changed)
+
+        if ($changed)
         {
-            $this->_list  = null;
-            $this->_item  = null;
+            $this->_list = null;
+            $this->_item = null;
             $this->_total = null;
         }
 
@@ -165,12 +152,12 @@ abstract class KModelAbstract extends KObject
     {
         $result = $default;
 
-        if(is_null($property)) {
+        if (is_null($property)) {
             $result = $this->_state->getData();
         }
         else
         {
-            if(isset($this->_state->$property)) {
+            if (isset($this->_state->$property)) {
                 $result = $this->_state->$property;
             }
         }
@@ -180,16 +167,16 @@ abstract class KModelAbstract extends KObject
 
     /**
      * Reset all cached data and reset the model state to it's default
-     * 
+     *
      * @param   boolean If TRUE use defaults when resetting. Default is TRUE
      * @return KModelAbstract
      */
     public function reset($default = true)
     {
-        $this->_list  = null;
-        $this->_item  = null;
+        $this->_list = null;
+        $this->_item = null;
         $this->_total = null;
-        
+
         $this->_state->reset($default);
 
         return $this;
@@ -234,18 +221,17 @@ abstract class KModelAbstract extends KObject
     {
         return $this->_total;
     }
-    
-	/**
+
+    /**
      * Get the model data
-     * 
-     * If the model state is unique this function will call getItem(), otherwise
-     * it will calle getList().
+     *
+     * If the model state is unique this function will call getItem(), otherwise it will call getList().
      *
      * @return KDatabaseRowset or KDatabaseRow
      */
     public function getData()
     {
-        if($this->_state->isUnique()) {
+        if ($this->_state->isUnique()) {
             $data = $this->getItem();
         } else {
             $data = $this->getList();
@@ -253,8 +239,8 @@ abstract class KModelAbstract extends KObject
 
         return $data;
     }
-    
-	/**
+
+    /**
      * Get a model state by name
      *
      * @param   string  The key name.
@@ -276,7 +262,7 @@ abstract class KModelAbstract extends KObject
     {
         $this->set($key, $value);
     }
-      
+
     /**
      * Supports a simple form Fluent Interfaces. Allows you to set states by
      * using the state name as the method name.
@@ -291,14 +277,14 @@ abstract class KModelAbstract extends KObject
      */
     public function __call($method, $args)
     {
-        if(isset($this->_state->$method)) {
+        if (isset($this->_state->$method)) {
             return $this->set($method, $args[0]);
         }
 
         return parent::__call($method, $args);
     }
-    
-	/**
+
+    /**
      * Preform a deep clone of the object.
      *
      * @retun void
@@ -306,7 +292,7 @@ abstract class KModelAbstract extends KObject
     public function __clone()
     {
         parent::__clone();
-        
+
         $this->_state = clone $this->_state;
     }
 }

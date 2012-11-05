@@ -1,18 +1,16 @@
 <?php
 /**
-* @version		$Id$
-* @category		Koowa
-* @package      Koowa_Filter
-* @copyright    Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
-* @license      GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
-* @link 		http://www.nooku.org
-*/
+ * @version		$Id$
+ * @package      Koowa_Filter
+ * @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
+ * @license      GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link 		http://www.nooku.org
+ */
 
 /**
  * Abstract filter.
  *
  * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
  * @package     Koowa_Filter
  */
 abstract class KFilterAbstract extends KObject implements KFilterInterface
@@ -41,7 +39,7 @@ abstract class KFilterAbstract extends KObject implements KFilterInterface
 	{
 		parent::__construct($config); 
 		 
-	    $this->_chain = new KFilterChain();
+	    $this->_chain = $this->getService('koowa:filter.chain');
 		$this->addFilter($this);
 	}
 	
@@ -120,7 +118,7 @@ abstract class KFilterAbstract extends KObject implements KFilterInterface
 	 * @param	mixed	Data to be sanitized
 	 * @return	mixed	The sanitized data
 	 */
-	public final function sanitize($data)
+	final public function sanitize($data)
 	{
 		if($this->_walk && (is_array($data) || is_object($data))) 
 		{

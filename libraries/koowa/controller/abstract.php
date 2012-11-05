@@ -1,11 +1,10 @@
 <?php
 /**
- * @version		$Id$
- * @category	Koowa
- * @package		Koowa_Controller
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.nooku.org
+ * @version        $Id$
+ * @package        Koowa_Controller
+ * @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
+ * @license        GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link         http://www.nooku.org
  */
 
 /**
@@ -14,12 +13,11 @@
  * Note: Concrete controllers must have a singular name
  *
  * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
  * @package     Koowa_Controller
  * @uses        KMixinClass
  * @uses        KCommandChain
  */
-abstract class KControllerAbstract extends KObject
+abstract class KControllerAbstract extends KObject implements KControllerInterface
 {
     /**
      * Array of class methods to call for a given action.
@@ -27,54 +25,61 @@ abstract class KControllerAbstract extends KObject
      * @var array
      */
     protected $_action_map = array();
-  
+
     /**
      * The class actions
      *
      * @var array
      */
     protected $_actions = array();
-    
+
     /**
      * Has the controller been dispatched
      *
      * @var boolean
      */
     protected $_dispatched;
-    
+
     /**
-	 * The request information
-	 *
-	 * @var array
-	 */
-	protected $_request = null;
-	
+     * The request information
+     *
+     * @var array
+     */
+    protected $_request = null;
+
+    /**
+     * The response object
+     *
+     * @var KControllerResponseInterface
+     */
+    protected $_response = null;
+
     /**
      * Constructor.
      *
      * @param   object  An optional KConfig object with configuration options.
      */
-    public function __construct( KConfig $config = null)
+    public function __construct(KConfig $config)
     {
-        //If no config is passed create it
-        if(!isset($config)) $config = new KConfig();
-        
         parent::__construct($config);
-        
+
         //Set the dispatched state
         $this->_dispatched = $config->dispatched;
-        
+
         //Set the mixer in the config
         $config->mixer = $this;
-        
+
         // Mixin the command interface
         $this->mixin(new KMixinCommand($config));
-         
+
         // Mixin the behavior interface
         $this->mixin(new KMixinBehavior($config));
-        	
+
         //Set the request
-		$this->setRequest((array) KConfig::unbox($config->request));
+        $this->setRequest((array)KConfig::unbox($config->request));
+
+        //Set the response
+        $this->_response = $config->response;
     }
 
     /**
@@ -90,20 +95,21 @@ abstract class KControllerAbstract extends KObject
         $config->append(array(
             'command_chain'     => $this->getService('koowa:command.chain'),
             'dispatch_events'   => true,
-            'event_dispatcher'  => $this->getService('koowa:event.dispatcher'),
+            'event_dispatcher'  => $this->getService('koowa:event.dispatcher.default'),
             'enable_callbacks'  => true,
-            'dispatched'		=> false,
-            'request'		    => null,
+            'dispatched'        => false,
+            'request'           => null,
+            'response'          => $this->getService('koowa:controller.response.default'),
             'behaviors'         => array(),
         ));
-        
+
         parent::_initialize($config);
     }
-        
-	/**
+
+    /**
      * Has the controller been dispatched
-     * 
-     * @return  boolean	Returns true if the controller has been dispatched
+     *
+     * @return  boolean    Returns true if the controller has been dispatched
      */
     public function isDispatched()
     {
@@ -114,83 +120,82 @@ abstract class KControllerAbstract extends KObject
      * Execute an action by triggering a method in the derived class.
      *
      * @param   string      The action to execute
-     * @param   object		A command context object
+     * @param   object      A command context object
      * @return  mixed|false The value returned by the called method, false in error case.
      * @throws  KControllerException
      */
     public function execute($action, KCommandContext $context)
     {
         $action = strtolower($action);
-        
+
         //Update the context
-        $context->action = $action;
-        $context->caller = $this;
-        
+        $context->action  = $action;
+        $context->setSubject($this);
+
         //Find the mapped action
-        if (isset( $this->_action_map[$action] )) {
-           $command = $this->_action_map[$action];
+        if (isset($this->_action_map[$action])) {
+            $command = $this->_action_map[$action];
         } else {
-           $command = $action;
+            $command = $action;
         }
-       
+
         //Execute the action
-        if($this->getCommandChain()->run('before.'.$command, $context) !== false) 
+        if ($this->getCommandChain()->run('before.' . $command, $context) !== false)
         {
-            $method = '_action'.ucfirst($command);
-            
-            if(!method_exists($this, $method)) 
-            {             
-                if(isset($this->_mixed_methods[$command])) {      
-                    $context->result = $this->_mixed_methods[$command]->execute('action.'.$command, $context);
+            $method = '_action' . ucfirst($command);
+
+            if (!method_exists($this, $method))
+            {
+                if (isset($this->_mixed_methods[$command])) {
+                    $context->result = $this->_mixed_methods[$command]->execute('action.' . $command, $context);
                 } else {
                     throw new KControllerException("Can't execute '$command', method: '$method' does not exist");
                 }
             }
             else  $context->result = $this->$method($context);
-                
-            $this->getCommandChain()->run('after.'.$command, $context);
+
+            //Handle errors
+            if ($context->response->isError())
+            {
+                $code    = $context->response->getStatusCode();
+                $message = $context->response->getStatusMessage();
+
+                throw new KControllerException($message, $code);
+            }
+
+            $this->getCommandChain()->run('after.' . $command, $context);
         }
-        
-        //Handle exceptions
-        if($context->getError() instanceof KException) 
-        {
-            //@TODO : Move header handling into a response object
-            if($context->headers) 
-	        {
-	            foreach($context->headers as $name => $value) {
-	                header($name.' : '.$value);
-	            }
-	        }
-	        
-            throw $context->getError();
-        }
-       
+
         return $context->result;
     }
-    
-	/**
-     * Mixin an object 
+
+    /**
+     * Mixin an object
      *
-     * @param   object  An object that implements KMinxInterface
+     * When using mixin(), the calling object inherits the methods of the mixed in objects, in a LIFO order.
+     *
+     * @@param   mixed    An object that implements KMixinInterface, KServiceIdentifier object
+     *                     or valid identifier string
+     * @param    array An optional associative array of configuration options
      * @return  KObject
      */
-    public function mixin(KMixinInterface $object)
+    public function mixin($mixin, $config = array())
     {
-        if($object instanceof KControllerBehaviorAbstract) 
+        if ($mixin instanceof KControllerBehaviorAbstract)
         {
-            foreach($object->getMethods() as $method)
+            foreach ($mixin->getMethods() as $method)
             {
-                if(substr($method, 0, 7) == '_action') {
+                if (substr($method, 0, 7) == '_action') {
                     $this->_actions[] = strtolower(substr($method, 7));
-                }  
+                }
             }
-            
+
             $this->_actions = array_unique(array_merge($this->_actions, array_keys($this->_action_map)));
         }
-        
-        return parent::mixin($object);   
+
+        return parent::mixin($mixin, $config);
     }
-    
+
     /**
      * Gets the available actions in the controller.
      *
@@ -198,48 +203,48 @@ abstract class KControllerAbstract extends KObject
      */
     public function getActions()
     {
-        if(!$this->_actions)
+        if (!$this->_actions)
         {
             $this->_actions = array();
-               
-            foreach($this->getMethods() as $method)
+
+            foreach ($this->getMethods() as $method)
             {
-                if(substr($method, 0, 7) == '_action') {
+                if (substr($method, 0, 7) == '_action') {
                     $this->_actions[] = strtolower(substr($method, 7));
-                }  
+                }
             }
-            
+
             $this->_actions = array_unique(array_merge($this->_actions, array_keys($this->_action_map)));
         }
-        
+
         return $this->_actions;
     }
-    
-	/**
-	 * Get the request information
-	 *
-	 * @return KConfig	A KConfig object with request information
-	 */
-	public function getRequest()
-	{
-		return $this->_request;
-	}
 
-	/**
-	 * Set the request information
-	 *
-	 * @param array	An associative array of request information
-	 * @return KControllerBread
-	 */
-	public function setRequest(array $request)
-	{
-		$this->_request = new KConfig();
-		foreach($request as $key => $value) {
-		    $this->$key = $value;
-		}
-		
-		return $this;
-	}
+    /**
+     * Get the request information
+     *
+     * @return KConfig    A KConfig object with request information
+     */
+    public function getRequest()
+    {
+        return $this->_request;
+    }
+
+    /**
+     * Set the request information
+     *
+     * @param array    An associative array of request information
+     * @return KControllerAbstract
+     */
+    public function setRequest(array $request)
+    {
+        $this->_request = new KConfig();
+        foreach ($request as $key => $value) {
+            $this->$key = $value;
+        }
+
+        return $this;
+    }
 
     /**
      * Register (map) an action to a method in the class.
@@ -249,91 +254,92 @@ abstract class KControllerAbstract extends KObject
      *                  for this action.
      * @return  KControllerAbstract
      */
-    public function registerActionAlias( $alias, $action )
+    public function registerActionAlias($alias, $action)
     {
-        $alias = strtolower( $alias ); 
-        
-        if ( !in_array($alias, $this->getActions()) )  { 
-            $this->_action_map[$alias] = $action; 
-        }    
-        
+        $alias = strtolower($alias);
+
+        if (!in_array($alias, $this->getActions())) {
+            $this->_action_map[$alias] = $action;
+        }
+
         //Force reload of the actions
         $this->_actions = array_unique(array_merge($this->_actions, array_keys($this->_action_map)));
-    
+
         return $this;
-    }
-  
-	/**
-     * Set a request properties
-     *
-     * @param  	string 	The property name.
-     * @param 	mixed 	The property value.
-     */
- 	public function __set($property, $value)
-    {
-    	$this->_request->$property = $value;
-  	}
-  	
-  	/**
-     * Get a request property
-     *
-     * @param  	string 	The property name.
-     * @return 	string 	The property value.
-     */
-    public function __get($property)
-    {
-    	$result = null;
-    	if(isset($this->_request->$property)) {
-    		$result = $this->_request->$property;
-    	} 
-    	
-    	return $result;
     }
 
     /**
-     * Execute a controller action by it's name. 
-	 *
-	 * Function is also capable of checking is a behavior has been mixed succesfully
-	 * using is[Behavior] function. If the behavior exists the function will return 
-	 * TRUE, otherwise FALSE.
-     * 
+     * Set a request properties
+     *
+     * @param      string     The property name.
+     * @param     mixed     The property value.
+     */
+    public function __set($property, $value)
+    {
+        $this->_request->$property = $value;
+    }
+
+    /**
+     * Get a request property
+     *
+     * @param      string     The property name.
+     * @return     string     The property value.
+     */
+    public function __get($property)
+    {
+        $result = null;
+        if (isset($this->_request->$property)) {
+            $result = $this->_request->$property;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Execute a controller action by it's name.
+     *
+     * Function is also capable of checking is a behavior has been mixed succesfully
+     * using is[Behavior] function. If the behavior exists the function will return
+     * TRUE, otherwise FALSE.
+     *
      * @param   string  Method name
      * @param   array   Array containing all the arguments for the original call
      * @see execute()
      */
     public function __call($method, $args)
-    {  
+    {
         //Handle action alias method
-        if(in_array($method, $this->getActions())) 
+        if (in_array($method, $this->getActions()))
         {
             //Get the data
             $data = !empty($args) ? $args[0] : array();
-            
+
             //Create a context object
-            if(!($data instanceof KCommandContext))
+            if (!($data instanceof KCommandContext))
             {
                 $context = $this->getCommandContext();
-                $context->data   = $data;
-                $context->result = false;
-            } 
+                $context->response = $this->_response;
+                $context->data     = $data;
+                $context->result   = false;
+            }
             else $context = $data;
-           
+
             //Execute the action
             return $this->execute($method, $context);
         }
-        
-        //Check if a behavior is mixed
-		$parts = KInflector::explode($method);
 
-		if($parts[0] == 'is' && isset($parts[1]))
-		{
-            if(!isset($this->_mixed_methods[$method])) { 
-			    return false;
+        //Check if a behavior is mixed
+        $parts = KInflector::explode($method);
+
+        if ($parts[0] == 'is' && isset($parts[1]))
+        {
+            if (!isset($this->_mixed_methods[$method])) {
+                return false;
             }
-            
+
             return true;
-		}
-     
+        }
+
         return parent::__call($method, $args);
     }
 }

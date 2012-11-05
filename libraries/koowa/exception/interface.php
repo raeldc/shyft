@@ -1,9 +1,8 @@
 <?php
 /**
  * @version		$Id$
- * @category	Koowa
  * @package		Koowa_Exception
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright	Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://www.nooku.org
  */
@@ -12,7 +11,6 @@
  * Exception Interface
  *
  * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
  * @package     Koowa_Exception
  */
 interface KExceptionInterface
@@ -58,19 +56,4 @@ interface KExceptionInterface
 	 * @return string
 	 */
     public function getTraceAsString();
-
-    /**
-	 * Format the exception for display
-	 *
-	 * @return string
-	 */
-    public function __toString();
-
-    /**
-	 * Constructor
-	 *
-	 * @param string  The exception message
-	 * @param integer The exception code
-	 */
-    public function __construct($message = null, $code = 0);
 }

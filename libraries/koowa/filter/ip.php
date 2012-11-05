@@ -1,18 +1,16 @@
 <?php
 /**
 * @version		$Id$
-* @category		Koowa
 * @package      Koowa_Filter
-* @copyright    Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+* @copyright    Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
 * @license      GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
 * @link 		http://www.nooku.org
 */
 
 /**
  * IP filter
- * 
+ *
  * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
  * @package     Koowa_Filter
  */
 class KFilterIP extends KFilterAbstract
@@ -28,7 +26,7 @@ class KFilterIP extends KFilterAbstract
 		$value = trim($value);
 		return (false !== filter_var($value, FILTER_VALIDATE_IP));
 	}
-	
+
 	/**
 	 * Sanitize a value
 	 *

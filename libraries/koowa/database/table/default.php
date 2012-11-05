@@ -1,25 +1,23 @@
 <?php
 /**
- * @version     $Id$
- * @category    Koowa
+ * @version		$Id$
  * @package     Koowa_Database
  * @subpackage  Table
- * @copyright   Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
- * @license     GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link        http://www.nooku.org
+ * @copyright	Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
+ * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+ * @link     	http://www.nooku.org
  */
 
 /**
  * Default Database Table Class
  *
- * @author      Johan Janssens <johan@nooku.org>
- * @category    Koowa
+ * @author		Johan Janssens <johan@nooku.org>
  * @package     Koowa_Database
  * @subpackage  Table
  */
 class KDatabaseTableDefault extends KDatabaseTableAbstract implements KServiceInstantiatable
 {
-    /**
+	/**
      * Force creation of a singleton
      *
      * @param 	object 	An optional KConfig object with configuration options
@@ -36,7 +34,7 @@ class KDatabaseTableDefault extends KDatabaseTableAbstract implements KServiceIn
             $instance  = new $classname($config);
             $container->set($config->service_identifier, $instance);
         }
-        
+
         return $container->get($config->service_identifier);
     }
 }

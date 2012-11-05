@@ -1,10 +1,9 @@
 <?php
 /**
  * @version		$Id$
- * @category	Koowa
  * @package     Koowa_Database
  * @subpackage  Row
- * @copyright	Copyright (C) 2007 - 2010 Johan Janssens. All rights reserved.
+ * @copyright	Copyright (C) 2007 - 2012 Johan Janssens. All rights reserved.
  * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://www.nooku.org
  */
@@ -13,7 +12,6 @@
  * Database Row Interface
  *
  * @author		Johan Janssens <johan@nooku.org>
- * @category	Koowa
  * @package     Koowa_Database
  * @subpackage  Row
  */
@@ -25,6 +23,29 @@ interface KDatabaseRowInterface
      * @return string The status value.
      */
     public function getStatus();
+    
+    /**
+     * Set the status
+     *
+     * @param   string|null     The status value or NULL to reset the status
+     * @return  KDatabaseRowAbstract
+     */
+    public function setStatus($status);
+    
+    /**
+     * Returns the status message
+     *
+     * @return string The status message
+     */
+    public function getStatusMessage();  
+    
+    /**
+     * Set the status message
+     *
+     * @param   string      The status message
+     * @return  KDatabaseRowAbstract
+     */
+    public function setStatusMessage($message);
 
 	/**
      * Load the row from the database.
@@ -32,7 +53,7 @@ interface KDatabaseRowInterface
      * @return object	If successfull returns the row object, otherwise NULL
      */
 	public function load();
-    
+
     /**
      * Saves the row to the database.
      *
@@ -49,7 +70,7 @@ interface KDatabaseRowInterface
      * @return KDatabaseRowInterface
      */
     public function delete();
-    
+
     /**
      * Count the rows in the database based on the data in the row
      *
@@ -90,12 +111,20 @@ interface KDatabaseRowInterface
     public function getModified();
 
     /**
+     * Check if a column has been modified
+     *
+     * @param   string  The column name.
+     * @return  boolean
+     */
+    public function isModified($column);
+
+    /**
      * Checks if the row is new or not
      *
      * @return bool
      */
     public function isNew();
-    
+
 	/**
 	 * Test the connected status of the row.
 	 *
