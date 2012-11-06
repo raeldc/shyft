@@ -20,3 +20,9 @@ logs/last_run.json
 update-koowa
 
 .htaccess
+/composer.lock
+/libraries/autoload.php
+/libraries/bin/
+/libraries/composer/
+/libraries/phpunit/
+/libraries/symfony/
