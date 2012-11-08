@@ -14,8 +14,8 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 			'routes' => array(
 				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=admin&com=dashboard',
 				'[<lang>/]admin/pages[/<page>][/<uri>][.<format>]' => 'mode=admin&com=pages',
-				'[<lang>][/][<page>[/<uri>][.<format>]]'           => 'mode=site&page=&uri=',
-				'[<lang>][/][<uri>[.<format>]]'                    => 'mode=site&page=&uri=',
+				'[<lang>/][<page>[/<uri>][.<format>]]'           => 'mode=site&com=content',
+				'[<lang>/][<uri>[.<format>]]'                    => 'mode=site&com=content',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -24,13 +24,13 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 				// @TODO: must be populated by all installed components.
 				'com'	 => array('dashboard','widgets'),
 				// @TODO: must be populated by all enabled pages
-				'page'   => 'blog|about-us|contacts',
+				'page'   => 'home|blog|about-us|users',
 			),
 			'defaults' => array(
 				'mode'   => 'site',
 				'lang'   => 'en',
 				'format' => 'html',
-				'page'   => '',
+				'page'   => 'home',
 				'uri'    => '',
 				'com'    => 'dashboard',
 			),
@@ -48,7 +48,7 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 				'com'    => 'widgets',
 				'uri'    => 'edit/40',
 				'format' => 'html',
-				'page'   => ''
+				'page'   => 'home'
 			)
 		));
 
@@ -61,6 +61,78 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 				'page'   => 'blog',
 				'uri'    => 'edit/50-50',
 				'format' => 'json',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$this->router->parse('en/blog/edit/50-50.json'),
+			array(
+				'lang'   => 'en',
+				'mode'   => 'site',
+				'page'   => 'blog',
+				'uri'    => 'edit/50-50',
+				'format' => 'json',
+				'com'    => 'content',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$this->router->parse('about-us'),
+			array(
+				'lang'   => 'en',
+				'mode'   => 'site',
+				'page'   => 'about-us',
+				'uri'    => '',
+				'format' => 'html',
+				'com'    => 'content',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$this->router->parse('users/list'),
+			array(
+				'lang'   => 'en',
+				'mode'   => 'site',
+				'page'   => 'users',
+				'uri'    => 'list',
+				'format' => 'html',
+				'com'    => 'content',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$this->router->parse('title-of-content.json'),
+			array(
+				'lang'   => 'en',
+				'mode'   => 'site',
+				'page'   => 'home',
+				'uri'    => 'title-of-content',
+				'format' => 'json',
+				'com'    => 'content',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$this->router->parse('en-gb/title-of-content.json'),
+			array(
+				'lang'   => 'en-gb',
+				'mode'   => 'site',
+				'page'   => 'home',
+				'uri'    => 'title-of-content',
+				'format' => 'json',
+				'com'    => 'content',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$this->router->parse(''),
+			array(
+				'lang'   => 'en',
+				'mode'   => 'site',
+				'page'   => 'home',
+				'uri'    => '',
+				'format' => 'html',
+				'com'    => 'content',
 			)
 		));
 	}
