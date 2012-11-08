@@ -36,7 +36,7 @@ class SServiceLocatorKoowa extends KServiceLocatorKoowa
 			$path .= '/'.$identifier->name;
 		}
 
-		$path = Shyft::findFile($path.'.php', $identifier->basepath);
+		$path = Shyft::getInstance()->findFile($path.'.php', $identifier->basepath);
 		return $path;
 	}
 }

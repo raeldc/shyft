@@ -132,7 +132,7 @@ class SServiceLocatorComponent extends KServiceLocatorAbstract
 			else $path  = strtolower($identifier->name);	
 		}
 
-		$path = Shyft::findFile('/components/'.$component.'/'.$path.'.php', $identifier->basepath);
+		$path = Shyft::getInstance()->findFile('/components/'.$component.'/'.$path.'.php', $identifier->basepath);
 
 		return $path;
 	}

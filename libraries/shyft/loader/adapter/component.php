@@ -66,7 +66,7 @@ class SLoaderAdapterComponent extends KLoaderAdapterComponent
 			} 
 			else $path = $file;
 
-			$path = Shyft::findFile($component.'/'.$path.'.php', $basepath);
+			$path = Shyft::getInstance()->findFile($component.'/'.$path.'.php', $basepath);
 		}
 		return $path;
 	}

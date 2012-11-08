@@ -56,7 +56,7 @@ class SServiceLocatorTheme extends KServiceLocatorAbstract
 			$path = '/'.implode('/', $parts);
 		}
 
-		$path = Shyft::findFile('/themes/'.$theme.$path.'/'.$layout.'.php', $identifier->basepath);
+		$path = Shyft::getInstance()->findFile('/themes/'.$theme.$path.'/'.$layout.'.php', $identifier->basepath);
 
 		return $path;
 	}

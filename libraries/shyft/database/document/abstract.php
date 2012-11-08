@@ -76,7 +76,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
 
 		$config->append(array(
 			'command_chain'     => $this->getService('koowa:command.chain'),
-            'event_dispatcher'  => $this->getService('koowa:event.dispatcher'),
+            'event_dispatcher'  => $this->getService('koowa:event.dispatcher.default'),
             'dispatch_events'   => false,
             'enable_callbacks'  => false,
 
@@ -405,7 +405,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
 
 		if (is_null($instance)) 
         {
-			$instance = new SDatabaseQueryDocument();
+			$instance = new SDatabaseQueryDocument(new KConfig());
 		}
 
         if (is_array($query)) 

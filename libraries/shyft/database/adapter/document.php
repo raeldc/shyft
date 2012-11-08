@@ -39,7 +39,7 @@ class SDatabaseAdapterDocument extends KObject
     		'database'			=> 'shyft',
     		'synced'			=> true,
     		'command_chain'		=> $this->getService('koowa:command.chain'),
-    		'event_dispatcher'  => $this->getService('koowa:event.dispatcher'),
+    		'event_dispatcher'  => $this->getService('koowa:event.dispatcher.default'),
 			'options'	=> array(
     			'host'		=> 'localhost', 
     			'username'	=> '',

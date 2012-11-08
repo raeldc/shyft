@@ -26,55 +26,57 @@ class Shyft
     /**
      * Path to Shyft libraries
      */
-    protected static $_path;
+    protected $_path;
 
     /**
-     * Container for singleton self instance
+     * Already initialized?
      */
-    public static $instance;
+    protected $_initialized;
 
     /**
      * Container for paths to essential directories
      */
-    public static $paths;
+    protected $_paths = array();
 
-    final public function __construct($paths)
+    /**
+     * Get the version of the Shyft library
+     */
+    public static function getVersion()
     {
-        // Don't do anything else if instance is already created.
-        if (self::$instance !== null)
-            return false;
+        return self::VERSION;
+    }
 
-        self::$paths['libraries']   = (isset($paths['libraries']))  ? $paths['libraries']   : SYSTEM_LIBRARIES;
-        self::$paths['components']  = (isset($paths['components'])) ? $paths['components']  : SYSTEM_COMPONENTS;
-        self::$paths['themes']      = (isset($paths['themes']))     ? $paths['themes']      : SYSTEM_THEMES;
-        self::$paths['site']        = (isset($paths['site']))       ? $paths['site']        : SYSTEM_ROOT;
+    public function initialize()
+    {
+    	if($this->_initialized) {
+    		return $this;
+    	}
 
         // Exception Classes
-        require_once self::findFile('koowa/exception/interface.php',      self::$paths['libraries']);
-        require_once self::findFile('koowa/exception/exception.php',      self::$paths['libraries']);
+        require_once $this->findFile('koowa/exception/interface.php',      $this->_paths['libraries']);
+        require_once $this->findFile('koowa/exception/exception.php',      $this->_paths['libraries']);
 
         // Loader Classes
-        require_once self::findFile('koowa/loader/adapter/interface.php', self::$paths['libraries']);
-        require_once self::findFile('koowa/loader/adapter/exception.php', self::$paths['libraries']);
-        require_once self::findFile('koowa/loader/adapter/abstract.php',  self::$paths['libraries']);
-        require_once self::findFile('shyft/loader/adapter/koowa.php',     self::$paths['libraries']);
-        require_once self::findFile('shyft/loader/adapter/shyft.php',     self::$paths['libraries']);
+        require_once $this->findFile('koowa/loader/adapter/interface.php', $this->_paths['libraries']);
+        require_once $this->findFile('koowa/loader/adapter/exception.php', $this->_paths['libraries']);
+        require_once $this->findFile('koowa/loader/adapter/abstract.php',  $this->_paths['libraries']);
+        require_once $this->findFile('shyft/loader/adapter/koowa.php',     $this->_paths['libraries']);
+        require_once $this->findFile('shyft/loader/adapter/shyft.php',     $this->_paths['libraries']);
 
         // Registry Classes
-        require_once self::findFile('koowa/loader/registry.php',          self::$paths['libraries']);
+        require_once $this->findFile('koowa/loader/registry.php',          $this->_paths['libraries']);
 
         // Get Shyft Loader
-        require_once self::findFile('shyft/loader/loader.php',            self::$paths['libraries']);
+        require_once $this->findFile('shyft/loader/loader.php',            $this->_paths['libraries']);
 
         // Inject the Koowa and Shyft loader adapters into the SLoader.
         $loader = SLoader::getInstance(array(
-            'koowa_adapter' => new SLoaderAdapterKoowa(array('basepath' => self::$paths['libraries'])),
-            'shyft_adapter' => new SLoaderAdapterShyft(array('basepath' => self::$paths['libraries']))
+            'koowa_adapter' => new SLoaderAdapterKoowa(array('basepath' => $this->_paths['libraries'])),
+            'shyft_adapter' => new SLoaderAdapterShyft(array('basepath' => $this->_paths['libraries']))
         ));
 
         // Register the Koowa and Shyft Identifier Adapters
-        KServiceIdentifier::addLocator(new SServiceLocatorKoowa());
-        KServiceIdentifier::addLocator(new SServiceLocatorShyft());
+        KServiceIdentifier::addLocator(new SServiceLocatorShyft(new KConfig()));
 
         //Setup the factory
         KService::getInstance()->set('shyft:loader', $loader);
@@ -86,21 +88,27 @@ class Shyft
          */
 
         // Register the application's Loader Adapters
-        SLoader::addAdapter(new SLoaderAdapterComponent(array('basepath' => self::$paths['components'])));
+        SLoader::addAdapter(new SLoaderAdapterComponent(array('basepath' => $this->_paths['components'])));
 
         // Register the application's Identifier Adapaters
         KServiceIdentifier::addLocator(KService::get('shyft:service.locator.component'));
         KServiceIdentifier::addLocator(KService::get('shyft:service.locator.theme'));
 
-        KServiceIdentifier::setApplication('site' , self::$paths['site']);
+        KServiceIdentifier::setApplication('site' , $this->_paths['site']);
+
+        $this->_initialized = true;
+
+        return $this;
     }
 
-    /**
-     * Get the version of the Shyft library
-     */
-    public static function getVersion()
+    public function setPaths($paths)
     {
-        return self::VERSION;
+        $this->_paths['libraries']   = (isset($paths['libraries']))  ? $paths['libraries']   : SYSTEM_LIBRARIES;
+        $this->_paths['components']  = (isset($paths['components'])) ? $paths['components']  : SYSTEM_COMPONENTS;
+        $this->_paths['templates']   = (isset($paths['templates']))  ? $paths['templates']   : SYSTEM_TEMPLATES;
+        $this->_paths['site']   = (isset($paths['site']))  ? $paths['site']   : DOCUMENT_ROOT;
+
+    	return $this;
     }
 
     /**
@@ -108,20 +116,22 @@ class Shyft
      */
     public static function getPath()
     {
-        if(!isset(self::$_path)) {
-            self::$_path = dirname(__FILE__);
+        if(!isset($this->_path)) {
+            $this->_path = dirname(__FILE__);
         }
 
-        return self::$_path;
+        return $this->_path;
     }
 
-    public static function getInstance($directories = array())
+    public static function getInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new self($directories);
+    	static $instance;
+
+        if ($instance === null) {
+            $instance = new self();
         }
 
-        return self::$instance;
+        return $instance;
     }
 
     /**

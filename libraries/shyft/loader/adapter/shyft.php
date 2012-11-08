@@ -54,11 +54,11 @@ class SLoaderAdapterShyft extends KLoaderAdapterAbstract
 			if(count($parts) == 1) {
 				$path = $path.'/'.$path;
 			}
-			if(!is_file(Shyft::findFile('shyft/'.$path.'.php', $this->_basepath))) {
+			if(!is_file(Shyft::getInstance()->findFile('shyft/'.$path.'.php', $this->_basepath))) {
 				$path = $path.'/'.strtolower(array_pop($parts));
 			}
 
-			$path = Shyft::findFile('shyft/'.$path.'.php', $this->_basepath);
+			$path = Shyft::getInstance()->findFile('shyft/'.$path.'.php', $this->_basepath);
 		}
 
 		return $path;
