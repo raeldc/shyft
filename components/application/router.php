@@ -19,7 +19,7 @@ final class ComApplicationRouter extends SRouterDefault
 		// Get the confiugration if SEF URL is activated
 		$this->_sefurl = $config->sefurl;
 	}
-	
+
 	protected function _initialize(KConfig $config)
 	{
 		$config->append(array(
@@ -61,11 +61,11 @@ final class ComApplicationRouter extends SRouterDefault
 
 	public function getRequest()
 	{
-		if(!($this->_request instanceof KConfig)) 
+		if(!($this->_request instanceof KConfig))
 		{
 			if(!$this->_sefurl){
 				$application = new KConfig(array_merge($this->_defaults, KRequest::get('get', 'string')));
-			}else{ 
+			}else{
 				$application = new KConfig($this->parse($this->getUri()));
 			}
 
@@ -83,13 +83,13 @@ final class ComApplicationRouter extends SRouterDefault
 			}
 
 			// If sefurl is turned on
-			if($this->_sefurl && !empty($application->uri)) 
+			if($this->_sefurl && !empty($application->uri))
 			{
 				$component = $this->getRouter($application->com)
 						->parse($application->uri);
 			}
 			// Else we just get the request values from $_GET
-			elseif(!$this->_sefurl) 
+			elseif(!$this->_sefurl)
 				$component = array_merge($component, KRequest::get('get', 'string'));
 
 			// Clear all empty application parameters so that values from component can be appended to it
@@ -114,7 +114,7 @@ final class ComApplicationRouter extends SRouterDefault
 	public function build($httpquery)
 	{
 		// $httpquery is expected to come from the component.
-		parse_str($httpquery, $query);	
+		parse_str($httpquery, $query);
 
 		$application = $this->_request->application->toArray();
 
@@ -131,9 +131,9 @@ final class ComApplicationRouter extends SRouterDefault
 			if ($application['mode'] == 'site') {
 				unset($application['com']);
 			}
-			
+
 			// Remove values that are equal to defaults
-			foreach ($application as $key => $value) 
+			foreach ($application as $key => $value)
 			{
 				if (isset($this->_defaults[$key]) && $this->_defaults[$key] == $value) {
 					unset($application[$key]);
@@ -144,9 +144,9 @@ final class ComApplicationRouter extends SRouterDefault
 		}
 
 		// Merge the query's values into application's request
-		foreach($query as $key => $value) 
+		foreach($query as $key => $value)
 		{
-			if(isset($application[$key])) 
+			if(isset($application[$key]))
 			{
 				// Merge only if the application has the same parameter
 				$application[$key] = $value;
@@ -176,7 +176,7 @@ final class ComApplicationRouter extends SRouterDefault
 		}
 
 		// If base is true, use only the application request to build the route.
-		if(isset($query['base'])) 
+		if(isset($query['base']))
 		{
 			unset($application['uri']);
 			$uri = parent::build(http_build_query($application));
@@ -189,7 +189,7 @@ final class ComApplicationRouter extends SRouterDefault
 		$getvars = '';
 
 		// Get the extra get vars from the component's router which will be appended on the final URI.
-		if(strpos($application['uri'], '?') !== false) 
+		if(strpos($application['uri'], '?') !== false)
 		{
 			list($application['uri'], $getvars) = explode('?', $application['uri'], 2);
 			$getvars = '?'.$getvars;
@@ -202,7 +202,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 	public function getRouter($component)
 	{
-		if(!isset($this->_routers[$component])) 
+		if(!isset($this->_routers[$component]))
 		{
 			$identifier          = clone $this->getIdentifier();
 			$identifier->package = $component;
@@ -211,7 +211,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 			$this->_routers[$component] = $this->getService($identifier);
 		}
-		
+
 		return $this->_routers[$component];
 	}
 
@@ -220,7 +220,7 @@ final class ComApplicationRouter extends SRouterDefault
 		$page = null;
 		$pages = $this->getPages();
 
-		if(!empty($id)) 
+		if(!empty($id))
 		{
 			if(!in_array($id, array('default','admin','manage')))
 			{
@@ -229,7 +229,7 @@ final class ComApplicationRouter extends SRouterDefault
 		}
 
 		if(is_null($page)) {
-			$page = $pages->find(array('default' => true))->current();	
+			$page = $pages->find(array('default' => true))->current();
 		}
 
 		if(is_null($page)) {
@@ -256,12 +256,12 @@ final class ComApplicationRouter extends SRouterDefault
 	public function getPageList()
 	{
 		// @TODO: cache the result
-		if (is_null($this->_page_list)) 
+		if (is_null($this->_page_list))
 		{
 			$pages = $this->getPages();
 			$this->_page_list = '';
 
-			foreach ($pages as $page) 
+			foreach ($pages as $page)
 			{
 				if (!empty($this->_page_list)) {
 					$this->_page_list .= '|';
@@ -273,7 +273,7 @@ final class ComApplicationRouter extends SRouterDefault
 
 		return $this->_page_list;
 	}
-	
+
 	/**
 	 * Get the URI of the request using PATH_INFO,
 	 * REQUEST_URI, PHP_SELF or REDIRECT_URL.
@@ -311,7 +311,7 @@ final class ComApplicationRouter extends SRouterDefault
 			elseif(isset($_SERVER['REDIRECT_URL'])) {
 				$uri = $_SERVER['REDIRECT_URL'];
 			}
-			else{ 
+			else{
 				throw new SRouterException('Unable to get the URI using PATH_INFO, REQUEST_URI, PHP_SELF or REDIRECT_URL');
 			}
 

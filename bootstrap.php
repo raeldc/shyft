@@ -15,9 +15,9 @@ define('SYSTEM_TEMPLATES',  realpath(SYSTEM_ROOT.'/templates'));
 require_once SYSTEM_LIBRARIES.'/autoload.php';
 require_once SYSTEM_LIBRARIES.'/shyft/shyft.php';
 
-Shyft::getInstance()->setPaths([
+Shyft::getInstance()->setPaths(array(
 	'libraries'  => SYSTEM_LIBRARIES,
 	'components' => SYSTEM_COMPONENTS,
 	'templates'  => SYSTEM_TEMPLATES,
 	'site' 		 => DOCUMENT_ROOT
-])->initialize();
+))->initialize();
