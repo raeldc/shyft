@@ -19,7 +19,7 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
-				'uri'    => '[a-zA-Z0-9\-+.:_/]+',
+				'uri'    => '[a-zA-Z0-9\-+:_/]+',
 				'format' => '[a-z]+$',
 				// @TODO: must be populated by all installed components.
 				'com'	 => array('dashboard','widgets'),
@@ -46,20 +46,20 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 				'lang'   => 'en-gb',
 				'mode'   => 'admin',
 				'com'    => 'widgets',
-				'uri'    => 'edit/40.html',
+				'uri'    => 'edit/40',
 				'format' => 'html',
 				'page'   => ''
 			)
 		));
-		var_dump($this->router->parse('ch/admin/pages/blog/edit/40.json'));
+
 		$this->assertTrue($this->arraysAreSimilar(
-			$this->router->parse('ch/admin/pages/blog/edit/40.json'),
+			$this->router->parse('ch/admin/pages/blog/edit/50-50.json'),
 			array(
 				'lang'   => 'ch',
 				'mode'   => 'admin',
 				'com'    => 'pages',
 				'page'   => 'blog',
-				'uri'    => 'edit/40',
+				'uri'    => 'edit/50-50',
 				'format' => 'json',
 			)
 		));
