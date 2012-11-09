@@ -140,10 +140,7 @@ class SRouter extends KObject implements KServiceInstantiatable
 			{
 				list($key, $param) = $match;
 
-				// Remove indicators from the default's values
-				$defaults[$param] = str_replace(array('!', '#'), '', $defaults[$param]);
-
-				// If the optional parameter is equal to defaults, don't replace it.
+				// If the optional parameter is not equal to defaults, put it in the uri.
 				if (isset($query[$param]) && $query[$param] != $defaults[$param])
 				{
 					// Replace the key with the parameter value
@@ -307,63 +304,13 @@ class SRouter extends KObject implements KServiceInstantiatable
 		}
 		else $query = $httpquery;
 
-		// We will match the query based on how similar they are
-		$best_match = 'default';
-		$similarities = array('default' => 0);
-
 		foreach ($this->_routes as $route)
 		{
-			$similarities[$route->rule] = $this->getSimilarity($route->query, $query);
-			$best_match = ($similarities[$route->rule] > $similarities[$best_match]) ? $route->rule : $best_match;
-		}
-
-		if ($best_match == 'default') {
-			throw new SRouterException('Cant find a match for '. http_build_query($query));
-		}
-
-		return $this->_routes[$best_match];
-	}
-
-	/**
-	 * Calculate similarity based on how much keys and values match.
-	 * 		Add one point for each similar key or value.
-	 *
-	 */
-	public function getSimilarity($base, $query)
-	{
-		if (!is_array($query)) {
-			parse_str($query, $subject);
-		}
-		else $subject = $query;
-
-		parse_str($base, $model);
-
-		$points = 0;
-
-		foreach ($model as $key => $value)
-		{
-			if(array_key_exists($key, $subject))
-			{
-				if(substr($value, 0, 1) === '!')
-				{
-					// Higher points if the parameters are different
-					$parameter = substr($value, 1);
-					if($parameter != $subject[$key]){
-						$points++;
-					}
-				}
-				elseif(substr($value, 0, 1) === '#')
-				{
-					// Higher points if the parameters are the same
-					$parameter = substr($value, 1);
-					if($parameter == $subject[$key]){
-						$points++;
-					}
-
-				}
+			if(isset($httpquery['route']) && $httpquery['route'] == $route->default_values->route){
+				return $route;
 			}
 		}
 
-		return $points;
+		throw new SRouterException('Cant find a match for '. http_build_query($query));
 	}
 }
