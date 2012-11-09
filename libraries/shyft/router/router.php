@@ -107,7 +107,7 @@ class SRouter extends KObject implements KServiceInstantiatable
 		parse_str($httpquery, $query);
 
 		// Find which rule to use in building the route based on the query
-		$route = $this->getMatch($query);
+		$route = $this->getBuilderRoute($query);
 
 		// Start with the the route's rule
 		$uri = $route->rule;
@@ -295,7 +295,7 @@ class SRouter extends KObject implements KServiceInstantiatable
 	 * Find the rule that best matches the query string
 	 *
 	 */
-	public function getMatch($httpquery)
+	public function getBuilderRoute($httpquery)
 	{
 		// @TODO: Cache the results
 
