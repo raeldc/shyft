@@ -13,10 +13,10 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 	{
 		$router = KService::get('shyft:router.default', array(
 			'routes' => array(
-				'<id>'      		  => '',
-				'new'                 => 'view=content&layout=form',
-				'edit/<id>'           => 'view=content&layout=form',
-				'contents[/<layout>]' => 'view=contents',
+				'new'                 => 'route=new&view=content&layout=form',
+				'edit/<id>'           => 'route=edit&view=content&layout=form',
+				'contents[/<layout>]' => 'route=list&view=contents',
+				'<id>'      		  => 'route=default&view=content',
 			),
 			'defaults' => array(
 				'view'   => 'content',
@@ -30,6 +30,15 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 				'view'   => 'content',
 				'layout' => 'default',
 				'id'	 => '50',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$router->parse('slug-of-item'),
+			array(
+				'view'   => 'content',
+				'layout' => 'default',
+				'id'	 => 'slug-of-item',
 			)
 		));
 

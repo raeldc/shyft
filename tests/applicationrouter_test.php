@@ -12,10 +12,10 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 
 		$this->router = KService::get('shyft:router.default', array(
 			'routes' => array(
-				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=admin&com=dashboard',
-				'[<lang>/]admin/pages[/<page>][/<uri>][.<format>]' => 'mode=admin&com=pages',
-				'[<lang>/][<page>[/<uri>][.<format>]]'           => 'mode=site&com=content',
-				'[<lang>/][<uri>[.<format>]]'                    => 'mode=site&com=content',
+				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'route=admin-component&mode=admin&com=dashboard',
+				'[<lang>/]admin/pages[/<page>][/<uri>][.<format>]' => 'route=admin-pages&mode=admin&com=pages&page=',
+				'[<lang>/][<page>[/<uri>][.<format>]]'             => 'route=site-pages&mode=site&com=content&page=home',
+				'[<lang>/][<uri>[.<format>]]'                      => 'route=site-default&mode=site&com=content&page=home',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
@@ -30,13 +30,20 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 				'mode'   => 'site',
 				'lang'   => 'en',
 				'format' => 'html',
-				'page'   => 'home',
 				'uri'    => '',
 				'com'    => 'dashboard',
 			),
-			'sefurl' => true,
 		));
 	}
+
+	/**
+     * @expectedException SRouterException
+     */
+    public function testCantFindMatch()
+    {
+    	// Should throw SRouterException because of unexpected characters
+    	$this->router->parse('ph/admin:=/dashboard');
+    }
 
 	public function testApplicationRouterParsing()
 	{
@@ -48,7 +55,6 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 				'com'    => 'widgets',
 				'uri'    => 'edit/40',
 				'format' => 'html',
-				'page'   => 'home'
 			)
 		));
 
@@ -60,6 +66,18 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 				'com'    => 'pages',
 				'page'   => 'blog',
 				'uri'    => 'edit/50-50',
+				'format' => 'json',
+			)
+		));
+
+		$this->assertTrue($this->arraysAreSimilar(
+			$this->router->parse('ch/admin/pages/blog/special-+:_/character.json'),
+			array(
+				'lang'   => 'ch',
+				'mode'   => 'admin',
+				'com'    => 'pages',
+				'page'   => 'blog',
+				'uri'    => 'special-+:_/character',
 				'format' => 'json',
 			)
 		));
@@ -139,7 +157,9 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 
 	public function testApplicationRouterBuilding()
 	{
-
+		$this->assertEquals('en-gb/admin/pages/blog/edit/40.json', $this->router->build('route=admin-pages&mode=admin&lang=en-gb&com=pages&page=blog&uri=edit/40&format=json'));
+		$this->assertEquals('admin/widgets/new', $this->router->build('route=admin-component&mode=admin&com=widgets&uri=new'));
+		$this->assertEquals('en-gb/admin', $this->router->build('route=admin-component&mode=admin&lang=en-gb'));
 	}
 
 	public function arraysAreSimilar($a, $b)
