@@ -113,7 +113,7 @@ class SRouter extends KObject implements KServiceInstantiatable
 		$uri = $route->rule;
 
 		// Get the defaults from the route's query
-		parse_str($route->query, $query_defaults);
+		parse_str($route->defaults, $query_defaults);
 
 		// Merge the defaults with this instance's defaults
 		$defaults = array_merge($this->_defaults, $query_defaults);
@@ -234,10 +234,13 @@ class SRouter extends KObject implements KServiceInstantiatable
 		}
 
 		// Get the default queries from the route rule
-		parse_str($route->query, $query);
+		parse_str($route->defaults, $query);
 
 		// Merge the default query to the defaults of this instance
 		$query = array_merge($this->_defaults, $query);
+
+		// Unset the route key
+		unset($query['route']);
 
 		// Populate params with default values
 		foreach($query as $key => $value)
