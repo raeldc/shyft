@@ -81,13 +81,16 @@ class SRouter extends KObject implements KServiceInstantiatable
 	{
         $routes = (array) KConfig::unbox($routes);
 
-        foreach($routes as $uri => $query)
+        foreach($routes as $uri => $defaults)
         {
+        	parse_str($defaults, $default_values);
+
         	//Add the routes
         	$this->_routes[$uri] = new KConfig(array(
-        		'rule'  => $uri,
-        		'uri'   => $this->compile($uri, $regex),
-        		'query' => $query,
+        		'rule'           => $uri,
+        		'uri'            => $this->compile($uri, $regex),
+        		'defaults'       => $defaults,
+        		'default_values' => $default_values
 	        ));
         }
 
