@@ -2,16 +2,15 @@
 
 class BaseRouterTest extends PHPUnit_Framework_TestCase
 {
+	protected $router;
+
 	public function setUp()
 	{
 		if(!defined('DOCUMENT_ROOT'))
 			define('DOCUMENT_ROOT', realpath(dirname(__FILE__)));
 		require_once DOCUMENT_ROOT.'/../bootstrap.php';
-	}
 
-	public function testBaseRouterParsing()
-	{
-		$router = KService::get('shyft:router.default', array(
+		$this->router = KService::get('shyft:router.default', array(
 			'routes' => array(
 				'new'                 => 'route=new&view=content&layout=form',
 				'edit/<id>'           => 'route=edit&view=content&layout=form',
@@ -23,9 +22,12 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 				'layout' => 'default'
 			)
 		));
+	}
 
+	public function testBaseRouterParsing()
+	{
 		$this->assertTrue($this->arraysAreSimilar(
-			$router->parse('50'),
+			$this->router->parse('50'),
 			array(
 				'view'   => 'content',
 				'layout' => 'default',
@@ -34,7 +36,7 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 		));
 
 		$this->assertTrue($this->arraysAreSimilar(
-			$router->parse('slug-of-item'),
+			$this->router->parse('slug-of-item'),
 			array(
 				'view'   => 'content',
 				'layout' => 'default',
@@ -44,7 +46,7 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 
 
 		$this->assertTrue($this->arraysAreSimilar(
-			$router->parse('edit/50'),
+			$this->router->parse('edit/50'),
 			array(
 				'view'   => 'content',
 				'layout' => 'form',
@@ -53,7 +55,7 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 		));
 
 		$this->assertTrue($this->arraysAreSimilar(
-			$router->parse('new'),
+			$this->router->parse('new'),
 			array(
 				'view'   => 'content',
 				'layout' => 'form',
@@ -61,7 +63,7 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 		));
 
 		$this->assertTrue($this->arraysAreSimilar(
-			$router->parse('contents'),
+			$this->router->parse('contents'),
 			array(
 				'view'   => 'contents',
 				'layout' => 'default',
@@ -69,7 +71,7 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 		));
 
 		$this->assertTrue($this->arraysAreSimilar(
-			$router->parse('contents/list'),
+			$this->router->parse('contents/list'),
 			array(
 				'view'   => 'contents',
 				'layout' => 'list',
@@ -77,19 +79,13 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 		));
 	}
 
-	public function testApplicationRouterParsing()
-	{
-
-	}
-
 	public function testBaseRouterBuilding()
 	{
-
-	}
-
-	public function testApplicationRouterBuilding()
-	{
-
+		$this->assertEquals('edit/50', $this->router->build('route=edit&id=50'));
+		$this->assertEquals('new', $this->router->build('route=new'));
+		$this->assertEquals('contents/list', $this->router->build('route=list&layout=list'));
+		$this->assertEquals('contents', $this->router->build('route=list'));
+		$this->assertEquals('slug-of-item', $this->router->build('route=default&id=slug-of-item'));
 	}
 
 	public function arraysAreSimilar($a, $b)
