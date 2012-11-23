@@ -21,3 +21,13 @@ Shyft::getInstance()->setPaths(array(
 	'templates'  => SYSTEM_TEMPLATES,
 	'site' 		 => DOCUMENT_ROOT
 ))->initialize();
+
+KService::setConfig('com://site/default.database.adapter.mongo', array(
+	'database' => 'shyft',
+	'options' => array(
+		'host'     => 'localhost',
+		'username' => '',
+		'password' => '',
+		'port'     => null,
+	)
+));
