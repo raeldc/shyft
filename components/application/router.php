@@ -24,24 +24,17 @@ final class ComApplicationRouter extends SRouterDefault
 	{
 		$config->append(array(
 			'routes' => array(
-				// Get route for the component                     => Use it when com is set, and mode is admin.
-				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'mode=#admin&com=!dashboard',
-
-				// Get route for page management                   => Use it when page is set and mode is admin
-				'[<lang>/]admin/pages[/<page>][/<uri>][.<format>]' => 'mode=#admin&page=!&com=pages',
-
-				// Lang is optinally set and page is set           => Use this route if page or uri is set
-				'[<lang>][/][<page>[/<uri>][.<format>]]'           => 'mode=#site&page=!&uri=!',
-
-				// This is the catch all rule 					   => Use this if page and uri is blank
-				'[<lang>][/][<uri>[.<format>]]'                    => 'mode=#site&page=#&uri=#',
+				'[<lang>/]admin[/<com>[/<uri>][.<format>]]'        => 'route=admin-component&mode=admin&com=dashboard',
+				'[<lang>/]admin/pages[/<page>][/<uri>][.<format>]' => 'route=admin-pages&mode=admin&com=pages&page=',
+				'[<lang>/][<page>[/<uri>][.<format>]]'             => 'route=site-pages&mode=site&com=content&page=home',
+				'[<lang>/][<uri>[.<format>]]'                      => 'route=site-default&mode=site&com=content&page=home',
 			),
 			'regex' => array(
 				'lang'	 => '^[a-z]{2,2}|^[a-z]{2,2}-[a-z]{2,2}',
 				'uri'    => '[a-zA-Z0-9\-+.:_/]+',
 				'format' => '[a-z]+$',
 				// @TODO: must be populated by all installed components.
-				'com'	 => array('dashboard','widgets'),
+				'com'	 => array('dashboard','pages'),
 				// @TODO: must be populated by all enabled pages
 				'page'   => $this->getPageList(),
 			),
