@@ -19,16 +19,16 @@
  */
 class SLoaderAdapterShyft extends KLoaderAdapterAbstract
 {
-	/** 
+	/**
 	 * The adapter type
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $_type = 'shyft';
-	
+
 	/**
 	 * The class prefix
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $_prefix = 'S';
@@ -36,21 +36,21 @@ class SLoaderAdapterShyft extends KLoaderAdapterAbstract
 	/**
 	 * Get the path based on a class name
 	 *
-	 * @param  string		  	The class name 
+	 * @param  string		  	The class name
 	 * @return string|false		Returns the path on success FALSE on failure
 	 */
 	public function findPath($classname, $basepath = null)
 	{
 		$path     = false;
-		
+
 		$word  = preg_replace('/(?<=\\w)([A-Z])/', ' \\1',  $classname);
 		$parts = explode(' ', $word);
-		
+
 		// If class start with a 'K' it is a Koowa framework class and we handle it
 		if(array_shift($parts) == $this->_prefix)
-		{	
+		{
 		    $path = strtolower(implode('/', $parts));
-				
+
 			if(count($parts) == 1) {
 				$path = $path.'/'.$path;
 			}
@@ -62,5 +62,5 @@ class SLoaderAdapterShyft extends KLoaderAdapterAbstract
 		}
 
 		return $path;
-	}	
+	}
 }

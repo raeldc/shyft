@@ -19,13 +19,13 @@
  */
 class SServiceLocatorShyft extends KServiceLocatorAbstract
 {
-	/** 
+	/**
 	 * The adapter type
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $_type = 'shyft';
-	
+
 	/**
 	 * Get the classname based on an identifier
 	 *
@@ -35,20 +35,20 @@ class SServiceLocatorShyft extends KServiceLocatorAbstract
 	public function findClass(KServiceIdentifier $identifier)
 	{
         $classname = 'S'.ucfirst($identifier->package).KInflector::implode($identifier->path).ucfirst($identifier->name);
-			
+
 		if (!class_exists($classname))
 		{
 			// use default class instead
 			$classname = 'S'.ucfirst($identifier->package).KInflector::implode($identifier->path).'Default';
-				
+
 			if (!class_exists($classname)) {
 				$classname = false;
 			}
 		}
-		
+
 		return $classname;
 	}
-	
+
 	/**
 	 * Get the path based on an identifier
 	 *
@@ -64,7 +64,7 @@ class SServiceLocatorShyft extends KServiceLocatorAbstract
 		if(!empty($identifier->name)) {
 			$path .= '/'.$identifier->name;
 		}
-				
+
 		$path = $identifier->basepath.'/'.$path.'.php';
 		return $path;
 	}
