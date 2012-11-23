@@ -1,6 +1,7 @@
 <?php
+require 'abstract/router.php';
 
-class ApplicationRouterTest extends PHPUnit_Framework_TestCase
+class ApplicationRouterTest extends RouterTest
 {
 	protected $router;
 
@@ -160,23 +161,6 @@ class ApplicationRouterTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('en-gb/admin/pages/blog/edit/40.json', $this->router->build('route=admin-pages&mode=admin&lang=en-gb&com=pages&page=blog&uri=edit/40&format=json'));
 		$this->assertEquals('admin/widgets/new', $this->router->build('route=admin-component&mode=admin&com=widgets&uri=new'));
 		$this->assertEquals('en-gb/admin', $this->router->build('route=admin-component&mode=admin&lang=en-gb'));
-	}
 
-	public function arraysAreSimilar($a, $b)
-	{
-		// if the indexes don't match, return immediately
-		if (count(array_diff_assoc($a, $b))) {
-			return false;
-		}
-		// we know that the indexes, but maybe not values, match.
-		// compare the values between the two arrays
-		foreach($a as $k => $v)
-		{
-			if ($v !== $b[$k]) {
-				return false;
-			}
-		}
-		// we have identical indexes, and no unequal values
-		return true;
 	}
 }

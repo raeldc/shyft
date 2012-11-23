@@ -1,6 +1,7 @@
 <?php
+require 'abstract/router.php';
 
-class BaseRouterTest extends PHPUnit_Framework_TestCase
+class BaseRouterTest extends RouterTest
 {
 	protected $router;
 
@@ -86,23 +87,5 @@ class BaseRouterTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('contents/list', $this->router->build('route=list&layout=list'));
 		$this->assertEquals('contents', $this->router->build('route=list'));
 		$this->assertEquals('slug-of-item', $this->router->build('route=default&id=slug-of-item'));
-	}
-
-	public function arraysAreSimilar($a, $b)
-	{
-		// if the indexes don't match, return immediately
-		if (count(array_diff_assoc($a, $b))) {
-			return false;
-		}
-		// we know that the indexes, but maybe not values, match.
-		// compare the values between the two arrays
-		foreach($a as $k => $v)
-		{
-			if ($v !== $b[$k]) {
-				return false;
-			}
-		}
-		// we have identical indexes, and no unequal values
-		return true;
 	}
 }
