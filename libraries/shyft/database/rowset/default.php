@@ -1,6 +1,3 @@
 <?php
 
-class SDatabaseRowsetDefault extends SDatabaseRowsetDocument
-{
-	
-}
+class SDatabaseRowsetDefault extends SDatabaseRowsetDocument{}

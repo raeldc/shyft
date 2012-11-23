@@ -1,22 +1,6 @@
 <?php
-/**
- * @category    Shyft
- * @package     Shyft_Database
- * @subpackage  Rowset
- * @copyright   Copyright (C) 2007 - 2010 Israel Canasa. All rights reserved.
- * @license     GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
- * @link        http://www.shyfted.com
- */
 
-/**
- * Document Rowset Class
- *
- * @author      Israel Canasa <shyft@me.com>
- * @category    Shyft
- * @package     Shyft_Database
- * @subpackage  Rowset
- * @uses        KMixinClass
- */
+
 class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
 {
     /**
@@ -25,7 +9,7 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
      * @var string|object
      */
     protected $_document = false;
-
+    protected $_row_cloning;
     /**
      * Constructor
      *
@@ -40,9 +24,9 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
         // Reset the rowset
         $this->reset();
 
-        // Insert the data, if exists        
+        // Insert the data, if exists
         if(!empty($config->data)) {
-            $this->addData($config->data->toArray(), $config->new); 
+            $this->addData($config->data->toArray(), $config->new);
         }
     }
 
@@ -64,11 +48,11 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
     }
 
     /**
-     * Returns a SDatabaseRow 
-     * 
+     * Returns a SDatabaseRow
+     *
      * This functions accepts either a know position or associative array of key/value pairs
      *
-     * @param   string|array    The position or the key or an associatie array of column data 
+     * @param   string|array    The position or the key or an associatie array of column data
      *                          to match
      * @return SDatabaseRow(set)Abstract Returns a row or rowset if successfull. Otherwise NULL.
      */
@@ -79,18 +63,18 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
         if(!is_scalar($needle))
         {
             $result = clone $this;
-            
-            foreach ($this as $i => $row) 
-            { 
+
+            foreach ($this as $i => $row)
+            {
                 foreach($needle as $key => $value)
                 {
                     if(!in_array($row->{$key}, (array) $value)) {
                         $result->extract($row);
-                    } 
+                    }
                 }
             }
         }
-        else 
+        else
         {
             if(isset($this->_object_set[$needle])) {
                 $result = $this->_object_set[$needle];
@@ -102,7 +86,7 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
 
     /**
      * Insert a row into the rowset
-     * 
+     *
      * The row will be stored by it's identity_column if set or otherwise by
      * it's object handle.
      *
@@ -116,18 +100,106 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
         } else {
             $handle = $row->getHandle();
         }
-        
+
         if($handle) {
             $this->_object_set->offsetSet((string)$handle, $row);
         }
-        
+
         return true;
     }
 
     /**
+     * Add rows to the rowset
+     *
+     * This function will either clone the row object, or create a new instance of the row object for
+     * each row being inserted. By default the row will be cloned.
+     *
+     * @param  array    An associative array of row data to be inserted.
+     * @param  boolean  If TRUE, mark the row(s) as new (i.e. not in the database yet). Default TRUE
+     * @return  KDatabaseRowsetAbstract
+     * @see __construct
+     */
+    public function addData(array $rows, $new = true)
+    {
+        $options = array(
+            'status' => $new ? NULL : KDatabase::STATUS_LOADED,
+            'new'    => $new,
+        );
+
+        if($this->_row_cloning)
+        {
+            $default = $this->getRow($options);
+
+            foreach($rows as $k => $data)
+            {
+                $row = clone $default;
+                $row->setData($data, $new);
+
+                $this->insert($row);
+            }
+        }
+        else
+        {
+            foreach($rows as $k => $data)
+            {
+                $options['data'] = $data;
+
+                $row = $this->getRow($options);
+                $this->insert($row);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add rows to the rowset
+     *
+     * This function will either clone the row object, or create a new instance of the row object for
+     * each row being inserted. By default the row will be cloned.
+     *
+     * @param  array    An associative array of row data to be inserted.
+     * @param  boolean  If TRUE, mark the row(s) as new (i.e. not in the database yet). Default TRUE
+     * @return  KDatabaseRowsetAbstract
+     * @see __construct
+     */
+    public function addMappedData(array $rows)
+    {
+        $options = array(
+            'status' => KDatabase::STATUS_LOADED,
+            'new'    => false,
+        );
+
+        if($this->_row_cloning)
+        {
+            $default = $this->getRow($options);
+
+            foreach($rows as $k => $data)
+            {
+                $row = clone $default;
+                $row->setMappedData($data);
+
+                $this->insert($row);
+            }
+        }
+        else
+        {
+            foreach($rows as $k => $data)
+            {
+                $options['data'] = $data;
+
+                $row = $this->getRow($options);
+                $this->insert($row);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Method to get a document object
-     * 
-     * Function catches SDatabaseDocumentExceptions that are thrown for documents that 
+     *
+     * Function catches SDatabaseDocumentExceptions that are thrown for documents that
      * don't exist. If no document object can be created the function will return FALSE.
      *
      * @return SDatabaseDocumentAbstract
@@ -137,12 +209,12 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
         if($this->_document !== false)
         {
             if(!($this->_document instanceof SDatabaseDocumentAbstract))
-            {                   
+            {
                 //Make sure we have a document identifier
                 if(!($this->_document instanceof KServiceIdentifier)) {
                     $this->setDocument($this->_document);
                 }
-                
+
                 try {
                     $this->_document = $this->getService($this->_document);
                 } catch (SDatabaseDocumentException $e) {
@@ -157,7 +229,7 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
     /**
      * Method to set a document object attached to the rowset
      *
-     * @param   mixed   An object that implements KObjectServiceable, KServiceIdentifier object 
+     * @param   mixed   An object that implements KObjectServiceable, KServiceIdentifier object
      *                  or valid identifier string
      * @throws  SDatabaseRowsetException    If the identifier is not a document identifier
      * @return  KDatabaseRowsetAbstract
@@ -166,14 +238,14 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
     {
         if(!($document instanceof SDatabaseDocumentAbstract))
         {
-            if(is_string($document) && strpos($document, '.') === false ) 
+            if(is_string($document) && strpos($document, '.') === false )
             {
                 $identifier         = clone $this->getIdentifier();
                 $identifier->path   = array('database', 'document');
                 $identifier->name   = KInflector::tableize($document);
             }
             else  $identifier = $this->getIdentifier($document);
-            
+
             if($identifier->path[1] != 'document') {
                 throw new SDatabaseRowsetException('Identifier: '.$identifier.' is not a document identifier');
             }
@@ -185,7 +257,7 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
 
         return $this;
     }
-    
+
     /**
      * Test the connected status of the row.
      *
@@ -202,7 +274,7 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
      * @param   array An optional associative array of configuration settings.
      * @return  object  A SDatabaseRow object.
      */
-    public function getRow(array $options = array()) 
+    public function getRow(array $options = array())
     {
         $result = null;
 
@@ -212,12 +284,12 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
 
         return $result;
     }
-    
+
     /**
      * Forward the call to each row
-     * 
-     * This functions overloads KDatabaseRowsetAbstract::__call and implements 
-     * a just in time mixin strategy. Available document behaviors are only mixed 
+     *
+     * This functions overloads KDatabaseRowsetAbstract::__call and implements
+     * a just in time mixin strategy. Available document behaviors are only mixed
      * when needed.
      *
      * @param  string   The function name

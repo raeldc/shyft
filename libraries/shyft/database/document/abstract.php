@@ -1,152 +1,91 @@
 <?php
-/**
- * @category	Shyft
- * @package     Shyft_Database
- * @subpackage  Table
- * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.shyfted.com
- */
 
-/**
- * Abstract Document Class for Document Oriented Databases
- *
- *
- * @author      Israel Canasa <shyft@me.com>
- * @category    Shyft
- * @package     Shyft_Database
- * @subpackage  Document
- */
 abstract class SDatabaseDocumentAbstract extends KObject
 {
-	protected $_database;
-	protected $_name;
+    protected $_database;
+    protected $_name;
+    protected $_behaviors = array();
+    protected $_schema;
 
-    /**
-     * Name of the identity column in the document
-     *
-     * @var string
-     */
-    protected $_identity_column;
-    
-    /**
-     * Array of column mappings by column name
-     *
-     * @var array
-     */
-    protected $_column_map = array();
+    public function __construct(KConfig $config)
+    {
+        parent::__construct($config);
 
-	public function __construct(KConfig $config)
-	{
-		parent::__construct($config);
+        $this->_database = $config->database;
+        $this->_name = $config->name;
 
-		$this->_database = $config->database;
-		$this->_name = $config->name;
-        
-        // Set the identity column
-        $this->_identity_column = $config->identity_column;
-
-        //Set the default column mappings
-        $this->_column_map = $config->column_map ? $config->column_map->toArray() : array();
-        if(!isset( $this->_column_map['id']) && isset($this->_identity_column)) {
-            $this->_column_map['id'] = $this->_identity_column;
-        }
-
-        // TODO: Set the column filters
-        if(!empty($config->filters) && false) 
-        {
-            foreach($config->filters as $column => $filter) {
-                $this->getColumn($column, true)->filter = KConfig::toData($filter);
-            }       
-        }
-    
         // Mixin a command chain
         $this->mixin(new KMixinCommand($config->append(array('mixer' => $this))));
-           
+
         // Mixin the behavior interface
         $this->mixin(new KMixinBehavior($config));
-	}
+    }
 
-	protected function _initialize(KConfig $config)
-	{
-		// TODO: Set the database to be a singleton, use com:application.database
-		$database = $this->getService('shyft:database.adapter.document');
-		$package = $this->getIdentifier()->package;
+    protected function _initialize(KConfig $config)
+    {
+        $database = $this->getService('com://site/default.database.adapter.mongo');
+        $package = $this->getIdentifier()->package;
         $name    = $this->getIdentifier()->name;
 
-		$config->append(array(
-			'command_chain'     => $this->getService('koowa:command.chain'),
-            'event_dispatcher'  => $this->getService('koowa:event.dispatcher.default'),
+        $config->append(array(
+            'command_chain'     => $this->getService('koowa:command.chain'),
+            'event_dispatcher'  => null,
             'dispatch_events'   => false,
             'enable_callbacks'  => false,
+            'database'          => $database,
+            'behaviors'         => array(),
+            'name'              => $name,
+        ));
 
-			'database' 			=> $database,
-			'behaviors' 		=> array(),
-			'filters'	 		=> array(),
-			'name'		        => empty($package) ? $name : $package.'_'.$name,
-		));
-	
-		parent::_initialize($config);
-	}
+        parent::_initialize($config);
+    }
 
-	public function find($query = null, $mode = KDatabase::FETCH_ROWSET)
-	{
+    public function find($query = null, $mode = KDatabase::FETCH_ROWSET)
+    {
         //Create commandchain context
         $context            = $this->getCommandContext();
         $context->operation = KDatabase::OPERATION_SELECT;
-        $context->query     = $query;
+        $context->query     = $this->getQuery($query);
         $context->mode      = $mode;
-        
-        if($this->getCommandChain()->run('before.find', $context) !== false) 
+
+        if($this->getCommandChain()->run('before.find', $context) !== false)
         {
-            if ($context->query) 
-            {
-                $context->query->from($this->_name);
-                $data = $this->_database->find($context->query, $context->mode);
-
-                //Map the columns
-                if (($context->mode != KDatabase::FETCH_FIELD) && ($context->mode != KDatabase::FETCH_FIELD_LIST))
-                { 
-                    if($context->mode % 2)
-                    {
-                        foreach($data as $key => $value) {
-                            $data[$key] = $this->mapColumns($value, true);
-                        }
-                    }
-                    else $data = $this->mapColumns(KConfig::unbox($data), true);   
-                }
-            }
-
             switch($context->mode)
             {
-                case KDatabase::FETCH_ROW    : 
+                case KDatabase::FETCH_ROW:
                 {
                     $context->data = $this->getRow();
-                    if(isset($data) && !empty($data)) {
-                       $context->data->setData($data, false)->setStatus(KDatabase::STATUS_LOADED);
+                    // Execute the query
+                    $data = $this->getDatabase()->find($context->query, $context->mode);
+
+                    if(isset($data) && !empty($data)){
+                       $context->data->setMappedData($data)->setStatus(KDatabase::STATUS_LOADED);
                     }
 
                     break;
                 }
-                
-                case KDatabase::FETCH_ROWSET : 
+
+                case KDatabase::FETCH_ROWSET:
                 {
                     $context->data = $this->getRowset();
 
+                    // Execute the query
+                    $data = $this->getDatabase()->find($context->query, $context->mode);
+
                     if(isset($data) && !empty($data)) {
-                        $context->data->addData($data, false);
+                        $context->data->addMappedData($data);
                     }
                     break;
                 }
-                
+
                 default : $context->data = $data;
             }
-                        
+
             $this->getCommandChain()->run('after.find', $context);
         }
 
         return $context->data;
-	}
+    }
 
     /**
      * Table insert method
@@ -154,25 +93,21 @@ abstract class SDatabaseDocumentAbstract extends KObject
      * @param  object       A KDatabaseRow object
      * @return bool|integer Returns the number of rows inserted, or FALSE if insert query was not executed.
      */
-    public function insert( KDatabaseRowInterface $row )
+    public function insert(KDatabaseRowInterface $row)
     {
         //Create commandchain context
         $context            = $this->getCommandContext();
         $context->operation = KDatabase::OPERATION_INSERT;
         $context->data      = $row;
         $context->query     = null;
-        $context->name      = $this->_name;
+        $context->name      = $this->getName();
 
-        if($this->getCommandChain()->run('before.insert', $context) !== false) 
+        if($this->getCommandChain()->run('before.insert', $context) !== false)
         {
-            // @TODO: Prepare data, running validation, filters, mappings, etc.
-            //$context->data->prepare();
-            $data = $this->mapColumns($context->data->getData());
-
             //Execute the insert query
-            $data = $this->_database->insert($context->name, $context->data->toArray());
+            $data = $this->getDatabase()->insert($context->name, $context->data->getMappedData());
 
-            $context->data->setData($this->mapColumns($data, true), false)->setStatus(KDatabase::STATUS_CREATED);
+            $context->data->setMappedData($data)->setStatus(KDatabase::STATUS_CREATED);
 
             $this->getCommandChain()->run('after.insert', $context);
         }
@@ -186,43 +121,39 @@ abstract class SDatabaseDocumentAbstract extends KObject
      * @param  object           A KDatabaseRow object
      * @return boolean|integer  Returns the number of rows updated, or FALSE if insert query was not executed.
      */
-    public function update( KDatabaseRowInterface $row)
+    public function update(KDatabaseRowInterface $row)
     {
         //Create commandchain context
         $context            = $this->getCommandContext();
         $context->operation = KDatabase::OPERATION_UPDATE;
         $context->data      = $row;
-        $context->name      = $this->_name;
+        $context->name      = $this->getName();
         $context->affected  = false;
-        
-        if($this->getCommandChain()->run('before.update', $context) !== false) 
+        $context->query     = $this->getQuery();
+
+        if($this->getCommandChain()->run('before.update', $context) !== false)
         {
-            // TODO: Prepare data, running validation, filters, mappings, etc.
-            //$context->data->prepare();
 
-            $query = $this->getQuery();
-
-            if (!$row->isNew()) 
+            if (!$row->isNew())
             {
-                // TODO: map $row->id to $row->_id. Query with all the unique keys of row.
-                $query->where($this->getIdentityColumn(), '=', $context->data->id);
-
-                // Convert object to array first
-                $data = $context->data->toArray();
+                foreach ($this->getSchema()->getUniqueFields() as $field)
+                {
+                    $key = $field->name;
+                    $context->query->field($key)->equalTo($context->data->$key);
+                }
 
                 //Execute the update query
-                $context->affected = $this->_database->update($context->name, $query, $data);
+                $context->affected = $this->getDatabase()->update($context->query, $context->data->getModifiedData());
 
-                if(((integer) $context->affected) > 0)
+                if(((integer)$context->affected) > 0)
                 {
                     //Reverse apply the column mappings and set the data in the row
-                    $context->data->setData($data, false)
-                                  ->setStatus(KDatabase::STATUS_UPDATED);
+                    $context->data->setStatus(KDatabase::STATUS_UPDATED);
                 }
                 else $context->data->setStatus(KDatabase::STATUS_FAILED);
 
                 //Set the query in the context
-                $context->query = $query;
+                $context->query = $context->query;
             }
             else $context->data->setStatus(KDatabase::STATUS_FAILED);
 
@@ -238,43 +169,35 @@ abstract class SDatabaseDocumentAbstract extends KObject
      * @param  object       A KDatabaseRow object
      * @return bool|integer Returns the number of rows deleted, or FALSE if delete query was not executed.
      */
-    public function delete( KDatabaseRowInterface $row)
+    public function delete(KDatabaseRowInterface $row)
     {
         //Create commandchain context
         $context            = $this->getCommandContext();
         $context->operation = KDatabase::OPERATION_DELETE;
         $context->data      = $row;
-        $context->name      = $this->_name;
+        $context->name      = $this->getName();
         $context->affected  = false;
-        
-        if($this->getCommandChain()->run('before.delete', $context) !== false) 
+        $context->query     = $this->getQuery();
+
+        if($this->getCommandChain()->run('before.delete', $context) !== false)
         {
-            // TODO: Prepare data, running validation, filters, mappings, etc.
-            //$context->data->prepare();
-
-            $query = $this->getQuery();
-
-            if (!$row->isNew()) 
+            if (!$row->isNew())
             {
-                // TODO: map $row->id to $row->_id. Query with all the unique keys of row.
-                $query->where('id', '=', $context->data->id);
-
-                // Convert object to array first
-                $data = $context->data->toArray();
+                foreach ($this->getSchema()->getUniqueFields() as $field)
+                {
+                    $key = $field->name;
+                    $context->query->field($key)->equalTo($context->data->$key);
+                }
 
                 //Execute the update query
-                $context->affected = $this->_database->delete($context->name, $query, $data);
+                $context->affected = $this->getDatabase()->delete($context->query);
 
                 if(((integer) $context->affected) > 0)
                 {
                     //Reverse apply the column mappings and set the data in the row
-                    $context->data->setData($data, false)
-                                  ->setStatus(KDatabase::STATUS_DELETED);
+                    $context->data->setStatus(KDatabase::STATUS_DELETED);
                 }
                 else $context->data->setStatus(KDatabase::STATUS_FAILED);
-
-                //Set the query in the context
-                $context->query = $query;
             }
             else $context->data->setStatus(KDatabase::STATUS_FAILED);
 
@@ -284,7 +207,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
         return $context->affected;
     }
 
-	/**
+    /**
      * Count Results of the Query
      *
      * @param   mixed   KDatabaseQuery object or query string or null to count all rows
@@ -292,7 +215,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
      */
     public function count($query = null)
     {
-        return $this->_database->count($query->from($this->_name));
+        return $this->getDatabase()->count($this->getQuery($query));
     }
 
     /**
@@ -305,10 +228,10 @@ abstract class SDatabaseDocumentAbstract extends KObject
         return $this->_name;
     }
 
-	/**
+    /**
      * Get an instance of a row object for this table
      *
-     * @param	array An optional associative array of configuration settings.
+     * @param   array An optional associative array of configuration settings.
      * @return  KDatabaseRowInterface
      */
     public function getRow(array $options = array())
@@ -316,132 +239,28 @@ abstract class SDatabaseDocumentAbstract extends KObject
         $identifier         = clone $this->getIdentifier();
         $identifier->path   = array('database', 'row');
         $identifier->name   = KInflector::singularize($identifier->name);
-            
-        //The row default options
-        $options['document'] = $this; 
-        $options['identity_column'] = $this->mapColumns($this->getIdentityColumn(), true);
 
-        return $this->getService($identifier, $options); 
+        //The row default options
+        $options['document'] = $this;
+
+        return $this->getService($identifier, $options);
     }
 
     /**
      * Get an instance of a rowset object for this table
      *
-     * @param	array An optional associative array of configuration settings.
+     * @param   array An optional associative array of configuration settings.
      * @return  KDatabaseRowInterface
      */
     public function getRowset(array $options = array())
     {
         $identifier         = clone $this->getIdentifier();
         $identifier->path   = array('database', 'rowset');
-            
+
         //The rowset default options
         $options['document'] = $this;
-        $options['identity_column'] = $this->mapColumns($this->getIdentityColumn(), true);
 
         return $this->getService($identifier, $options);
-    }
-
-    /**
-     * Gets the identitiy column of the document.
-     *
-     * @return string
-     */
-    public function getIdentityColumn()
-    {
-        $result = null;
-        if(isset($this->_identity_column)) {
-            $result = $this->_identity_column;
-        }
-        
-        return $result;
-    }
-
-    /**
-     * Table map method
-     * 
-     * This functions maps the column names to those in the table schema 
-     *
-     * @param  array|string An associative array of data to be mapped, or a column name
-     * @param  boolean      If TRUE, perform a reverse mapping
-     * @return array|string The mapped data or column name
-     */
-    public function mapColumns($data, $reverse = false)
-    {
-        $map = $reverse ? array_flip($this->_column_map) : $this->_column_map;
-
-        $result = null;
-        if(is_array($data))
-        {
-            $result = array();
-            foreach($data as $column => $value)
-            {
-                if(isset($map[$column])) {
-                    $column = $map[$column];
-                }
-            
-                $result[$column] = $value;
-            }
-        } 
-        
-        if(is_string($data))
-        {
-            $result = $data;
-            if(isset($map[$data])) {
-                $result = $map[$data];
-            }
-        }
-            
-        return $result;
-    }
-
-	public function getQuery($query = null)
-	{
-		static $instance;
-
-        if ($query instanceof SDatabaseQueryDocument) {
-            return $query;
-        }
-
-		if (is_null($instance)) 
-        {
-			$instance = new SDatabaseQueryDocument(new KConfig());
-		}
-
-        if (is_array($query)) 
-        {
-            foreach ($query as $key => $value) {
-                $instance->where($key, '=', $value);
-            }
-        }
-
-		return $instance;
-	}
-
-    public function getSchema()
-    {
-        static $schema;
-
-        if (is_null($schema)) {
-            $schema = array();
-        }
-
-        $identifier = (string) $this->getIdentifier();
-        if (!isset($schema[$identifier])) {
-            $schema[$identifier] = new SDatabaseSchemaDocument();
-        }
-        
-        return $schema[$identifier];
-    }
-       
-    /**
-     * Gets the behaviors of the table
-     *
-     * @return array    An asscociate array of table behaviors, keys are the behavior names
-     */
-    public function getBehaviors()
-    {
-        return $this->getSchema()->behaviors;
     }
 
     public function getDatabase()
@@ -449,11 +268,65 @@ abstract class SDatabaseDocumentAbstract extends KObject
         return $this->_database;
     }
 
+    public function getSchema()
+    {
+        if(!$this->_schema)
+        {
+            $identifier         = clone $this->getIdentifier();
+            $identifier->path   = array('database', 'schema');
+            $identifier->name   = KInflector::singularize($identifier->name);
+
+            //The row default options
+            $options = array('document' => $this);
+
+            $this->_schema = $this->getService($identifier, $options);
+        }
+
+        return $this->_schema;
+    }
+
+    public function getQuery($query = null)
+    {
+        if($query instanceof SDatabaseQueryAbstract)
+        {
+            $query->from($this->getName());
+            return $query;
+        }
+
+        $builder = 'com://site/default.database.query.'.$this->getDatabase()->getIdentifier()->name;
+
+        $option = array(
+            'schema' => $this->getSchema()
+        );
+
+        if(is_numeric($query) || is_string($query) || (is_array($query) && is_numeric(key($query))))
+        {
+        	// @TODO: Create an schema::getUniqueField()
+        	/*
+            $query = $this->getService($builder, $option)
+                          ->where
+                          ->field($id)->equalTo($query);
+			*/
+        }
+        elseif(is_array($query) && !is_numeric(key($query)))
+        {
+        	$values = $query;
+            $query = $this->getService($builder, $option);
+
+            foreach($values as $field => $value){
+                $query->field($field)->equalTo($value);
+            }
+        }
+        else $query = $this->getService($builder, $option);
+
+        return $query->from($this->getName());
+    }
+
     /**
      * Search the behaviors to see if this table behaves as.
      *
      * Function is also capable of checking is a behavior has been mixed succesfully
-     * using is[Behavior] function. If the behavior exists the function will return 
+     * using is[Behavior] function. If the behavior exists the function will return
      * TRUE, otherwise FALSE.
      *
      * @param  string   The function name
@@ -469,9 +342,9 @@ abstract class SDatabaseDocumentAbstract extends KObject
         if($parts[0] == 'is' && isset($parts[1]))
         {
             if($this->hasBehavior(strtolower($parts[1]))) {
-                 return true;    
+                 return true;
             }
-                
+
             return false;
         }
 

@@ -1,34 +1,8 @@
 <?php
-/**
- * @category	Shyft
- * @package     Shyft_Database
- * @subpackage  Table
- * @copyright	Copyright (C) 2011 Israel Canasa. All rights reserved.
- * @license		GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
- * @link     	http://www.shyfted.com
- */
 
-/**
- * Abstract Table Class for NoSQL Databases
- *
- *
- * @author      Israel Canasa <shyft@me.com>
- * @category    Shyft
- * @package     Shyft_Database
- * @subpackage  Table
- */
 class SDatabaseDocumentDefault extends SDatabaseDocumentAbstract implements KServiceInstantiatable
 {
-    protected function _initialize(KConfig $config)
-    {
-        if (!isset($config->identity_column)) {
-            $config->identity_column = '_id';
-        }
-
-        parent::_initialize($config);
-    }
-    
-	/**
+    /**
      * Force creation of a singleton
      *
      * @return SDatabaseDocumentDefault
@@ -43,7 +17,7 @@ class SDatabaseDocumentDefault extends SDatabaseDocumentAbstract implements KSer
             $instance  = new $classname($config);
             $container->set($config->service_identifier, $instance);
         }
-        
+
         return $container->get($config->service_identifier);
     }
 }
