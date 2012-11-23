@@ -162,5 +162,7 @@ class ApplicationRouterTest extends RouterTest
 		$this->assertEquals('admin/widgets/new', $this->router->build('route=admin-component&mode=admin&com=widgets&uri=new'));
 		$this->assertEquals('en-gb/admin', $this->router->build('route=admin-component&mode=admin&lang=en-gb'));
 
+		// tests if value is a default, don't build it into the route. In this case, lang=en is the default lang.
+		$this->assertEquals('admin/widgets/new', $this->router->build('route=admin-component&mode=admin&com=widgets&uri=new&lang=en'));
 	}
 }
