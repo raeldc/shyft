@@ -100,7 +100,7 @@ abstract class SDatabaseSchemaAbstract extends KObject implements SDatabaseSchem
 
 		// Created a field object based on the definition
 		$identifier       = clone $this->getIdentifier();
-	    $identifier->path = array('field');
+	    $identifier->path = array('database', 'field');
 	    $identifier->name = $definition->type;
 
 		$field = $this->getService($identifier, $definition->toArray());

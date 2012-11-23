@@ -47,12 +47,12 @@ abstract class SDatabaseQueryAbstract extends KObject
             if(is_string($builder) && strpos($builder, '.') === false )
             {
                 $identifier         = clone $this->getIdentifier();
-                $identifier->path   = array('query', 'builder');
+                $identifier->path   = array('database', 'query', 'builder');
                 $identifier->name   = $builder;
             }
             else $identifier = $this->getIdentifier($builder);
 
-            if($identifier->path[1] != 'builder') {
+            if($identifier->path[2] != 'builder') {
                 throw new KDatabaseException('Identifier: '.$identifier.' is not a builder identifier');
             }
 
@@ -69,7 +69,7 @@ abstract class SDatabaseQueryAbstract extends KObject
         if ($this->_compiler === null)
         {
             $identifier = clone $this->getBuilder()->getIdentifier();
-            $identifier->path = array('query', 'compiler');
+            $identifier->path = array('database', 'query', 'compiler');
             $this->_compiler = $this->getService($identifier);
         }
 

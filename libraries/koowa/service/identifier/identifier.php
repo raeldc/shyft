@@ -126,8 +126,10 @@ class KServiceIdentifier implements KServiceIdentifierInterface
         $this->_path = trim($parts['path'], '/');
         $this->_path = explode('.', $this->_path);
 
-        // Set the extension (first part)
-        $this->_package = array_shift($this->_path);
+        if($this->application !== ''){
+	        // Set the extension (first part)
+	        $this->_package = array_shift($this->_path);
+	    }
 
         // Set the name (last part)
         if(count($this->_path)) {
@@ -330,12 +332,14 @@ class KServiceIdentifier implements KServiceIdentifierInterface
                 $this->_identifier .= ':';
             }
 
+            $path_separator = '';
             if(!empty($this->_package)) {
                 $this->_identifier .= $this->_package;
+                $path_separator = '.';
             }
 
             if(count($this->_path)) {
-                $this->_identifier .= '.'.implode('.',$this->_path);
+                $this->_identifier .= $path_separator.implode('.',$this->_path);
             }
 
             if(!empty($this->_name)) {
