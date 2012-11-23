@@ -9,7 +9,7 @@ class QueryBuilderTest extends DatabaseTest
 	{
 		parent::setUp();
 
-		$this->query = KService::get('shyft:database.query.tests', array(
+		$this->query = KService::get('shyft:database.query.mongo', array(
 			'schema' => KService::get('shyft:database.schema.tests', array(
 				'dynamic' => true,
 				'fields' => array(
@@ -26,7 +26,7 @@ class QueryBuilderTest extends DatabaseTest
 
 	public function testSelect()
 	{
-		$this->query->where('id')->equalTo('something');
+		$this->query->from('shyft_tests')->field('id')->equalTo('something');
 		var_dump($this->query->compile('where'));
 	}
 }
