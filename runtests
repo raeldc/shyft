@@ -2,5 +2,5 @@
 
 echo "Testing Router:";
 
-libraries/bin/phpunit tests/baserouter_test.php
-libraries/bin/phpunit tests/applicationrouter_test.php
+libraries/bin/phpunit tests/routers/baserouter_test.php
+libraries/bin/phpunit tests/routers/applicationrouter_test.php

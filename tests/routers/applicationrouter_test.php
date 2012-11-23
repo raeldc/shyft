@@ -1,5 +1,5 @@
 <?php
-require 'abstract/router.php';
+require 'abstract.php';
 
 class ApplicationRouterTest extends RouterTest
 {
@@ -7,9 +7,7 @@ class ApplicationRouterTest extends RouterTest
 
 	public function setUp()
 	{
-		if(!defined('DOCUMENT_ROOT'))
-			define('DOCUMENT_ROOT', realpath(dirname(__FILE__)));
-		require_once DOCUMENT_ROOT.'/../bootstrap.php';
+		parent::setUp();
 
 		$this->router = KService::get('shyft:router.default', array(
 			'routes' => array(
