@@ -47,6 +47,7 @@ abstract class SDatabaseDocumentAbstract extends KObject
         $context->operation = KDatabase::OPERATION_SELECT;
         $context->query     = $this->getQuery($query);
         $context->mode      = $mode;
+        $context->caller 	= $this;
 
         if($this->getCommandChain()->run('before.find', $context) !== false)
         {

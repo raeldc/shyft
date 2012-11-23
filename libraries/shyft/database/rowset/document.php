@@ -93,7 +93,7 @@ class SDatabaseRowsetDocument extends KDatabaseRowsetAbstract
      * @param  object   A KDatabaseRow object to be inserted
      * @return boolean  TRUE on success FALSE on failure
      */
-    public function insert(KDatabaseRowInterface $row)
+    public function insert(KObjectHandlable $row)
     {
         if(isset($this->_identity_column)) {
             $handle = $row->{$this->_identity_column};

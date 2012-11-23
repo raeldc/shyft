@@ -36,7 +36,7 @@ abstract class SDatabaseFieldCommandchain extends SDatabaseFieldAbstract impleme
 	 * @param 	object   	The command context
 	 * @return 	boolean		Can return both true or false.
 	 */
-	public function execute( $name, KCommandContext $context)
+	public function execute($name, KCommandContext $context)
 	{
 		$identifier = clone $context->caller->getIdentifier();
 		$type       = array_pop($identifier->path);

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Model to get a single page. 
+ * Model to get a single page.
  * This is used by the application dispatcher to get the current page.
  */
 class ComPagesModelPages extends SModelDocument implements KServiceInstantiatable
@@ -13,7 +13,7 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
 	public function __construct(KConfig $config)
 	{
 		parent::__construct($config);
-	
+
 		$this->_state = new KConfigState();
 
 		$this->_state
@@ -38,7 +38,7 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
             $instance  = new $classname($config);
             $container->set($config->service_identifier, $instance);
         }
-        
+
         return $container->get($config->service_identifier);
     }
 
@@ -81,22 +81,26 @@ class ComPagesModelPages extends SModelDocument implements KServiceInstantiatabl
     	return $this->_totals[$state];
     }
 
-	protected function _buildQueryWhere(SDatabaseQueryDocument $query)
+	protected function _buildQueryWhere(SDatabaseQueryAbstract $query)
 	{
+		parent::_buildQueryWhere($query);
+
         // Check if all is true, then make a query that will return everything
-		if ($this->_state->all) 
+		if ($this->_state->all)
         {
-			$query->where('enabled', '<>', null);
+        	$query->field('slug')->exists();
             $this->_state->id = null;
 		}
         // Get enabled or disabled items
-        else $query->where('enabled', '=', $this->_state->enabled);
+        elseif($this->_state->enabled !== null) {
+        	$query->field('enabled')->equalTo($this->_state->enabled);
+        }
 
         // If id is set, don't build any other query but this
-        if ($this->_state->id) 
+        if ($this->_state->id)
         {
             $query->reset();
-            $query->where('slug', '=', $this->_state->id);
+            $query->field('slug')->equalTo($this->_state->id);
         }
 	}
 }
