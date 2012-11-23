@@ -25,57 +25,57 @@ class BaseRouterTest extends RouterTest
 
 	public function testBaseRouterParsing()
 	{
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('50'),
 			array(
 				'view'   => 'content',
 				'layout' => 'default',
 				'id'	 => '50',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('slug-of-item'),
 			array(
 				'view'   => 'content',
 				'layout' => 'default',
 				'id'	 => 'slug-of-item',
 			)
-		));
+		);
 
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('edit/50'),
 			array(
 				'view'   => 'content',
 				'layout' => 'form',
 				'id'     => '50'
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('new'),
 			array(
 				'view'   => 'content',
 				'layout' => 'form',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('contents'),
 			array(
 				'view'   => 'contents',
 				'layout' => 'default',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('contents/list'),
 			array(
 				'view'   => 'contents',
 				'layout' => 'list',
 			)
-		));
+		);
 	}
 
 	public function testBaseRouterBuilding()

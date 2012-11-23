@@ -46,7 +46,7 @@ class ApplicationRouterTest extends RouterTest
 
 	public function testApplicationRouterParsing()
 	{
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('en-gb/admin/widgets/edit/40.html'),
 			array(
 				'lang'   => 'en-gb',
@@ -55,9 +55,9 @@ class ApplicationRouterTest extends RouterTest
 				'uri'    => 'edit/40',
 				'format' => 'html',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('ch/admin/pages/blog/edit/50-50.json'),
 			array(
 				'lang'   => 'ch',
@@ -67,9 +67,9 @@ class ApplicationRouterTest extends RouterTest
 				'uri'    => 'edit/50-50',
 				'format' => 'json',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('ch/admin/pages/blog/special-+:_/character.json'),
 			array(
 				'lang'   => 'ch',
@@ -79,9 +79,9 @@ class ApplicationRouterTest extends RouterTest
 				'uri'    => 'special-+:_/character',
 				'format' => 'json',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('en/blog/edit/50-50.json'),
 			array(
 				'lang'   => 'en',
@@ -91,9 +91,9 @@ class ApplicationRouterTest extends RouterTest
 				'format' => 'json',
 				'com'    => 'content',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('about-us'),
 			array(
 				'lang'   => 'en',
@@ -103,9 +103,9 @@ class ApplicationRouterTest extends RouterTest
 				'format' => 'html',
 				'com'    => 'content',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('users/list'),
 			array(
 				'lang'   => 'en',
@@ -115,9 +115,9 @@ class ApplicationRouterTest extends RouterTest
 				'format' => 'html',
 				'com'    => 'content',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('title-of-content.json'),
 			array(
 				'lang'   => 'en',
@@ -127,9 +127,9 @@ class ApplicationRouterTest extends RouterTest
 				'format' => 'json',
 				'com'    => 'content',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse('en-gb/title-of-content.json'),
 			array(
 				'lang'   => 'en-gb',
@@ -139,9 +139,9 @@ class ApplicationRouterTest extends RouterTest
 				'format' => 'json',
 				'com'    => 'content',
 			)
-		));
+		);
 
-		$this->assertTrue($this->arraysAreSimilar(
+		$this->assertEquals(
 			$this->router->parse(''),
 			array(
 				'lang'   => 'en',
@@ -151,7 +151,7 @@ class ApplicationRouterTest extends RouterTest
 				'format' => 'html',
 				'com'    => 'content',
 			)
-		));
+		);
 	}
 
 	public function testApplicationRouterBuilding()
