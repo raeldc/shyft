@@ -4,3 +4,5 @@ echo "Testing Router:";
 
 libraries/bin/phpunit tests/routers/baserouter_test.php
 libraries/bin/phpunit tests/routers/applicationrouter_test.php
+libraries/bin/phpunit tests/databases/querybuilder_test.php
+libraries/bin/phpunit tests/models/pages_test.php
